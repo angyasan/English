@@ -24,7 +24,6 @@
       border-color: #007bff;
     }
 
-    /* シャッフル・戻しボタンの親コンテナ */
     .controls {
       margin-bottom: 10px;
       display: flex;
@@ -49,14 +48,19 @@
       margin-bottom: 18px;
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
+      cursor: pointer;
     }
     .jp {
       font-size: 18px;
       color: #333;
       margin-bottom: 6px;
-      white-space: pre-line; /* 改行を反映 */
+      white-space: pre-line;
     }
-    .row {
+    .details {
+      display: none;
+      user-select: none;
+      color: #555;
+      font-size: 16px;
       display: flex;
       align-items: center;
     }
@@ -68,7 +72,6 @@
       margin-left: 12px;
       color: #666;
       font-size: 15px;
-      user-select: none;
     }
     .play-btn {
       margin-left: auto;
@@ -96,7 +99,6 @@
     <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
-  <!-- 各タブのシャッフル・戻しボタンエリア -->
   <div id="controls-container"></div>
 
   <div id="content"></div>
@@ -107,7 +109,6 @@
       {jp:"〜である/いる", en:"be", reading:"ビー"},
       {jp:"持ってくる", en:"bring", reading:"ブリング"},
       {jp:"回す", en:"turn", reading:"ターン"},
-      // 必要に応じて追加
     ],
     nouns: [
       {jp:"両親", en:"parent", reading:"ペアレント"},
@@ -130,10 +131,9 @@
   const tabButtons = document.querySelectorAll(".tab-btn");
   const controlsContainer = document.getElementById("controls-container");
 
-  // 現在のタブタイプ
   let currentType = "verbs";
 
-  // 各タイプごとに表示順を保持（初期は元の順番）
+  // 表示順管理（元の順番）
   const orderState = {
     verbs: data.verbs.slice(),
     nouns: data.nouns.slice(),
@@ -141,7 +141,7 @@
     adjectives: data.adjectives.slice()
   };
 
-  // 配列シャッフル関数（Fisher-Yates）
+  // Fisher-Yatesシャッフル関数
   function shuffle(array) {
     const arr = array.slice();
     for(let i = arr.length -1; i > 0; i--) {
@@ -154,18 +154,14 @@
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
     const audio = new Audio(url);
-    audio.play().catch(() => {
-      // 音声ないときは何もしない
-    });
+    audio.play().catch(() => {});
   }
 
-  // シャッフル・戻しボタンを表示
   function renderControls(type) {
     controlsContainer.innerHTML = "";
     const controlsDiv = document.createElement("div");
     controlsDiv.className = "controls";
 
-    // シャッフルボタン
     const shuffleBtn = document.createElement("button");
     shuffleBtn.textContent = "シャッフル";
     shuffleBtn.onclick = () => {
@@ -173,7 +169,6 @@
       renderList(type);
     };
 
-    // 戻すボタン
     const resetBtn = document.createElement("button");
     resetBtn.textContent = "元に戻す";
     resetBtn.onclick = () => {
@@ -189,9 +184,8 @@
   function renderList(type) {
     contentDiv.innerHTML = "";
     currentType = type;
-
-    // 現在のorderStateから表示
     const list = orderState[type];
+
     list.forEach(item => {
       const entry = document.createElement("div");
       entry.className = "entry";
@@ -200,8 +194,9 @@
       jpDiv.className = "jp";
       jpDiv.textContent = item.jp;
 
-      const row = document.createElement("div");
-      row.className = "row";
+      // 詳細情報部分（最初は非表示）
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "details";
 
       const enSpan = document.createElement("span");
       enSpan.className = "en";
@@ -215,20 +210,31 @@
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
       playBtn.title = `発音再生: ${item.en}`;
-      playBtn.onclick = () => playSound(item.en);
+      playBtn.onclick = e => {
+        e.stopPropagation(); // クリック伝播を止める（親のトグルを阻止）
+        playSound(item.en);
+      };
 
-      row.appendChild(enSpan);
-      row.appendChild(kanaSpan);
-      row.appendChild(playBtn);
+      detailsDiv.appendChild(enSpan);
+      detailsDiv.appendChild(kanaSpan);
+      detailsDiv.appendChild(playBtn);
+
+      // クリックで詳細の表示切替
+      jpDiv.addEventListener("click", () => {
+        if(detailsDiv.style.display === "flex") {
+          detailsDiv.style.display = "none";
+        } else {
+          detailsDiv.style.display = "flex";
+        }
+      });
 
       entry.appendChild(jpDiv);
-      entry.appendChild(row);
+      entry.appendChild(detailsDiv);
 
       contentDiv.appendChild(entry);
     });
   }
 
-  // タブ切り替え処理
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
@@ -239,11 +245,13 @@
     });
   });
 
-  // 初期表示
   renderControls(currentType);
   renderList(currentType);
+
 </script>
+
 </body>
 </html>
+
 
 
