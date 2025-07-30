@@ -2,201 +2,163 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>単語帳（動詞・副詞）</title>
+  <title>単語帳</title>
   <style>
-    body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    h2 { text-align: center; }
-    #tab-buttons { display: flex; justify-content: center; margin-bottom: 20px; }
-    #tab-buttons button {
+    body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
+    .tabs { display: flex; margin-bottom: 20px; }
+    .tab-btn {
       flex: 1;
-      padding: 10px;
-      font-size: 16px;
+      padding: 10px 0;
       cursor: pointer;
-      border: none;
-      border-bottom: 3px solid transparent;
-      background-color: #f0f0f0;
-      transition: border-color 0.3s;
-    }
-    #tab-buttons button.active {
-      border-bottom: 3px solid #007bff;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      text-align: center;
       font-weight: bold;
-      background-color: #e0eaff;
+      user-select: none;
+      transition: background-color 0.3s;
     }
-
+    .tab-btn.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
     .entry {
-      margin-bottom: 15px;
-      border-bottom: 1px solid #ddd;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #eee;
       padding-bottom: 10px;
     }
     .jp {
-      font-size: 16px;
-      color: #444;
+      font-size: 18px;
+      color: #333;
       margin-bottom: 6px;
+      white-space: pre-line; /* 改行を反映 */
     }
     .row {
       display: flex;
       align-items: center;
-      gap: 10px;
     }
     .en {
       font-weight: bold;
-      font-size: 18px;
-      min-width: 100px;
+      font-size: 17px;
     }
     .kana {
-      color: #888;
-      min-width: 80px;
-    }
-    button.play-btn {
-      cursor: pointer;
-      font-size: 18px;
-      background: none;
-      border: none;
-      color: #007bff;
-      padding: 0 8px;
+      margin-left: 12px;
+      color: #666;
+      font-size: 15px;
       user-select: none;
-      transition: color 0.3s;
     }
-    button.play-btn:disabled {
-      color: #ccc;
-      cursor: default;
+    .play-btn {
+      margin-left: auto;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      user-select: none;
+      color: #007bff;
+      transition: color 0.2s;
+    }
+    .play-btn:hover {
+      color: #0056b3;
     }
   </style>
 </head>
 <body>
 
-  <h2>📘 英単語帳（動詞・副詞）</h2>
+  <h2>📘 単語帳</h2>
 
-  <div id="tab-buttons">
-    <button id="btn-verbs" class="active">動詞</button>
-    <button id="btn-adverbs">副詞</button>
+  <div class="tabs">
+    <div class="tab-btn active" data-type="verbs">動詞</div>
+    <div class="tab-btn" data-type="nouns">名詞</div>
+    <div class="tab-btn" data-type="adverbs">副詞</div>
+    <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
-  <div id="list-verbs"></div>
-  <div id="list-adverbs" style="display:none;"></div>
+  <div id="content"></div>
 
-  <script>
-    const verbsData = [
-      ["なる", "be", "ビー"],
-      ["持ってくる", "bring", "ブリング"],
-      ["回す", "turn", "ターン"],
-      ["増える", "increase", "インクリーズ"],
-      ["減らす", "reduce", "リデュース"],
-      ["決める", "decide", "ディサイド"],
-      ["謝る", "apologize", "アポロジャイズ"],
-    ];
+<script>
+  // データ
+  const data = {
+    verbs: [
+      {jp:"〜である/いる", en:"be", reading:"ビー"},
+      {jp:"持ってくる", en:"bring", reading:"ブリング"},
+      {jp:"回す", en:"turn", reading:"ターン"},
+    ],
+    nouns: [
+      {jp:"両親", en:"parent", reading:"ペアレント"},
+      {jp:"学校", en:"school", reading:"スクール"},
+      {jp:"本", en:"book", reading:"ブック"},
+    ],
+    adverbs: [
+      {jp:"いつも", en:"always", reading:"オールウェイズ"},
+      {jp:"普段", en:"usually", reading:"ユージュアリー"},
+      {jp:"たまに", en:"occasionally", reading:"オケイジョナリー"},
+    ],
+    adjectives: [
+      {jp:"厚い", en:"thick", reading:"シック"},
+      {jp:"速い", en:"fast", reading:"ファースト"},
+      {jp:"新しい", en:"new", reading:"ニュー"},
+    ],
+  };
 
-    const adverbsData = [
-      ["いつも", "always", "オールウェイズ"],
-      ["よく", "often", "オーフン"],
-      ["時々", "sometimes", "サムタイムズ"],
-      ["たまに", "occasionally", "オケイジョナリー"],
-      ["絶対に", "definitely", "デフィニットリー"],
-      ["ゆっくりと", "slowly", "スローリー"],
-      ["速く", "quickly", "クイックリー"],
-      ["完全に", "completely", "コンプリートリー"],
-    ];
+  const contentDiv = document.getElementById("content");
+  const tabButtons = document.querySelectorAll(".tab-btn");
 
-    const btnVerbs = document.getElementById("btn-verbs");
-    const btnAdverbs = document.getElementById("btn-adverbs");
+  function playSound(word) {
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+    const audio = new Audio(url);
+    audio.play().catch(() => {
+      alert("音声を再生できませんでした。");
+    });
+  }
 
-    const listVerbs = document.getElementById("list-verbs");
-    const listAdverbs = document.getElementById("list-adverbs");
-
-    function getAudioUrl(word) {
-      return "https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + word.toLowerCase() + "--_us_1.mp3";
-    }
-
-    async function checkAudioExists(word) {
-      const url = getAudioUrl(word);
-      try {
-        const response = await fetch(url, { method: "HEAD" });
-        return response.ok;
-      } catch {
-        return false;
-      }
-    }
-
-    async function createEntry(jp, en, kana) {
+  function renderList(type) {
+    contentDiv.innerHTML = "";
+    data[type].forEach(item => {
       const entry = document.createElement("div");
       entry.className = "entry";
 
       const jpDiv = document.createElement("div");
       jpDiv.className = "jp";
-      jpDiv.textContent = jp;
+      jpDiv.textContent = item.jp;
 
-      const rowDiv = document.createElement("div");
-      rowDiv.className = "row";
+      const row = document.createElement("div");
+      row.className = "row";
 
       const enSpan = document.createElement("span");
       enSpan.className = "en";
-      enSpan.textContent = en;
+      enSpan.textContent = item.en;
 
       const kanaSpan = document.createElement("span");
       kanaSpan.className = "kana";
-      kanaSpan.textContent = kana;
+      if(item.reading) kanaSpan.textContent = item.reading;
 
-      const btnPlay = document.createElement("button");
-      btnPlay.className = "play-btn";
-      btnPlay.textContent = "▶️";
-      btnPlay.disabled = true;
+      const playBtn = document.createElement("button");
+      playBtn.className = "play-btn";
+      playBtn.textContent = "▶️";
+      playBtn.title = `発音再生: ${item.en}`;
+      playBtn.onclick = () => playSound(item.en);
 
-      const exists = await checkAudioExists(en);
-      if (exists) {
-        btnPlay.disabled = false;
-        btnPlay.onclick = () => {
-          const audio = new Audio(getAudioUrl(en));
-          audio.play();
-        };
-      } else {
-        btnPlay.disabled = true;
-        btnPlay.textContent = "❌";
-        btnPlay.title = "音声なし";
-      }
-
-      rowDiv.appendChild(enSpan);
-      rowDiv.appendChild(kanaSpan);
-      rowDiv.appendChild(btnPlay);
+      row.appendChild(enSpan);
+      row.appendChild(kanaSpan);
+      row.appendChild(playBtn);
 
       entry.appendChild(jpDiv);
-      entry.appendChild(rowDiv);
+      entry.appendChild(row);
 
-      return entry;
-    }
-
-    async function renderList(listElem, data) {
-      listElem.innerHTML = "";
-      for (const [jp, en, kana] of data) {
-        const entry = await createEntry(jp, en, kana);
-        listElem.appendChild(entry);
-      }
-    }
-
-    btnVerbs.addEventListener("click", async () => {
-      btnVerbs.classList.add("active");
-      btnAdverbs.classList.remove("active");
-      listVerbs.style.display = "block";
-      listAdverbs.style.display = "none";
-      if (!listVerbs.hasChildNodes()) {
-        await renderList(listVerbs, verbsData);
-      }
+      contentDiv.appendChild(entry);
     });
+  }
 
-    btnAdverbs.addEventListener("click", async () => {
-      btnAdverbs.classList.add("active");
-      btnVerbs.classList.remove("active");
-      listAdverbs.style.display = "block";
-      listVerbs.style.display = "none";
-      if (!listAdverbs.hasChildNodes()) {
-        await renderList(listAdverbs, adverbsData);
-      }
+  // 初期表示
+  renderList("verbs");
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderList(btn.getAttribute("data-type"));
     });
-
-    // 初期は動詞表示
-    renderList(listVerbs, verbsData);
-
-  </script>
+  });
+</script>
 </body>
 </html>
-
-
