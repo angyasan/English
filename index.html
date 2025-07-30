@@ -1,34 +1,107 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>単語帳</title>
-  <style>
-    body { font-family: -apple-system, sans-serif; padding: 20px; }
-    .entry { margin-bottom: 15px; }
-    .jp { font-size: 16px; color: #444; }
-    .row { display: flex; justify-content: space-between; align-items: center; }
-    .en { font-weight: bold; font-size: 18px; }
-    .kana { margin-left: 10px; color: #888; }
-    .play { cursor: pointer; font-size: 18px; margin-left: 10px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>単語帳</title>
+<style>
+  body {
+    font-family: -apple-system, sans-serif;
+    padding: 20px;
+  }
+  .entry {
+    margin-bottom: 15px;
+  }
+  .jp {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 4px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .en {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .kana {
+    color: #888;
+  }
+  .play {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 0;
+    padding-left: 5px;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
-  <h2>📘 単語帳</h2>
 
-  <div class="entry">
-    <div class="jp">持ってくる</div>
-    <div class="row">
-      <div><span class="en">bring</span><span class="kana">ブリング</span></div>
-      <div class="play" onclick="playSound('bring')">▶︎</div>
-    </div>
-  </div>
+<h2>📘 単語帳</h2>
 
-  <script>
-    function playSound(word) {
-      const audio = new Audio("https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + word + "--_gb_1.mp3");
+<div id="wordList"></div>
+
+<script>
+  const words = [
+    {jp:"〜である/いる", en:"be", kana:""},
+    {jp:"〜になる", en:"become", kana:""},
+    {jp:"回す", en:"turn", kana:""},
+    {jp:"持ってくる", en:"bring", kana:"ブリング"},
+    {jp:"持っていく", en:"take", kana:""},
+    {jp:"運ぶ", en:"carry", kana:""},
+    {jp:"目が覚める", en:"wake up", kana:""},
+    {jp:"起き上がる", en:"get up", kana:""},
+    {jp:"増える", en:"increase", kana:"インクリーズ"},
+    {jp:"減る", en:"decrease", kana:"ディクリーズ"},
+    {jp:"減らす", en:"reduce", kana:"リデュース"},
+    {jp:"支持する、支援する", en:"support", kana:"サポート"},
+    {jp:"反対する", en:"oppose", kana:"アポーズ"},
+    // 全部ここに入れてね
+  ];
+
+  const container = document.getElementById('wordList');
+
+  words.forEach(({jp, en, kana}) => {
+    const entry = document.createElement('div');
+    entry.className = 'entry';
+
+    // 日本語訳
+    const jpDiv = document.createElement('div');
+    jpDiv.className = 'jp';
+    jpDiv.textContent = jp;
+    entry.appendChild(jpDiv);
+
+    // 英単語＋カタカナ＋音声ボタン横並び
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    const enSpan = document.createElement('span');
+    enSpan.className = 'en';
+    enSpan.textContent = en;
+
+    const kanaSpan = document.createElement('span');
+    kanaSpan.className = 'kana';
+    if(kana) kanaSpan.textContent = ' ' + kana;
+
+    const playBtn = document.createElement('div');
+    playBtn.className = 'play';
+    playBtn.textContent = '▶︎';
+    playBtn.onclick = () => {
+      const audio = new Audio("https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + en + "--_gb_1.mp3");
       audio.play();
-    }
-  </script>
+    };
+
+    row.appendChild(enSpan);
+    row.appendChild(kanaSpan);
+    row.appendChild(playBtn);
+
+    entry.appendChild(row);
+    container.appendChild(entry);
+  });
+</script>
+
 </body>
 </html>
