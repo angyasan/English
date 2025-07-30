@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>単語帳</title>
+  <title>単語帳（タップで英単語表示）</title>
   <style>
     body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
     .tabs { display: flex; margin-bottom: 20px; }
@@ -26,29 +26,23 @@
       margin-bottom: 18px;
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
+      cursor: pointer;
+      user-select: none;
     }
     .jp {
       font-size: 18px;
       color: #333;
-      margin-bottom: 6px;
       white-space: pre-line; /* 改行を反映 */
     }
-    .row {
-      display: flex;
-      align-items: center;
-    }
-    .en {
-      font-weight: bold;
-      font-size: 17px;
-    }
-    .kana {
-      margin-left: 12px;
+    .hide-info {
+      margin-top: 6px;
       color: #666;
-      font-size: 15px;
+      font-size: 16px;
       user-select: none;
+      display: none;
     }
     .play-btn {
-      margin-left: auto;
+      margin-left: 10px;
       cursor: pointer;
       border: none;
       background: transparent;
@@ -60,11 +54,16 @@
     .play-btn:hover {
       color: #0056b3;
     }
+    .info-row {
+      display: flex;
+      align-items: center;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
 
-  <h2>📘 単語帳</h2>
+  <h2>📘 単語帳（タップで英語表示）</h2>
 
   <div class="tabs">
     <div class="tab-btn active" data-type="verbs">動詞</div>
@@ -76,7 +75,6 @@
   <div id="content"></div>
 
 <script>
-  // データ
   const data = {
     verbs: [
       {jp:"〜である/いる", en:"be", reading:"ビー"},
@@ -107,7 +105,7 @@
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
     const audio = new Audio(url);
     audio.play().catch(() => {
-      // 何もしない（ポップアップ表示しない）
+      // 音声がない場合は何もしない
     });
   }
 
@@ -121,8 +119,9 @@
       jpDiv.className = "jp";
       jpDiv.textContent = item.jp;
 
-      const row = document.createElement("div");
-      row.className = "row";
+      // 英単語・カタカナ表示用（初期は非表示）
+      const infoRow = document.createElement("div");
+      infoRow.className = "info-row hide-info";
 
       const enSpan = document.createElement("span");
       enSpan.className = "en";
@@ -130,20 +129,33 @@
 
       const kanaSpan = document.createElement("span");
       kanaSpan.className = "kana";
+      kanaSpan.style.marginLeft = "12px";
       if(item.reading) kanaSpan.textContent = item.reading;
 
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
       playBtn.title = `発音再生: ${item.en}`;
-      playBtn.onclick = () => playSound(item.en);
+      playBtn.onclick = e => {
+        e.stopPropagation(); // 親divのクリックイベントを止める
+        playSound(item.en);
+      };
 
-      row.appendChild(enSpan);
-      row.appendChild(kanaSpan);
-      row.appendChild(playBtn);
+      infoRow.appendChild(enSpan);
+      infoRow.appendChild(kanaSpan);
+      infoRow.appendChild(playBtn);
 
       entry.appendChild(jpDiv);
-      entry.appendChild(row);
+      entry.appendChild(infoRow);
+
+      // クリックで英語情報の表示/非表示切り替え
+      entry.addEventListener("click", () => {
+        if(infoRow.style.display === "flex") {
+          infoRow.style.display = "none";
+        } else {
+          infoRow.style.display = "flex";
+        }
+      });
 
       contentDiv.appendChild(entry);
     });
@@ -160,5 +172,7 @@
     });
   });
 </script>
+
 </body>
 </html>
+
