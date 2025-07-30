@@ -1,374 +1,142 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<title>動詞・副詞リスト 音声再生付き</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  .item { margin-bottom: 10px; }
-  .jp { font-weight: bold; }
-  .en { margin-left: 10px; color: #555; }
-  button { margin-left: 10px; }
-</style>
+  <meta charset="UTF-8" />
+  <title>単語帳</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    .buttons {
+      margin-bottom: 20px;
+    }
+    .buttons button {
+      padding: 8px 16px;
+      margin-right: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .buttons button.active {
+      background-color: #007bff;
+      color: white;
+    }
+    .entry {
+      margin-bottom: 20px;
+    }
+    .jp {
+      font-size: 16px;
+      color: #333;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+    }
+    .en {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .kana {
+      margin-left: 10px;
+      color: #777;
+    }
+    .play {
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
-<h1>動詞リスト</h1>
-<div id="verbs"></div>
 
-<h1>副詞リスト</h1>
-<div id="adverbs"></div>
+  <div class="buttons">
+    <button id="btn-verbs" class="active">動詞</button>
+    <button id="btn-adverbs">副詞</button>
+  </div>
 
-<script>
-// 動詞リスト（日本語・英語・読み仮名(あれば)）
-const verbs = [
-  {jp:"〜である/いる", en:"be", reading:""},
-  {jp:"〜になる", en:"become", reading:""},
-  {jp:"回す", en:"turn", reading:""},
-  {jp:"持ってくる", en:"bring", reading:""},
-  {jp:"持っていく", en:"take", reading:""},
-  {jp:"運ぶ", en:"carry", reading:""},
-  {jp:"目が覚める", en:"wake up", reading:""},
-  {jp:"起き上がる", en:"get up", reading:""},
-  {jp:"増える", en:"increase", reading:"インクリーズ"},
-  {jp:"減る", en:"decrease", reading:"ディクリーズ"},
-  {jp:"減らす", en:"reduce", reading:"リデュース"},
-  {jp:"支持する、支援する", en:"support", reading:"サポート"},
-  {jp:"反対する", en:"oppose", reading:"アポーズ"},
-  {jp:"従う", en:"obey", reading:"オベェイ"},
-  {jp:"逆らう", en:"disobey", reading:"ディスオベェイ"},
-  {jp:"貸す", en:"lend", reading:"レンド"},
-  {jp:"借りる", en:"borrow", reading:"バラォウ"},
-  {jp:"貸す借りる(有料)", en:"rent", reading:""},
-  {jp:"受け入れる", en:"accept", reading:"アクセプト"},
-  {jp:"拒否する", en:"refuse", reading:""},
-  {jp:"建てる", en:"build", reading:""},
-  {jp:"破壊する", en:"destory", reading:"ディストロイ"},
-  {jp:"値する", en:"deserve", reading:"ディザーヴ"},
-  {jp:"決める", en:"decide", reading:"ディサイド"},
-  {jp:"埋める、満たす", en:"fill", reading:""},
-  {jp:"輝く", en:"glow", reading:""},
-  {jp:"入る", en:"enter", reading:""},
-  {jp:"出る", en:"exit", reading:""},
-  {jp:"参加する、加わる", en:"join", reading:""},
-  {jp:"離れる", en:"leave", reading:""},
-  {jp:"残す", en:"leave", reading:""},
-  {jp:"隠す", en:"hide", reading:""},
-  {jp:"見せる", en:"show", reading:""},
-  {jp:"捕まえる", en:"catch", reading:""},
-  {jp:"逃す", en:"miss", reading:""},
-  {jp:"逃げる", en:"run away", reading:""},
-  {jp:"貯める", en:"save", reading:""},
-  {jp:"費やす、使う", en:"spend", reading:""},
-  {jp:"強く主張する", en:"insist", reading:"インシスト"},
-  {jp:"招待する", en:"invite", reading:"インバイト"},
-  {jp:"謝る", en:"apologize", reading:"アポロジャイス"},
-  {jp:"握る", en:"hold", reading:""},
-  {jp:"持ってた物を離す", en:"let go of", reading:""},
-  {jp:"落とす", en:"drop", reading:""},
-  {jp:"落ちる", en:"fall", reading:"フォール"},
-  {jp:"含める", en:"include", reading:"インクルード"},
-  {jp:"除外する", en:"exclude", reading:"イクスクルード"},
-  {jp:"成功する", en:"succeed", reading:""},
-  {jp:"失敗する", en:"fail", reading:""},
-  {jp:"前進する", en:"advance", reading:""},
-  {jp:"後退する", en:"retreat", reading:"リトゥリート"},
-  {jp:"攻撃する", en:"attack", reading:""},
-  {jp:"守る", en:"defend", reading:"ディフェンド"},
-  {jp:"現れる、出現する", en:"appear", reading:"アピアー"},
-  {jp:"消える、消失する", en:"disappear", reading:"ディスアピアー"},
-  {jp:"気づく(頭で)", en:"realize", reading:""},
-  {jp:"気づく(五感で)", en:"notice", reading:""},
-  {jp:"始める始まる(日常会話)", en:"start", reading:""},
-  {jp:"始める始まる(フォーマル、書き言葉)", en:"begin", reading:""},
-  {jp:"終える/終わる(物事、時間)", en:"end", reading:""},
-  {jp:"終わる(やり遂げる)", en:"finish", reading:""},
-  {jp:"上がる", en:"rise", reading:""},
-  {jp:"上がる", en:"go up", reading:""},
-  {jp:"下がる", en:"fall", reading:""},
-  {jp:"下がる", en:"go down", reading:""},
-  {jp:"上げる", en:"raise", reading:"レイズ"},
-  {jp:"下げる", en:"lower", reading:"ロゥワー"},
-  {jp:"与える", en:"give", reading:""},
-  {jp:"受け取る", en:"receive", reading:"レシーブ"},
-  {jp:"見つける(探す)", en:"find", reading:"ファインド"},
-  {jp:"失う", en:"lose", reading:""},
-  {jp:"教える", en:"teach", reading:""},
-  {jp:"学ぶ", en:"learn", reading:"ラーン"},
-  {jp:"入れる(カジュアル)", en:"put in", reading:""},
-  {jp:"入れる(精密な操作)", en:"insert", reading:""},
-  {jp:"取り出す(カジュアル)", en:"take out", reading:""},
-  {jp:"取り除く(汚れ、アプリ)", en:"remove", reading:""},
-  {jp:"着る/着ている", en:"put on", reading:""},
-  {jp:"着る/着ている", en:"wear", reading:""},
-  {jp:"脱ぐ", en:"take off", reading:""},
-  {jp:"登る", en:"climb up", reading:"クライムアップささささささ"},
-  {jp:"降りる", en:"climb down", reading:""},
-  {jp:"車に乗る", en:"get in", reading:""},
-  {jp:"電車に乗る", en:"get on", reading:""},
-  {jp:"バイクに乗る", en:"ride", reading:""},
-  {jp:"車から降りる", en:"get out", reading:""},
-  {jp:"電車、バイクから降りる", en:"get off", reading:""},
-  {jp:"笑う", en:"laugh", reading:"ラフ"},
-  {jp:"泣く", en:"cry", reading:""},
-  {jp:"挑戦する", en:"try", reading:""},
-  {jp:"諦める", en:"give up", reading:""},
-  {jp:"押す", en:"push", reading:""},
-  {jp:"引く", en:"pull", reading:""},
-  {jp:"出発する", en:"leave", reading:""},
-  {jp:"到着する", en:"arrive", reading:""},
-  {jp:"成長する", en:"grow", reading:""},
-  {jp:"縮む", en:"shrink", reading:"シュリンク"},
-  {jp:"捨てる", en:"throw away", reading:""},
-  {jp:"拾う", en:"pick up", reading:""},
-  {jp:"温める", en:"warm", reading:"ウォーム"},
-  {jp:"冷ます", en:"cool", reading:""},
-  {jp:"温まる", en:"warm up", reading:""},
-  {jp:"冷める", en:"cooldown", reading:""},
-  {jp:"加熱する", en:"heat up", reading:""},
-  {jp:"冷却する", en:"cooldown", reading:""},
-  {jp:"続ける", en:"continue", reading:"コンテニュー"},
-  {jp:"中止する", en:"discontinue", reading:""},
-  {jp:"変える、変わる", en:"change", reading:""},
-  {jp:"交換する", en:"exchange", reading:""},
-  {jp:"取り替える", en:"replace", reading:""},
-  {jp:"改善する", en:"improve", reading:"インプルーブ"},
-  {jp:"悪化する", en:"worsen", reading:"ウァーセン"},
-  {jp:"同意する", en:"agree", reading:""},
-  {jp:"否定する", en:"deny", reading:"ディナイ"},
-  {jp:"提案する", en:"suggest", reading:""},
-  {jp:"提出する", en:"submit", reading:"サブミッ"},
-  {jp:"提供する", en:"provide", reading:"プロヴァイド"},
-  {jp:"紹介する", en:"introduce", reading:""},
-  {jp:"説明する", en:"explain", reading:""},
-  {jp:"接続する", en:"connect", reading:""},
-  {jp:"切断する", en:"disconnect", reading:""},
-  {jp:"発展する", en:"develop", reading:""},
-  {jp:"拡大する", en:"expand", reading:"イクスパンド"},
-  {jp:"認める", en:"adimt", reading:"アドミット"},
-  {jp:"発表する", en:"announce", reading:"アナウンス"},
-  {jp:"制御する", en:"control", reading:""},
-  {jp:"望む", en:"hope", reading:""},
-  {jp:"責める", en:"blame", reading:"ブレイム"},
-  {jp:"許す", en:"forgive", reading:"ファギブ"},
-  {jp:"無視する", en:"ignore", reading:"イグノーア"},
-  {jp:"頼る、依存する", en:"depend", reading:"ディペンド"},
-  {jp:"噛む(歯でかじる)", en:"bite", reading:"バイト"},
-  {jp:"噛む(咀嚼する)", en:"chew", reading:"チュー"},
-  {jp:"甘噛み", en:"nibble", reading:"ニブル"},
-  {jp:"吐く(カジュアル)", en:"throw up", reading:""},
-  {jp:"吐く(医学的)", en:"vomit", reading:"ヴァーミット"},
-  {jp:"匂いを嗅ぐ", en:"smell", reading:""},
-  {jp:"味わう", en:"taste", reading:""},
-  {jp:"認識する", en:"recognize", reading:"レカグナイズ"},
-  {jp:"想像する", en:"imagine", reading:"イマジン"},
-  {jp:"観察する", en:"observe", reading:"アブザーヴ"},
-  {jp:"実行する", en:"perform", reading:"パフォーム"},
-  {jp:"要求する", en:"require", reading:"リクワイヤ"},
-  {jp:"言及する", en:"mention", reading:"メンション"},
-  {jp:"防ぐ", en:"prevent", reading:"プレベント"},
-  {jp:"予期する、期待する", en:"expect", reading:"エクスペクト"},
-  {jp:"巻き込む", en:"involve", reading:"インヴォルヴ"},
-  {jp:"配達する", en:"deliver", reading:"デリバー"},
-  {jp:"維持する", en:"maintain", reading:"メインテイン"},
-  {jp:"逆転する", en:"reverse", reading:""},
-  {jp:"〜を引き起こす、原因となる", en:"cause", reading:""},
-  {jp:"裏切る", en:"betray", reading:"ビｰトゥレイ"},
-  {jp:"ビンタする", en:"slap", reading:"スラップ"},
-  {jp:"拳で殴る", en:"punch", reading:""},
-  {jp:"軽く突く", en:"poke", reading:"ポーク"},
-  {jp:"つねる", en:"pinch", reading:"ピンチ"},
-  {jp:"強く押す", en:"shove", reading:"ショヴ"},
-  {jp:"息が詰まる", en:"choke", reading:"チョーク"},
-  {jp:"踏む", en:"step on", reading:""},
-  {jp:"前に出る", en:"come forward", reading:""},
-  {jp:"後ろに下がる", en:"back up", reading:""},
-  {jp:"後ろに下がる", en:"step back", reading:""},
-  {jp:"回転する", en:"spin around", reading:""},
-  {jp:"横になる", en:"lie down", reading:""},
-  {jp:"ハイタッチ", en:"high five", reading:"ハイ ファイブ"},
-  {jp:"グータッチ", en:"fist bump", reading:"フィスt バンプ"},
-  {jp:"点ける", en:"turn on", reading:""},
-  {jp:"消す", en:"turn off", reading:""},
-  {jp:"延長する", en:"expend", reading:""},
-  {jp:"短縮する", en:"shorten", reading:""},
-  {jp:"延期する", en:"postpone", reading:"ポストポーン"},
-  {jp:"前倒しする", en:"move up", reading:""},
-  {jp:"前倒しする", en:"bring forward", reading:""},
-  {jp:"別れる", en:"break up", reading:""},
-  {jp:"伸ばす", en:"stretch", reading:"ス トレッチ"},
-  {jp:"曲げる", en:"bend", reading:""},
-  {jp:"折る", en:"break", reading:""},
-  {jp:"舐める", en:"lick", reading:""},
-  {jp:"吸う", en:"suck", reading:""},
-  {jp:"吹く", en:"blow", reading:""},
-  {jp:"扱う、対処する", en:"deal", reading:"ディアル"},
-  {jp:"活用する、利用する", en:"avail", reading:"アヴェイル"},
-  {jp:"検査する", en:"examine", reading:"エグザミン"},
-  {jp:"表現する、速達", en:"express", reading:"エクスプレス"},
-  {jp:"爆発する", en:"explode", reading:"エクスプロード"},
-  {jp:"超える", en:"exceed", reading:"エクスィード"},
-  {jp:"興奮する", en:"excited", reading:""},
-  {jp:"注ぐ", en:"pour", reading:"ポァ"},
-  {jp:"焼く", en:"bake", reading:"ベイク"},
-  {jp:"ゆでる", en:"boil", reading:"ボイル"},
-  {jp:"集める", en:"collect", reading:""},
-  {jp:"磨く", en:"brush", reading:""},
-  {jp:"稼ぐ", en:"earn", reading:"アーン"},
-  {jp:"会う(初めて)", en:"meet", reading:""},
-  {jp:"会う", en:"see", reading:""},
-  {jp:"だます(軽く)", en:"fool", reading:"フール"},
-  {jp:"抵抗する", en:"resist", reading:"リズィスト"},
-  {jp:"耐える", en:"endure", reading:"エンデュア"},
-  {jp:"我慢する", en:"bear", reading:""},
-  {jp:"主張する", en:"claim", reading:"クレイム"},
-  {jp:"案内する", en:"guide", reading:""},
-  {jp:"記入する", en:"fill out", reading:""},
-  {jp:"配る", en:"give away", reading:""},
-  {jp:"進歩する", en:"make progress", reading:""},
-  {jp:"落ち着く", en:"chill out", reading:""},
-  {jp:"テンションを上げる", en:"hype up", reading:""},
-  {jp:"テンションが上がる", en:"get excited", reading:""},
-  {jp:"テンションが下がる", en:"feel down", reading:""},
-  {jp:"(罪を)犯す", en:"commit", reading:"コミット"},
-  {jp:"時間がかかる", en:"take time", reading:""},
-  {jp:"自慢する", en:"boast", reading:"ボウスト"},
-  {jp:"雑談する", en:"have a chat", reading:""},
-  {jp:"割く、惜しむ", en:"spare", reading:""},
-  {jp:"解く(problemを)", en:"solve", reading:"サーヴ"},
-  {jp:"解く(questionを)", en:"anwser", reading:""},
-  {jp:"解決する", en:"work out", reading:""},
-  {jp:"悩む", en:"worry", reading:""},
-  {jp:"迷う", en:"be torn", reading:"トーン"},
-  {jp:"共有する", en:"share", reading:""},
-  {jp:"投げる", en:"throw", reading:"スロー"},
-  {jp:"打つ", en:"hit", reading:""},
-  {jp:"撫でる(動物を)", en:"pet", reading:""},
-  {jp:"バレる", en:"get caught", reading:"ゲット コート"},
-  {jp:"浮く", en:"float", reading:"フロート"},
-  {jp:"目立つ", en:"stand out", reading:""},
-  {jp:"操作する", en:"manipulate", reading:"マニピュレイト"},
-  {jp:"調査する、捜査する(詳しく)", en:"investigate", reading:"インヴェスティゲート"},
-  {jp:"創造する", en:"create", reading:""},
-  {jp:"探す", en:"search", reading:""},
-  {jp:"油断する", en:"let your guard down", reading:""},
-  {jp:"遊ぶ(だらだら)", en:"hang out", reading:""},
-  {jp:"遊ぶ", en:"have fun", reading:""},
-  {jp:"優先する", en:"prioritize", reading:"プライオラタイズ"},
-  {jp:"生産する", en:"produce", reading:"プロデュース"},
-  {jp:"交代する", en:"take turns", reading:"テイク ターンズ"},
-  {jp:"離す", en:"release", reading:"リリース"},
-  {jp:"転送する", en:"forward", reading:""},
-  {jp:"回収する、取り戻す", en:"retrieve", reading:"リトゥリーヴ"},
-  {jp:"返却する", en:"return", reading:""},
-  {jp:"戻る(元いた場所に戻る)", en:"go back", reading:""},
-  {jp:"戻る（話し手のいる場所に戻る）", en:"come back", reading:""},
-  {jp:"やめる(習慣)", en:"quit", reading:"クェット"},
-  {jp:"聞く", en:"listen", reading:""},
-  {jp:"聞こえる", en:"hear", reading:""},
-  {jp:"録音する、録画する", en:"record", reading:"レコード"},
-  {jp:"記憶する", en:"memorize", reading:"メモライズ"},
-  {jp:"挑発する(煽る)", en:"provoke", reading:"プロヴォーク"},
-  {jp:"刺激する(物理的)", en:"stimulate", reading:"スティミュレイト"},
-  {jp:"準備する", en:"prepare", reading:"プレペアー"},
-  {jp:"誘惑する", en:"tempt", reading:"テンプト"},
-  {jp:"結ぶ(紐)", en:"tie", reading:"タイ"},
-  {jp:"梱包する", en:"pack", reading:""},
-  {jp:"包む(ギフト)", en:"wrap", reading:"ラップ"},
-  {jp:"剃る", en:"shave", reading:"シェーヴ"},
-  {jp:"評価する", en:"evaluate", reading:"イーバリューエイト"},
-  {jp:"散歩する", en:"take a walk", reading:""},
-  {jp:"散歩する", en:"walk around", reading:""},
-  {jp:"中に入る", en:"go inside", reading:""},
-  {jp:"外に出る", en:"go outside", reading:""},
-  {jp:"泊まる", en:"stay", reading:""},
-  {jp:"泊める", en:"let someone stay", reading:""},
-  {jp:"泊める", en:"put someone stay", reading:""},
-  {jp:"修理する", en:"fix", reading:""}
-];
+  <div id="verbs"></div>
+  <div id="adverbs" style="display: none;"></div>
 
-// 副詞リスト
-const adverbs = [
-  {jp:"いつも", en:"always"},
-  {jp:"普段", en:"usually"},
-  {jp:"よく", en:"often"},
-  {jp:"時々", en:"sometimes"},
-  {jp:"たまに", en:"occasionally"},
-  {jp:"決してない", en:"never"},
-  {jp:"既に", en:"already"},
-  {jp:"ちょうど、さっき", en:"just"},
-  {jp:"まだ", en:"still"},
-  {jp:"突然", en:"suddenly"},
-  {jp:"そろそろ", en:"soon"},
-  {jp:"まだ(肯定)", en:"still"},
-  {jp:"まだ(否定文、疑問文)", en:"yet"},
-  {jp:"多分", en:"maybe"},
-  {jp:"実は", en:"actually"},
-  {jp:"その代わりに", en:"instead"},
-  {jp:"それから、次に", en:"then"},
-  {jp:"別々に、個別に", en:"separately"},
-  {jp:"積極的に", en:"actively"},
-  {jp:"消極的に", en:"passively"},
-  {jp:"絶対に、確実に、間違いなく", en:"definitely"},
-  {jp:"絶対に(同意、感情、強調)", en:"absolutely"},
-  {jp:"完全に、本当に(ガジュアル、若者)", en:"totally"},
-  {jp:"完全に(状態の変化、事実の証明)", en:"completely"},
-  {jp:"十分に", en:"enough"},
-  {jp:"ゆっくりと", en:"slowly"},
-  {jp:"速く", en:"quickly"},
-  {jp:"注意深く", en:"carefully"},
-  {jp:"簡単に", en:"easily"},
-  {jp:"上手に", en:"well"},
-  {jp:"下手に", en:"badly"},
-  {jp:"基本的に", en:"basically"},
-  {jp:"一般的に", en:"generally"},
-  {jp:"論理的に", en:"logically"},
-  {jp:"普通に", en:"normally"},
-  {jp:"結果的に", en:"as a result"},
-  {jp:"必ず、忘れず", en:"without fail"},
-  {jp:"わざと", en:"on purpose"},
-  {jp:"その場合は", en:"in that case"},
-  {jp:"この理由で", en:"for this reason"},
-  {jp:"たまに", en:"once in a while"},
-  {jp:"以上(年齢)", en:"or older / or over / and above"},
-  {jp:"以下(年齢)", en:"or younger / or under"},
-  {jp:"以上(人数、金額、個数)", en:"or more"},
-  {jp:"以下(人数、金額、個数)", en:"or less"}
-];
+  <script>
+    // 音声再生（アメリカ発音）
+    function playSound(word) {
+      const audio = new Audio("https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + word.toLowerCase() + "--_us_1.mp3");
+      audio.play();
+    }
 
-// 発音再生関数
-function playSound(word) {
-  const audio = new Audio("https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + word.toLowerCase() + "--_us_1.mp3");
-  audio.play();
-}
+    // 要素作成
+    function createItem(item) {
+      const div = document.createElement("div");
+      div.className = "entry";
 
+      const jp = document.createElement("div");
+      jp.className = "jp";
+      jp.textContent = item.jp;
 
+      const row = document.createElement("div");
+      row.className = "row";
 
-// 要素生成関数
-function createItem(item) {
-  const div = document.createElement("div");
-  div.className = "item";
-  const jpSpan = document.createElement("span");
-  jpSpan.className = "jp";
-  jpSpan.textContent = item.jp;
-  const enSpan = document.createElement("span");
-  enSpan.className = "en";
-  enSpan.textContent = item.en + (item.reading ? ` (${item.reading})` : "");
-  const btn = document.createElement("button");
-  btn.textContent = "▶️ 発音";
-  btn.onclick = () => playSound(item.en);
-  div.appendChild(jpSpan);
-  div.appendChild(enSpan);
-  div.appendChild(btn);
-  return div;
-}
+      const en = document.createElement("span");
+      en.className = "en";
+      en.textContent = item.en;
 
-// 動詞表示
-const verbsDiv = document.getElementById("verbs");
-verbs.forEach(v => verbsDiv.appendChild(createItem(v)));
+      const kana = document.createElement("span");
+      kana.className = "kana";
+      kana.textContent = item.reading ? `（${item.reading}）` : "";
 
-// 副詞表示
-const adverbsDiv = document.getElementById("adverbs");
-adverbs.forEach(a => adverbsDiv.appendChild(createItem(a)));
-</script>
+      const btn = document.createElement("span");
+      btn.className = "play";
+      btn.textContent = "▶️";
+      btn.onclick = () => playSound(item.en);
+
+      row.appendChild(en);
+      row.appendChild(kana);
+      row.appendChild(btn);
+
+      div.appendChild(jp);
+      div.appendChild(row);
+      return div;
+    }
+
+    // データ
+    const verbs = [
+      { jp: "〜なる", en: "be", reading: "ビー" },
+      { jp: "持ってくる", en: "bring", reading: "ブリング" },
+      // 必要に応じて追加
+    ];
+
+    const adverbs = [
+      { jp: "絶対に", en: "absolutely", reading: "アブソルートゥリー" },
+      { jp: "普段", en: "usually" },
+      // 必要に応じて追加
+    ];
+
+    // 表示
+    const verbsDiv = document.getElementById("verbs");
+    const adverbsDiv = document.getElementById("adverbs");
+    verbs.forEach(v => verbsDiv.appendChild(createItem(v)));
+    adverbs.forEach(a => adverbsDiv.appendChild(createItem(a)));
+
+    // タブ切替
+    const btnVerbs = document.getElementById("btn-verbs");
+    const btnAdverbs = document.getElementById("btn-adverbs");
+
+    btnVerbs.onclick = () => {
+      btnVerbs.classList.add("active");
+      btnAdverbs.classList.remove("active");
+      verbsDiv.style.display = "block";
+      adverbsDiv.style.display = "none";
+    };
+
+    btnAdverbs.onclick = () => {
+      btnAdverbs.classList.add("active");
+      btnVerbs.classList.remove("active");
+      verbsDiv.style.display = "none";
+      adverbsDiv.style.display = "block";
+    };
+  </script>
+
 </body>
 </html>
+
