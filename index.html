@@ -4,18 +4,37 @@
   <meta charset="UTF-8" />
   <title>単語帳</title>
   <style>
-    body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
+    body {
+      font-family: -apple-system, sans-serif;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+
+      /* 背景画像追加 */
+      background-image: url('https://cdn.bhdw.net/im/wonyoung-from-ive-kpop-band-i-am-m-v-shoot-wallpaper-117822_w635.webp');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white; /* 背景が暗い前提で文字白く */
+      text-shadow: 0 0 3px rgba(0,0,0,0.7);
+    }
     .tabs { display: flex; margin-bottom: 20px; }
     .tab-btn {
       flex: 1;
       padding: 10px 0;
       cursor: pointer;
       border: 1px solid #ccc;
-      background: #f9f9f9;
+      background: rgba(249, 249, 249, 0.8);
       text-align: center;
       font-weight: bold;
       user-select: none;
       transition: background-color 0.3s;
+      color: #333;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+    .tab-btn:last-child {
+      margin-right: 0;
     }
     .tab-btn.active {
       background-color: #007bff;
@@ -24,14 +43,15 @@
     }
     .entry {
       margin-bottom: 18px;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
       padding-bottom: 10px;
     }
     .jp {
       font-size: 18px;
-      color: #333;
+      color: white;
       margin-bottom: 6px;
       white-space: pre-line; /* 改行を反映 */
+      text-shadow: 0 0 3px rgba(0,0,0,0.7);
     }
     .row {
       display: flex;
@@ -40,12 +60,15 @@
     .en {
       font-weight: bold;
       font-size: 17px;
+      color: white;
+      text-shadow: 0 0 2px rgba(0,0,0,0.6);
     }
     .kana {
       margin-left: 12px;
-      color: #666;
+      color: #ddd;
       font-size: 15px;
       user-select: none;
+      text-shadow: 0 0 2px rgba(0,0,0,0.6);
     }
     .play-btn {
       margin-left: auto;
@@ -54,11 +77,11 @@
       background: transparent;
       font-size: 20px;
       user-select: none;
-      color: #007bff;
+      color: #00aaff;
       transition: color 0.2s;
     }
     .play-btn:hover {
-      color: #0056b3;
+      color: #0077cc;
     }
   </style>
 </head>
@@ -159,6 +182,11 @@
       renderList(btn.getAttribute("data-type"));
     });
   });
+</script>
+
+</body>
+</html>
+
 </script>
 </body>
 </html>
