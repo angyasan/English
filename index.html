@@ -1,95 +1,132 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <meta charset="UTF-8" />
+  <title>単語帳</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 20px; }
+    .entry { margin-bottom: 15px; }
+    .jp { font-size: 16px; color: #444; }
+    .row { display: flex; justify-content: space-between; align-items: center; }
+    .en { font-weight: bold; font-size: 18px; }
+    .kana { margin-left: 10px; color: #888; }
+    .play { cursor: pointer; font-size: 18px; margin-left: 10px; }
+  </style>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>英単語 音声テスト</title>
+<title>単語帳</title>
 <style>
-  .entry {
-    margin-bottom: 1em;
+  body {
+    font-family: -apple-system, sans-serif;
+    padding: 20px;
   }
-  .japanese {
-    font-weight: bold;
-    margin-bottom: 0.3em;
+  .entry {
+    margin-bottom: 15px;
+  }
+  .jp {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 4px;
   }
   .row {
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 8px;
   }
-  .english {
-    width: 100px;
+  .en {
+    font-weight: bold;
+    font-size: 18px;
   }
-  .katakana {
-    width: 100px;
-    color: #555;
+  .kana {
+    color: #888;
   }
-  .play-btn {
+  .play {
     cursor: pointer;
-    padding: 0.2em 0.6em;
-    font-size: 1.2em;
+    font-size: 18px;
+    margin-left: 0;
+    padding-left: 5px;
+    user-select: none;
   }
 </style>
 </head>
 <body>
+  <h2>📘 単語帳</h2>
 
-<div id="list-verbs"></div>
+  <div class="entry">
+    <div class="jp">持ってくる</div>
+    <div class="row">
+      <div><span class="en">bring</span><span class="kana">ブリング</span></div>
+      <div class="play" onclick="playSound('bring')">▶︎</div>
+    </div>
+  </div>
+
+  <script>
+    function playSound(word) {
+      const audio = new Audio("https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + word + "--_gb_1.mp3");
+
+<h2>📘 単語帳</h2>
+
+<div id="wordList"></div>
 
 <script>
-const listVerbs = document.getElementById("list-verbs");
+  const words = [
+    {jp:"〜である/いる", en:"be", kana:""},
+    {jp:"〜になる", en:"become", kana:""},
+    {jp:"回す", en:"turn", kana:""},
+    {jp:"持ってくる", en:"bring", kana:"ブリング"},
+    {jp:"持っていく", en:"take", kana:""},
+    {jp:"運ぶ", en:"carry", kana:""},
+    {jp:"目が覚める", en:"wake up", kana:""},
+    {jp:"起き上がる", en:"get up", kana:""},
+    {jp:"増える", en:"increase", kana:"インクリーズ"},
+    {jp:"減る", en:"decrease", kana:"ディクリーズ"},
+    {jp:"減らす", en:"reduce", kana:"リデュース"},
+    {jp:"支持する、支援する", en:"support", kana:"サポート"},
+    {jp:"反対する", en:"oppose", kana:"アポーズ"},
+    // 全部ここに入れてね
+  ];
 
-// サンプル動詞データ [日本語, 英語, カタカナ]
-const verbsData = [
-  ["〜なる", "become", "ビカム"]
-];
+  const container = document.getElementById('wordList');
 
-function createEntry(japanese, english, katakana) {
-  const entry = document.createElement("div");
-  entry.className = "entry";
+  words.forEach(({jp, en, kana}) => {
+    const entry = document.createElement('div');
+    entry.className = 'entry';
 
-  const jp = document.createElement("div");
-  jp.className = "japanese";
-  jp.textContent = japanese;
+    // 日本語訳
+    const jpDiv = document.createElement('div');
+    jpDiv.className = 'jp';
+    jpDiv.textContent = jp;
+    entry.appendChild(jpDiv);
 
-  const row = document.createElement("div");
-  row.className = "row";
+    // 英単語＋カタカナ＋音声ボタン横並び
+    const row = document.createElement('div');
+    row.className = 'row';
 
-  const eng = document.createElement("div");
-  eng.className = "english";
-  eng.textContent = english;
+    const enSpan = document.createElement('span');
+    enSpan.className = 'en';
+    enSpan.textContent = en;
 
-  const kana = document.createElement("div");
-  kana.className = "katakana";
-  kana.textContent = katakana;
+    const kanaSpan = document.createElement('span');
+    kanaSpan.className = 'kana';
+    if(kana) kanaSpan.textContent = ' ' + kana;
 
-  const btnPlay = document.createElement("button");
-  btnPlay.className = "play-btn";
-  btnPlay.textContent = "▶";
+    const playBtn = document.createElement('div');
+    playBtn.className = 'play';
+    playBtn.textContent = '▶︎';
+    playBtn.onclick = () => {
+      const audio = new Audio("https://ssl.gstatic.com/dictionary/static/sounds/20200429/" + en + "--_gb_1.mp3");
+      audio.play();
+    }
+  </script>
+    };
 
-  btnPlay.onclick = () => {
-    const utterance = new SpeechSynthesisUtterance(english);
-    utterance.lang = "en-US"; // アメリカ英語で発音
-    speechSynthesis.speak(utterance);
-  };
+    row.appendChild(enSpan);
+    row.appendChild(kanaSpan);
+    row.appendChild(playBtn);
 
-  row.appendChild(eng);
-  row.appendChild(kana);
-  row.appendChild(btnPlay);
-
-  entry.appendChild(jp);
-  entry.appendChild(row);
-
-  return entry;
-}
-
-function renderList(listElem, data) {
-  listElem.innerHTML = "";
-  data.forEach(([jp, en, ka]) => {
-    listElem.appendChild(createEntry(jp, en, ka));
+    entry.appendChild(row);
+    container.appendChild(entry);
   });
-}
-
-renderList(listVerbs, verbsData);
 </script>
 
 </body>
