@@ -51,7 +51,7 @@
     .jp {
       font-size: 18px;
       color: #333;
-      white-space: pre-line; /* 改行を反映 */
+      white-space: pre-line;
     }
     .details {
       display: none;
@@ -97,7 +97,6 @@
     <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
-  <!-- 各タブのコントロールボタン -->
   <div id="controls" class="control-buttons">
     <button class="control-btn" id="shuffleBtn">シャッフル</button>
     <button class="control-btn" id="resetBtn">元に戻す</button>
@@ -106,8 +105,8 @@
   <div id="content"></div>
 
 <script>
-  // データ（例、必要に応じて追加してください）
-  const data = {
+  // 元データ
+  const originalData = {
     verbs: [
       {jp:"〜である/いる", en:"be", reading:"biː"},
       {jp:"持ってくる", en:"bring", reading:"brɪŋ"},
@@ -120,7 +119,6 @@
       {jp:"増える", en:"increase", reading:"ˈɪnkriːs"},
       {jp:"減る", en:"decrease", reading:"ˈdiːkriːs"},
       {jp:"減らす", en:"reduce", reading:"rɪˈduːs"},
-      // 必要なら続けて...
     ],
     nouns: [
       {jp:"両親", en:"parent", reading:"ˈpɛrənt"},
@@ -133,7 +131,6 @@
       {jp:"娘", en:"daughter", reading:"ˈdɔːtər"},
       {jp:"息子", en:"son", reading:"sʌn"},
       {jp:"一人っ子", en:"only child", reading:"ˈoʊnli tʃaɪld"},
-      // 続けて...
     ],
     adverbs: [
       {jp:"いつも", en:"always", reading:"ˈɔːlweɪz"},
@@ -143,7 +140,6 @@
       {jp:"たまに", en:"occasionally", reading:"əˈkeɪʒənəli"},
       {jp:"決してない", en:"never", reading:"ˈnɛvər"},
       {jp:"既に", en:"already", reading:"ɔːlˈrɛdi"},
-      // 続けて...
     ],
     adjectives: [
       {jp:"厚い", en:"thick", reading:"θɪk"},
@@ -152,16 +148,15 @@
       {jp:"必要な", en:"necessary", reading:"ˈnɛsəsɛri"},
       {jp:"騒がしい", en:"noisy", reading:"ˈnɔɪzi"},
       {jp:"静か", en:"quiet", reading:"ˈkwaɪət"},
-      // 続けて...
     ],
   };
 
-  // 元の順番保持用にコピーを用意（シャッフル時に使う）
-  const originalData = {
-    verbs: [...data.verbs],
-    nouns: [...data.nouns],
-    adverbs: [...data.adverbs],
-    adjectives: [...data.adjectives],
+  // 現在のリスト（シャッフル状態を保持）
+  const currentList = {
+    verbs: [...originalData.verbs],
+    nouns: [...originalData.nouns],
+    adverbs: [...originalData.adverbs],
+    adjectives: [...originalData.adjectives],
   };
 
   const contentDiv = document.getElementById("content");
@@ -169,18 +164,8 @@
   const shuffleBtn = document.getElementById("shuffleBtn");
   const resetBtn = document.getElementById("resetBtn");
 
-  let currentType = "verbs"; // 最初のタブ
+  let currentType = "verbs";
 
-  // 音声再生（失敗しても無反応）
-  function playSound(word) {
-    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
-    const audio = new Audio(url);
-    audio.play().catch(() => {
-      // 何もしない（アラートなし）
-    });
-  }
-
-  // 配列をシャッフル（Fisher-Yatesアルゴリズム）
   function shuffleArray(arr) {
     const a = arr.slice();
     for(let i = a.length - 1; i > 0; i--) {
@@ -190,87 +175,13 @@
     return a;
   }
 
-  // リスト表示関数
-  function renderList(type, list) {
-    contentDiv.innerHTML = "";
-    list.forEach(item => {
-      const entry = document.createElement("div");
-      entry.className = "entry";
-
-      const jpDiv = document.createElement("div");
-      jpDiv.className = "jp";
-      jpDiv.textContent = item.jp;
-
-      const detailsDiv = document.createElement("div");
-      detailsDiv.className = "details";
-
-      const enSpan = document.createElement("span");
-      enSpan.className = "en";
-      enSpan.textContent = item.en;
-
-      const kanaSpan = document.createElement("span");
-      kanaSpan.className = "kana";
-      if(item.reading) kanaSpan.textContent = item.reading;
-
-      const playBtn = document.createElement("button");
-      playBtn.className = "play-btn";
-      playBtn.textContent = "▶️";
-      playBtn.title = `発音再生: ${item.en}`;
-      playBtn.onclick = (e) => {
-        e.stopPropagation(); // 親のクリックを邪魔しない
-        playSound(item.en);
-      };
-
-      detailsDiv.appendChild(enSpan);
-      if(item.reading) detailsDiv.appendChild(kanaSpan);
-      detailsDiv.appendChild(playBtn);
-
-      entry.appendChild(jpDiv);
-      entry.appendChild(detailsDiv);
-
-      // 最初は details は非表示
-      detailsDiv.style.display = "none";
-
-      // 日本語クリックで表示/非表示トグル
-      jpDiv.addEventListener("click", () => {
-        if(detailsDiv.style.display === "flex") {
-          detailsDiv.style.display = "none";
-        } else {
-          detailsDiv.style.display = "flex";
-        }
-      });
-
-      contentDiv.appendChild(entry);
-    });
+  function playSound(word) {
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
   }
 
-  // 初期表示
-  renderList(currentType, originalData[currentType]);
-
-  // タブ切り替え
-  tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentType = btn.getAttribute("data-type");
-
-      // 元に戻すボタン有効化のために現在のリストは正規順で
-      renderList(currentType, originalData[currentType]);
-    });
-  });
-
-  // シャッフルボタン押下
-  shuffleBtn.addEventListener("click", () => {
-    const shuffled = shuffleArray(originalData[currentType]);
-    renderList(currentType, shuffled);
-  });
-
-  // 元に戻すボタン押下
-  resetBtn.addEventListener("click", () => {
-    renderList(currentType, originalData[currentType]);
-  });
-
-function renderList(type) {
+  function renderList(type) {
     contentDiv.innerHTML = "";
     currentList[type].forEach(item => {
       const entry = document.createElement("div");
@@ -308,8 +219,9 @@ function renderList(type) {
       entry.appendChild(detailsDiv);
 
       detailsDiv.style.display = "none";
+
       jpDiv.addEventListener("click", () => {
-        detailsDiv.style.display = detailsDiv.style.display === "flex" ? "none" : "flex";
+        detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
       });
 
       contentDiv.appendChild(entry);
@@ -319,7 +231,6 @@ function renderList(type) {
   // 初期表示
   renderList(currentType);
 
-  // タブ切り替え時：currentList をそのまま表示
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
@@ -329,20 +240,17 @@ function renderList(type) {
     });
   });
 
-  // シャッフルボタン：シャッフルして currentList に保存＆表示
   shuffleBtn.addEventListener("click", () => {
     currentList[currentType] = shuffleArray(originalData[currentType]);
     renderList(currentType);
   });
 
-  // リセットボタン：originalData に戻す
   resetBtn.addEventListener("click", () => {
     currentList[currentType] = [...originalData[currentType]];
     renderList(currentType);
   });
+
 </script>
-  
+
 </body>
 </html>
-
-
