@@ -190,10 +190,7 @@
 
   
 <script>
-  document.getElementById("closeExampleModal").onclick = () => {
-  document.getElementById("exampleModal").classList.add("hidden");
-  document.getElementById("exampleFrame").src = "";
-};
+ 
   // 元データ
   const originalData = {
     verbs: [
@@ -1014,7 +1011,10 @@ function showExampleModal(word) {
   document.getElementById("exampleModal").classList.remove("hidden");
 }
 
-
+ document.getElementById("closeExampleModal").onclick = () => {
+  document.getElementById("exampleModal").classList.add("hidden");
+  document.getElementById("exampleFrame").src = "";
+};
 
   
 </script>
