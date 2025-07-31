@@ -776,11 +776,12 @@
     return a;
   }
 
-  function speak(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  speechSynthesis.speak(utterance);
-  }
+function playSound(word) {
+  const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+  const audio = new Audio(url);
+  audio.play().catch(() => {});
+}
+
 
   function renderList(type) {
     contentDiv.innerHTML = "";
@@ -809,7 +810,7 @@
       playBtn.title = `発音再生: ${item.en}`;
       playBtn.onclick = (e) => {
         e.stopPropagation();
-        speak(item.en);
+        playSound(item.en);
       };
 
       detailsDiv.appendChild(enSpan);
