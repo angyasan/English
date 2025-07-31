@@ -40,6 +40,11 @@
   color: #444;
   margin-bottom: 15px;
 }
+  .quiz-kana {
+  font-size: 1em;
+  color: #666;
+  margin-top: 5px;
+}
 
     body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
     h2 { margin-bottom: 15px; }
@@ -150,6 +155,7 @@
       <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
     <div id="jpText" class="quiz-jp"></div>
     <div id="enText" class="quiz-en hidden"></div>
+    <div class="quiz-kana" id="kanaText"></div>
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
@@ -921,6 +927,7 @@ function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
   document.getElementById("jpText").textContent = item.jp;
   document.getElementById("enText").textContent = item.en;
+  document.getElementById("kanaText").textContent = item.reading || "";
  document.getElementById("enText").classList.add("hidden");
    document.getElementById("quizProgress").textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
   document.getElementById("showAnswerBtn").style.display = "inline-block";
