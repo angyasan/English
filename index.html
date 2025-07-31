@@ -46,6 +46,18 @@
   margin-top: 5px;
 }
 
+  .quiz-jp, #kanaText {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+#kanaText {
+  font-weight: normal;
+  font-size: 1.2em;
+  color: #666;
+}
     body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
     h2 { margin-bottom: 15px; }
     .tabs { display: flex; margin-bottom: 10px; }
@@ -131,13 +143,15 @@
 }
 #quizAnswerRow {
   display: flex;
-  flex-direction: column;  /* ← 縦並びに変更！ */
-  align-items: center;
+  flex-direction: row;      /* ← 横並びに変更 */
+  align-items: center;      /* 英語と音声マークを縦中央揃え */
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 4px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;       /* 中央寄せ */
 }
-
 #kanaText {
   margin-top: 8px;
   text-align: center;
@@ -166,27 +180,25 @@
 
 
 <!-- クイズのモーダル表示（ポップアップ） -->
-<!-- クイズのモーダル表示（ポップアップ） -->
 <div id="quizOverlay">
   <div id="quizContainer">
-    <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
-    <div id="jpText" class="quiz-jp"></div>
+      <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555; text-align:center;"></div>
 
-    <!-- 英語＋カタカナ縦並び＋音声マーク横並び -->
-    <div id="quizAnswerRow" class="hidden" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-        <div id="enText" class="quiz-en hidden" style="text-align: center;"></div>
-        <div id="kanaText" class="quiz-kana hidden" style="text-align: center; margin-top: 2px;"></div>
+      <div id="jpText" class="quiz-jp"></div>
+
+      <!-- 英語＋音声ボタンをまとめて横並び -->
+      <div id="enAudioRow" style="display: inline-flex; align-items: center; justify-content: center; margin: 0 auto;">
+        <div id="enText" class="quiz-en" style="text-align: center; min-width: 100px;"></div>
+        <button id="playQuizAudio" class="play-btn" style="font-size: 20px; margin-left: 6px;">▶️</button>
       </div>
-      <button id="playQuizAudio" class="play-btn" style="font-size: 20px;">▶️</button>
-    </div>
 
-    <button id="showAnswerBtn">答えを見る</button>
-    <button id="nextBtn" style="display:none;">次へ</button>
-    <button id="quitQuizBtn">やめる</button>
+      <div id="kanaText" class="quiz-kana"></div>
+
+      <button id="showAnswerBtn">答えを見る</button>
+      <button id="nextBtn" style="display:none;">次へ</button>
+      <button id="quitQuizBtn">やめる</button>
   </div>
 </div>
-
   
 <script>
   // 元データ
