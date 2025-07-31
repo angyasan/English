@@ -4,6 +4,29 @@
   <meta charset="UTF-8" />
   <title>単語帳</title>
   <style>
+    #quizOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#quizContainer {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
 .hidden {
   display: none;
 }
@@ -117,16 +140,20 @@
   </div>
 
   <div id="content"></div>
-<!-- J→EクイズのUI -->
+<!-- J→Eクイズのボタン -->
 <button id="startQuizBtn">J→Eクイズ</button>
 
-<div id="quizContainer" style="display:none; margin-top: 20px;">
-  <div id="jpText" class="quiz-jp"></div>
-  <div id="enText" class="quiz-en hidden"></div>
-  <button id="showAnswerBtn">答えを見る</button>
-  <button id="nextBtn" style="display:none;">次へ</button>
-  <button id="quitQuizBtn">やめる</button>
+<!-- クイズのモーダル表示（ポップアップ） -->
+<div id="quizOverlay">
+  <div id="quizContainer">
+    <div id="jpText" class="quiz-jp"></div>
+    <div id="enText" class="quiz-en hidden"></div>
+    <button id="showAnswerBtn">答えを見る</button>
+    <button id="nextBtn" style="display:none;">次へ</button>
+    <button id="quitQuizBtn">やめる</button>
+  </div>
 </div>
+
   
 <script>
   // 元データ
@@ -878,11 +905,14 @@ function playSound(word) {
 let quizList = [];
 let currentQuizIndex = 0;
 
+const overlay = document.getElementById("quizOverlay");
+const quizContainer = document.getElementById("quizContainer");
+
 document.getElementById("startQuizBtn").onclick = () => {
   quizList = shuffleArray([...currentList[currentType]]);
   currentQuizIndex = 0;
   showQuizQuestion();
-  document.getElementById("quizContainer").style.display = "block";
+  overlay.style.display = "flex";
 };
 
 function showQuizQuestion() {
@@ -904,14 +934,14 @@ document.getElementById("nextBtn").onclick = () => {
   currentQuizIndex++;
   if (currentQuizIndex >= quizList.length) {
     alert("全問終了！");
-    document.getElementById("quizContainer").style.display = "none";
+    overlay.style.display = "none";
   } else {
     showQuizQuestion();
   }
 };
 
 document.getElementById("quitQuizBtn").onclick = () => {
-  document.getElementById("quizContainer").style.display = "none";
+  overlay.style.display = "none";
 };
 
 </script>
