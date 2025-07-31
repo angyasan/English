@@ -117,7 +117,17 @@
   </div>
 
   <div id="content"></div>
+<!-- J→EクイズのUI -->
+<button id="startQuizBtn">J→Eクイズ</button>
 
+<div id="quizContainer" style="display:none; margin-top: 20px;">
+  <div id="jpText" class="quiz-jp"></div>
+  <div id="enText" class="quiz-en hidden"></div>
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
+  <button id="quitQuizBtn">やめる</button>
+</div>
+  
 <script>
   // 元データ
   const originalData = {
@@ -905,16 +915,7 @@ document.getElementById("quitQuizBtn").onclick = () => {
 };
 
 </script>
-<!-- J→EクイズのUI -->
-<button id="startQuizBtn">J→Eクイズ</button>
 
-<div id="quizContainer" style="display:none; margin-top: 20px;">
-  <div id="jpText" class="quiz-jp"></div>
-  <div id="enText" class="quiz-en hidden"></div>
-  <button id="showAnswerBtn">答えを見る</button>
-  <button id="nextBtn" style="display:none;">次へ</button>
-  <button id="quitQuizBtn">やめる</button>
-</div>
 
 </body>
 </html>
