@@ -4,6 +4,20 @@
   <meta charset="UTF-8" />
   <title>単語帳</title>
   <style>
+.hidden {
+  display: none;
+}
+.quiz-jp {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.quiz-en {
+  font-size: 1.2em;
+  color: #444;
+  margin-bottom: 15px;
+}
+
     body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
     h2 { margin-bottom: 15px; }
     .tabs { display: flex; margin-bottom: 10px; }
@@ -851,8 +865,56 @@ function playSound(word) {
     currentList[currentType] = [...originalData[currentType]];
     renderList(currentType);
   });
+let quizList = [];
+let currentQuizIndex = 0;
+
+document.getElementById("startQuizBtn").onclick = () => {
+  quizList = shuffleArray([...currentList[currentType]]);
+  currentQuizIndex = 0;
+  showQuizQuestion();
+  document.getElementById("quizContainer").style.display = "block";
+};
+
+function showQuizQuestion() {
+  const item = quizList[currentQuizIndex];
+  document.getElementById("jpText").textContent = item.jp;
+  document.getElementById("enText").textContent = item.en;
+  document.getElementById("enText").classList.add("hidden");
+  document.getElementById("showAnswerBtn").style.display = "inline-block";
+  document.getElementById("nextBtn").style.display = "none";
+}
+
+document.getElementById("showAnswerBtn").onclick = () => {
+  document.getElementById("enText").classList.remove("hidden");
+  document.getElementById("showAnswerBtn").style.display = "none";
+  document.getElementById("nextBtn").style.display = "inline-block";
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  currentQuizIndex++;
+  if (currentQuizIndex >= quizList.length) {
+    alert("全問終了！");
+    document.getElementById("quizContainer").style.display = "none";
+  } else {
+    showQuizQuestion();
+  }
+};
+
+document.getElementById("quitQuizBtn").onclick = () => {
+  document.getElementById("quizContainer").style.display = "none";
+};
 
 </script>
+<!-- J→EクイズのUI -->
+<button id="startQuizBtn">J→Eクイズ</button>
+
+<div id="quizContainer" style="display:none; margin-top: 20px;">
+  <div id="jpText" class="quiz-jp"></div>
+  <div id="enText" class="quiz-en hidden"></div>
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
+  <button id="quitQuizBtn">やめる</button>
+</div>
 
 </body>
 </html>
