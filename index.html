@@ -136,26 +136,15 @@
 
   <div id="controls" class="control-buttons">
     <button class="control-btn" id="shuffleBtn">シャッフル</button>
-    <button class="control-btn" id="resetBtn">元に戻す</button>
-    <!-- J→Eクイズのボタン -->
-<button id="startQuizBtn">J→Eクイズ</button>
-<button id="startQuizBtnReverse">E→Jクイズ</button>
+<button class="control-btn" id="resetBtn">元に戻す</button>
+<button class="control-btn" id="startQuizBtn">J→Eクイズ</button>
+<button class="control-btn" id="startQuizBtnReverse">E→Jクイズ</button>
   </div>
 
   <div id="content"></div>
 
 
 <!-- クイズのモーダル表示（ポップアップ） -->
-<div id="quizOverlay">
-  <div id="quizContainer">
-    <div id="jpText" class="quiz-jp"></div>
-    <div id="enText" class="quiz-en hidden"></div>
-    <button id="showAnswerBtn">答えを見る</button>
-    <button id="nextBtn" style="display:none;">次へ</button>
-    <button id="quitQuizBtn">やめる</button>
-  </div>
-
-  
 <div id="quizContainer" style="display:none; margin-top: 20px;">
   <div id="firstText" class="quiz-jp"></div>
   <div id="secondText" class="quiz-en hidden"></div>
@@ -163,8 +152,9 @@
   <button id="nextBtn" style="display:none;">次へ</button>
   <button id="quitQuizBtn">やめる</button>
 </div>
+</div>
+
   
-</div>  
 <script>
   // 元データ
   const originalData = {
@@ -914,18 +904,9 @@ function playSound(word) {
   });
 let quizList = [];
 let currentQuizIndex = 0;
+let quizDirection = "JtoE"; // または "EtoJ"
 
-const overlay = document.getElementById("quizOverlay");
-const quizContainer = document.getElementById("quizContainer");
-
-document.getElementById("startQuizBtn").onclick = () => {
-  quizList = shuffleArray([...currentList[currentType]]);
-  currentQuizIndex = 0;
-  showQuizQuestion();
-  overlay.style.display = "flex";
-};
-let quizDirection = "JtoE"; // 初期は日本語→英語
-
+// クイズ開始関数
 function startQuiz(direction) {
   quizDirection = direction;
   quizList = shuffleArray([...currentList[currentType]]);
@@ -934,6 +915,7 @@ function startQuiz(direction) {
   document.getElementById("quizContainer").style.display = "block";
 }
 
+// クイズ表示
 function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
   const firstTextDiv = document.getElementById("firstText");
@@ -952,6 +934,7 @@ function showQuizQuestion() {
   document.getElementById("nextBtn").style.display = "none";
 }
 
+// イベント設定
 document.getElementById("startQuizBtn").onclick = () => startQuiz("JtoE");
 document.getElementById("startQuizBtnReverse").onclick = () => startQuiz("EtoJ");
 
@@ -973,34 +956,6 @@ document.getElementById("nextBtn").onclick = () => {
 
 document.getElementById("quitQuizBtn").onclick = () => {
   document.getElementById("quizContainer").style.display = "none";
-};
-function showQuizQuestion() {
-  const item = quizList[currentQuizIndex];
-  document.getElementById("jpText").textContent = item.jp;
-  document.getElementById("enText").textContent = item.en;
-  document.getElementById("enText").classList.add("hidden");
-  document.getElementById("showAnswerBtn").style.display = "inline-block";
-  document.getElementById("nextBtn").style.display = "none";
-}
-
-document.getElementById("showAnswerBtn").onclick = () => {
-  document.getElementById("enText").classList.remove("hidden");
-  document.getElementById("showAnswerBtn").style.display = "none";
-  document.getElementById("nextBtn").style.display = "inline-block";
-};
-
-document.getElementById("nextBtn").onclick = () => {
-  currentQuizIndex++;
-  if (currentQuizIndex >= quizList.length) {
-    alert("全問終了！");
-    overlay.style.display = "none";
-  } else {
-    showQuizQuestion();
-  }
-};
-
-document.getElementById("quitQuizBtn").onclick = () => {
-  overlay.style.display = "none";
 };
 
 </script>
