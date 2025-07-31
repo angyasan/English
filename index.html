@@ -131,29 +131,16 @@
 }
 #quizAnswerRow {
   display: flex;
-  flex-direction: column; /* 縦積み */
+  flex-direction: column;  /* ← 縦並びに変更！ */
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 4px;
   margin-bottom: 4px;
 }
 
-#quizAnswerRow > div:first-child {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-#enText {
-  text-align: center;
-  font-size: 1.2em;
-  color: #444;
-}
-
 #kanaText {
+  margin-top: 8px;
   text-align: center;
-  font-size: 1.1em;
-  color: #666;
-  margin-top: 0;
 }
   </style>
 </head>
@@ -185,15 +172,14 @@
     <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
     <div id="jpText" class="quiz-jp"></div>
 
-  <!-- クイズ回答部分 -->
-<div id="quizAnswerRow" class="hidden" style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 4px;">
-  <div style="display: flex; align-items: center; gap: 8px;">
-    <div id="enText" class="quiz-en hidden" style="text-align: center;"></div>
-    <button id="playQuizAudio" class="play-btn" style="font-size: 20px;">▶️</button>
-  </div>
-  <div id="kanaText" class="quiz-kana hidden" style="text-align: center;"></div>
-</div>
-
+    <!-- 英語＋カタカナ縦並び＋音声マーク横並び -->
+    <div id="quizAnswerRow" class="hidden" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+        <div id="enText" class="quiz-en hidden" style="text-align: center;"></div>
+        <div id="kanaText" class="quiz-kana hidden" style="text-align: center; margin-top: 2px;"></div>
+      </div>
+      <button id="playQuizAudio" class="play-btn" style="font-size: 20px;">▶️</button>
+    </div>
 
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
