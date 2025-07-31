@@ -166,17 +166,21 @@
 
 
 <!-- クイズのモーダル表示（ポップアップ） -->
+<!-- クイズのモーダル表示（ポップアップ） -->
 <div id="quizOverlay">
   <div id="quizContainer">
-      <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
+    <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
     <div id="jpText" class="quiz-jp"></div>
-     <!-- 英単語＋音声ボタン横並び -->
-    <div id="quizAnswerRow" style="display: flex; align-items: center; justify-content: center; gap: 6px;" class="hidden">
-   
-    <div id="enText" class="quiz-en hidden"></div>
-        <button id="playQuizAudio" class="play-btn" style="font-size: 20px;">▶️</button>
-       </div>
-    <div class="quiz-kana hidden" id="kanaText"></div>
+
+    <!-- 英語＋カタカナ縦並び＋音声マーク横並び -->
+    <div id="quizAnswerRow" class="hidden" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+        <div id="enText" class="quiz-en hidden" style="text-align: center;"></div>
+        <div id="kanaText" class="quiz-kana hidden" style="text-align: center; margin-top: 2px;"></div>
+      </div>
+      <button id="playQuizAudio" class="play-btn" style="font-size: 20px;">▶️</button>
+    </div>
+
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
