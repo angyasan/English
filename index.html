@@ -2,68 +2,82 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>英単語帳</title>
+  <title>単語帳（タップで英単語表示）</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 1rem;
-    }
-    .tabs {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .tab {
-      padding: 0.5rem 1rem;
+    body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
+    .tabs { display: flex; margin-bottom: 20px; }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      cursor: pointer;
       border: 1px solid #ccc;
-      cursor: pointer;
-      border-radius: 5px;
+      background: #f9f9f9;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s;
     }
-    .tab.active {
-      background-color: #007BFF;
+    .tab-btn.active {
+      background-color: #007bff;
       color: white;
-    }
-    .controls {
-      margin: 0.5rem 0;
-    }
-    .word {
-      margin: 1rem 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid #ccc;
-      cursor: pointer;
-    }
-    .hidden {
-      display: none;
+      border-color: #007bff;
     }
     .entry {
-      margin-top: 0.3rem;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      cursor: pointer;
+      user-select: none;
     }
-    button.speak {
-      margin-left: 1rem;
+    .jp {
+      font-size: 18px;
+      color: #333;
+      white-space: pre-line;
+    }
+    .hide-info {
+      display: none;
+      margin-top: 6px;
+      color: #666;
+      font-size: 16px;
+      user-select: none;
+    }
+    .play-btn {
+      margin-left: 10px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      user-select: none;
+      color: #007bff;
+      transition: color 0.2s;
+    }
+    .play-btn:hover {
+      color: #0056b3;
+    }
+    .info-row {
+      display: flex;
+      align-items: center;
+      margin-top: 6px;
     }
   </style>
 </head>
 <body>
 
+  <h2>📘 単語帳（タップで英語表示）</h2>
+
   <div class="tabs">
-    <div class="tab active" data-tab="verbs">動詞</div>
-    <div class="tab" data-tab="nouns">名詞</div>
-    <div class="tab" data-tab="adverbs">副詞</div>
-    <div class="tab" data-tab="adjectives">形容詞</div>
+    <div class="tab-btn active" data-type="verbs">動詞</div>
+    <div class="tab-btn" data-type="nouns">名詞</div>
+    <div class="tab-btn" data-type="adverbs">副詞</div>
+    <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
-  <div class="controls">
-    <button id="shuffle">シャッフル</button>
-    <button id="reset">元に戻す</button>
-  </div>
+  <div id="content"></div>
 
-  <div id="wordList"></div>
-
-  <script>
-    const data = {
-      verbs: [
-         {jp:"〜である/いる", en:"be", reading:"ビー"},
+<script>
+  const data = {
+    verbs: [
+       {jp:"〜である/いる", en:"be", reading:"ビー"},
       {jp:"〜になる", en:"become", reading:"ビカム"},
       {jp:"回す", en:"turn", reading:"ターン"},
       {jp:"持ってくる", en:"bring", reading:"ブリング"},
@@ -705,87 +719,80 @@
   { jp: "怪しい", en: "suspicious", reading: "サスピシャス" },
   { jp: "怪しい(カジュアル)", en: "shady", reading: "シェイディ" }
     ],
-    };
+  };
 
-    const originalOrder = {
-      verbs: [...data.verbs],
-      nouns: [...data.nouns],
-      adverbs: [...data.adverbs],
-      adjectives: [...data.adjectives]
-    };
+  const contentDiv = document.getElementById("content");
+  const tabButtons = document.querySelectorAll(".tab-btn");
 
-    const orderState = {
-      verbs: [...data.verbs],
-      nouns: [...data.nouns],
-      adverbs: [...data.adverbs],
-      adjectives: [...data.adjectives]
-    };
+  function playSound(word) {
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
+  }
 
-    let currentTab = "verbs";
+  function renderList(type) {
+    contentDiv.innerHTML = "";
+    data[type].forEach(item => {
+      const entry = document.createElement("div");
+      entry.className = "entry";
 
-    const wordList = document.getElementById("wordList");
-    const tabs = document.querySelectorAll(".tab");
-    const shuffleBtn = document.getElementById("shuffle");
-    const resetBtn = document.getElementById("reset");
+      const jpDiv = document.createElement("div");
+      jpDiv.className = "jp";
+      jpDiv.textContent = item.jp;
 
-    function renderWords() {
-      wordList.innerHTML = "";
-      orderState[currentTab].forEach(word => {
-        const div = document.createElement("div");
-        div.className = "word";
-        div.innerHTML = `<strong>${word.ja}</strong>
-        <div class="entry hidden">
-          ${word.en}${word.kana ? "　" + word.kana : ""}
-          ${word.en ? `<button class="speak" onclick="speak('${word.en}')">🔊</button>` : ""}
-        </div>`;
-        div.onclick = () => {
-          const entry = div.querySelector(".entry");
-          entry.classList.toggle("hidden");
-        };
-        wordList.appendChild(div);
-      });
-    }
+      const infoRow = document.createElement("div");
+      infoRow.className = "info-row hide-info";
 
-    function shuffleCurrentTab() {
-      const shuffled = [...orderState[currentTab]];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      orderState[currentTab] = shuffled;
-      renderWords();
-    }
+      const enSpan = document.createElement("span");
+      enSpan.className = "en";
+      enSpan.textContent = item.en;
 
-    function resetCurrentTab() {
-      orderState[currentTab] = [...originalOrder[currentTab]];
-      renderWords();
-    }
+      const kanaSpan = document.createElement("span");
+      kanaSpan.className = "kana";
+      kanaSpan.style.marginLeft = "12px";
+      if(item.reading) kanaSpan.textContent = item.reading;
 
-    function switchTab(tab) {
-      currentTab = tab;
-      tabs.forEach(t => t.classList.remove("active"));
-      document.querySelector(`.tab[data-tab="${tab}"]`).classList.add("active");
-      renderWords();
-    }
-
-    function speak(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      speechSynthesis.speak(utterance);
-    }
-
-    shuffleBtn.onclick = shuffleCurrentTab;
-    resetBtn.onclick = resetCurrentTab;
-
-    tabs.forEach(tab => {
-      tab.onclick = () => {
-        switchTab(tab.dataset.tab);
+      const playBtn = document.createElement("button");
+      playBtn.className = "play-btn";
+      playBtn.textContent = "▶️";
+      playBtn.title = `発音再生: ${item.en}`;
+      playBtn.onclick = e => {
+        e.stopPropagation();
+        playSound(item.en);
       };
-    });
 
-    // 初期表示
-    renderWords();
-  </script>
+      infoRow.appendChild(enSpan);
+      infoRow.appendChild(kanaSpan);
+      infoRow.appendChild(playBtn);
+
+      entry.appendChild(jpDiv);
+      entry.appendChild(infoRow);
+
+      // 初期は非表示のまま（念のため）
+      infoRow.style.display = "none";
+
+      entry.addEventListener("click", () => {
+        if(infoRow.style.display === "flex") {
+          infoRow.style.display = "none";
+        } else {
+          infoRow.style.display = "flex";
+        }
+      });
+
+      contentDiv.appendChild(entry);
+    });
+  }
+
+  renderList("verbs");
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderList(btn.getAttribute("data-type"));
+    });
+  });
+</script>
 
 </body>
 </html>
