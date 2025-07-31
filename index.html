@@ -901,17 +901,14 @@ function playSound(word) {
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
       
-      const exampleBtn = document.createElement("button");
-exampleBtn.className = "control-btn";
+const exampleBtn = document.createElement("button");
 exampleBtn.textContent = "例文";
-exampleBtn.onclick = (e) => {
-  e.stopPropagation();
-  const url = `https://context.reverso.net/translation/english-japanese/${encodeURIComponent(item.en)}`;
-  document.getElementById("exampleFrame").src = url;
-  document.getElementById("exampleModal").classList.remove("hidden");
+exampleBtn.className = "example-btn";
+exampleBtn.onclick = () => {
+  showExampleModal(item.en);
 };
-
 detailsDiv.appendChild(exampleBtn);
+
 
 
       entry.appendChild(jpDiv);
@@ -1005,20 +1002,35 @@ document.getElementById("quitQuizBtn").onclick = () => {
   playSound(word);
 };
   
-  document.getElementById("closeExampleModal").onclick = () => {
+document.getElementById("closeExampleModal").onclick = () => {
   document.getElementById("exampleModal").classList.add("hidden");
-  document.getElementById("exampleFrame").src = "";  // iframeをリセット
+  document.getElementById("exampleFrame").src = "";
 };
 
+function showExampleModal(word) {
+  const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
+  document.getElementById("exampleFrame").src = url;
+  document.getElementById("exampleModal").classList.remove("hidden");
+}
+
+
+  
 </script>
 
 <!-- 例文表示モーダル -->
-<div id="exampleModal" class="hidden" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:1000;">
+<div id="exampleModal" class="hidden" style="
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
+  z-index:1000;">
   <div style="background:white; width:90%; max-width:600px; height:70%; position:relative; border-radius:8px; overflow:hidden;">
-    <button id="closeExampleModal" style="position:absolute; top:8px; right:10px; z-index:10;">✖</button>
+    <button id="closeExampleModal" style="
+      position:absolute; top:8px; right:10px; z-index:1001;
+      background:white; border:1px solid #ccc; border-radius:4px;
+      padding:4px 8px; cursor:pointer;">✖</button>
     <iframe id="exampleFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
   </div>
 </div>
+
 
 </body>
 </html>
