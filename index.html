@@ -155,7 +155,7 @@
       <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
     <div id="jpText" class="quiz-jp"></div>
     <div id="enText" class="quiz-en hidden"></div>
-    <div class="quiz-kana" id="kanaText"></div>
+    <div class="quiz-kana hidden" id="kanaText"></div>
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
@@ -930,12 +930,14 @@ function showQuizQuestion() {
   document.getElementById("kanaText").textContent = item.reading || "";
  document.getElementById("enText").classList.add("hidden");
    document.getElementById("quizProgress").textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+  document.getElementById("kanaText").classList.add("hidden");
   document.getElementById("showAnswerBtn").style.display = "inline-block";
   document.getElementById("nextBtn").style.display = "none";
 }
 
 document.getElementById("showAnswerBtn").onclick = () => {
   document.getElementById("enText").classList.remove("hidden");
+   document.getElementById("kanaText").classList.remove("hidden");
   document.getElementById("showAnswerBtn").style.display = "none";
   document.getElementById("nextBtn").style.display = "inline-block";
 };
