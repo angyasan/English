@@ -270,8 +270,78 @@
     renderList(currentType, originalData[currentType]);
   });
 
-</script>
+function renderList(type) {
+    contentDiv.innerHTML = "";
+    currentList[type].forEach(item => {
+      const entry = document.createElement("div");
+      entry.className = "entry";
 
+      const jpDiv = document.createElement("div");
+      jpDiv.className = "jp";
+      jpDiv.textContent = item.jp;
+
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "details";
+
+      const enSpan = document.createElement("span");
+      enSpan.className = "en";
+      enSpan.textContent = item.en;
+
+      const kanaSpan = document.createElement("span");
+      kanaSpan.className = "kana";
+      if(item.reading) kanaSpan.textContent = item.reading;
+
+      const playBtn = document.createElement("button");
+      playBtn.className = "play-btn";
+      playBtn.textContent = "▶️";
+      playBtn.title = `発音再生: ${item.en}`;
+      playBtn.onclick = (e) => {
+        e.stopPropagation();
+        playSound(item.en);
+      };
+
+      detailsDiv.appendChild(enSpan);
+      if(item.reading) detailsDiv.appendChild(kanaSpan);
+      detailsDiv.appendChild(playBtn);
+
+      entry.appendChild(jpDiv);
+      entry.appendChild(detailsDiv);
+
+      detailsDiv.style.display = "none";
+      jpDiv.addEventListener("click", () => {
+        detailsDiv.style.display = detailsDiv.style.display === "flex" ? "none" : "flex";
+      });
+
+      contentDiv.appendChild(entry);
+    });
+  }
+
+  // 初期表示
+  renderList(currentType);
+
+  // タブ切り替え時：currentList をそのまま表示
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentType = btn.getAttribute("data-type");
+      renderList(currentType);
+    });
+  });
+
+  // シャッフルボタン：シャッフルして currentList に保存＆表示
+  shuffleBtn.addEventListener("click", () => {
+    currentList[currentType] = shuffleArray(originalData[currentType]);
+    renderList(currentType);
+  });
+
+  // リセットボタン：originalData に戻す
+  resetBtn.addEventListener("click", () => {
+    currentList[currentType] = [...originalData[currentType]];
+    renderList(currentType);
+  });
+</script>
+  
 </body>
 </html>
 
