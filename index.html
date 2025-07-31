@@ -178,7 +178,7 @@
         <div id="enText" class="quiz-en hidden" style="text-align: center;"></div>
         <div id="kanaText" class="quiz-kana hidden" style="text-align: center; margin-top: 2px;"></div>
       </div>
-      <button id="playQuizAudio" class="play-btn" style="font-size: 20px;">▶️</button>
+    
     </div>
 
     <button id="showAnswerBtn">答えを見る</button>
@@ -967,6 +967,10 @@ document.getElementById("showAnswerBtn").onclick = () => {
    document.getElementById("kanaText").classList.remove("hidden");
   document.getElementById("showAnswerBtn").style.display = "none";
   document.getElementById("nextBtn").style.display = "inline-block";
+  document.getElementById("enText").onclick = () => {
+  const word = document.getElementById("enText").textContent;
+  playSound(word);
+};
 };
 
 document.getElementById("nextBtn").onclick = () => {
