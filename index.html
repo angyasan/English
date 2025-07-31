@@ -208,7 +208,7 @@
       playBtn.title = `発音再生: ${item.en}`;
       playBtn.onclick = (e) => {
         e.stopPropagation();
-        playSound(item.en);
+        speak(item.en);
       };
 
       detailsDiv.appendChild(enSpan);
