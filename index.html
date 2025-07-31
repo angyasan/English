@@ -139,8 +139,6 @@
     <button class="control-btn" id="resetBtn">元に戻す</button>
     <!-- J→Eクイズのボタン -->
 <button id="startQuizBtn">J→Eクイズ</button>
-    <button id="startQuizBtnReverse">E→Jクイズ</button>
-
   </div>
 
   <div id="content"></div>
@@ -905,65 +903,6 @@ function playSound(word) {
     currentList[currentType] = [...originalData[currentType]];
     renderList(currentType);
   });
-  let quizList = [];
-let currentQuizIndex = 0;
-let quizDirection = "JtoE"; // J→EかE→Jか
-
-const overlay = document.getElementById("quizOverlay");
-const jpTextDiv = document.getElementById("jpText");
-const enTextDiv = document.getElementById("enText");
-const showAnswerBtn = document.getElementById("showAnswerBtn");
-const nextBtn = document.getElementById("nextBtn");
-const quitQuizBtn = document.getElementById("quitQuizBtn");
-
-// クイズ開始関数
-function startQuiz(direction) {
-  quizDirection = direction;
-  quizList = shuffleArray([...currentList[currentType]]);
-  currentQuizIndex = 0;
-  showQuizQuestion();
-  overlay.style.display = "flex";
-}
-
-// クイズの問題表示
-function showQuizQuestion() {
-  const item = quizList[currentQuizIndex];
-  if (quizDirection === "JtoE") {
-    jpTextDiv.textContent = item.jp;
-    enTextDiv.textContent = item.en;
-  } else {
-    jpTextDiv.textContent = item.en;
-    enTextDiv.textContent = item.jp;
-  }
-  enTextDiv.classList.add("hidden");
-  showAnswerBtn.style.display = "inline-block";
-  nextBtn.style.display = "none";
-}
-
-// ボタンイベント設定
-document.getElementById("startQuizBtn").onclick = () => startQuiz("JtoE");
-document.getElementById("startQuizBtnReverse").onclick = () => startQuiz("EtoJ");
-
-showAnswerBtn.onclick = () => {
-  enTextDiv.classList.remove("hidden");
-  showAnswerBtn.style.display = "none";
-  nextBtn.style.display = "inline-block";
-};
-
-nextBtn.onclick = () => {
-  currentQuizIndex++;
-  if (currentQuizIndex >= quizList.length) {
-    alert("全問終了！");
-    overlay.style.display = "none";
-  } else {
-    showQuizQuestion();
-  }
-};
-
-quitQuizBtn.onclick = () => {
-  overlay.style.display = "none";
-};
-
 let quizList = [];
 let currentQuizIndex = 0;
 
