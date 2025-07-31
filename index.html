@@ -900,6 +900,19 @@ function playSound(word) {
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
+      
+      const exampleBtn = document.createElement("button");
+exampleBtn.className = "control-btn";
+exampleBtn.textContent = "例文";
+exampleBtn.onclick = (e) => {
+  e.stopPropagation();
+  const url = `https://context.reverso.net/translation/english-japanese/${encodeURIComponent(item.en)}`;
+  document.getElementById("exampleFrame").src = url;
+  document.getElementById("exampleModal").classList.remove("hidden");
+};
+
+detailsDiv.appendChild(exampleBtn);
+
 
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
@@ -991,8 +1004,21 @@ document.getElementById("quitQuizBtn").onclick = () => {
   const word = document.getElementById("enText").textContent;
   playSound(word);
 };
+  
+  document.getElementById("closeExampleModal").onclick = () => {
+  document.getElementById("exampleModal").classList.add("hidden");
+  document.getElementById("exampleFrame").src = "";  // iframeをリセット
+};
+
 </script>
 
+<!-- 例文表示モーダル -->
+<div id="exampleModal" class="hidden" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:1000;">
+  <div style="background:white; width:90%; max-width:600px; height:70%; position:relative; border-radius:8px; overflow:hidden;">
+    <button id="closeExampleModal" style="position:absolute; top:8px; right:10px; z-index:10;">✖</button>
+    <iframe id="exampleFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+  </div>
+</div>
 
 </body>
 </html>
