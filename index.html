@@ -1,3 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>単語帳</title>
+  <style>
+    #quizOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#quizContainer {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.hidden {
+  display: none;
+}
+.quiz-jp {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.quiz-en {
+  font-size: 1.2em;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+    body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
+    h2 { margin-bottom: 15px; }
+    .tabs { display: flex; margin-bottom: 10px; }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    .tab-btn.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    .control-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      user-select: none;
+    }
+    .control-btn {
+      cursor: pointer;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    .control-btn:hover {
+      background-color: #ddd;
+    }
+    .entry {
+      margin-bottom: 18px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .jp {
+      font-size: 18px;
+      color: #333;
+      white-space: pre-line;
+    }
+    .details {
+      display: none;
+      margin-top: 6px;
+      color: #555;
+      font-size: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      user-select: text;
+    }
+    .en {
+      font-weight: bold;
+      font-size: 17px;
+    }
+    .kana {
+      color: #666;
+      font-size: 15px;
+    }
+    .play-btn {
+      margin-left: auto;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      user-select: none;
+      color: #007bff;
+      transition: color 0.2s;
+    }
+    .play-btn:hover {
+      color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📘 単語帳</h2>
+
+  <div class="tabs">
+    <div class="tab-btn active" data-type="verbs">動詞</div>
+    <div class="tab-btn" data-type="nouns">名詞</div>
+    <div class="tab-btn" data-type="adverbs">副詞</div>
+    <div class="tab-btn" data-type="adjectives">形容詞</div>
+  </div>
+
+  <div id="controls" class="control-buttons">
+    <button class="control-btn" id="shuffleBtn">シャッフル</button>
+<button class="control-btn" id="resetBtn">元に戻す</button>
+<button class="control-btn" id="startQuizBtn">J→Eクイズ</button>
+<button class="control-btn" id="startQuizBtnReverse">E→Jクイズ</button>
+  </div>
+
+  <div id="content"></div>
+
+
+<!-- クイズのモーダル表示（ポップアップ） -->
+<div id="quizContainer" style="display:none; margin-top: 20px;">
+  <div id="firstText" class="quiz-jp"></div>
+  <div id="secondText" class="quiz-en hidden"></div>
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
+  <button id="quitQuizBtn">やめる</button>
+</div>
+
+  
 <script>
   // 仮のデータ（これで最低限動くかチェック）
   const originalData = {
@@ -74,3 +230,7 @@
     document.getElementById("quizContainer").style.display = "none";
   };
 </script>
+
+
+</body>
+</html>
