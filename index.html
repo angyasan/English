@@ -139,6 +139,7 @@
     <button class="control-btn" id="resetBtn">元に戻す</button>
     <!-- J→Eクイズのボタン -->
 <button id="startQuizBtn">J→Eクイズ</button>
+<button id="startQuizBtnReverse">E→Jクイズ</button>
   </div>
 
   <div id="content"></div>
@@ -153,9 +154,17 @@
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
   </div>
-</div>
 
   
+<div id="quizContainer" style="display:none; margin-top: 20px;">
+  <div id="firstText" class="quiz-jp"></div>
+  <div id="secondText" class="quiz-en hidden"></div>
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
+  <button id="quitQuizBtn">やめる</button>
+</div>
+  
+</div>  
 <script>
   // 元データ
   const originalData = {
@@ -915,7 +924,56 @@ document.getElementById("startQuizBtn").onclick = () => {
   showQuizQuestion();
   overlay.style.display = "flex";
 };
+let quizDirection = "JtoE"; // 初期は日本語→英語
 
+function startQuiz(direction) {
+  quizDirection = direction;
+  quizList = shuffleArray([...currentList[currentType]]);
+  currentQuizIndex = 0;
+  showQuizQuestion();
+  document.getElementById("quizContainer").style.display = "block";
+}
+
+function showQuizQuestion() {
+  const item = quizList[currentQuizIndex];
+  const firstTextDiv = document.getElementById("firstText");
+  const secondTextDiv = document.getElementById("secondText");
+
+  if (quizDirection === "JtoE") {
+    firstTextDiv.textContent = item.jp;
+    secondTextDiv.textContent = item.en;
+  } else {
+    firstTextDiv.textContent = item.en;
+    secondTextDiv.textContent = item.jp;
+  }
+
+  secondTextDiv.classList.add("hidden");
+  document.getElementById("showAnswerBtn").style.display = "inline-block";
+  document.getElementById("nextBtn").style.display = "none";
+}
+
+document.getElementById("startQuizBtn").onclick = () => startQuiz("JtoE");
+document.getElementById("startQuizBtnReverse").onclick = () => startQuiz("EtoJ");
+
+document.getElementById("showAnswerBtn").onclick = () => {
+  document.getElementById("secondText").classList.remove("hidden");
+  document.getElementById("showAnswerBtn").style.display = "none";
+  document.getElementById("nextBtn").style.display = "inline-block";
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  currentQuizIndex++;
+  if (currentQuizIndex >= quizList.length) {
+    alert("全問終了！");
+    document.getElementById("quizContainer").style.display = "none";
+  } else {
+    showQuizQuestion();
+  }
+};
+
+document.getElementById("quitQuizBtn").onclick = () => {
+  document.getElementById("quizContainer").style.display = "none";
+};
 function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
   document.getElementById("jpText").textContent = item.jp;
