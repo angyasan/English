@@ -215,6 +215,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 元データ
   const originalData = {
+    various: [
+    { jp: "ありがとう", en: "thank you", reading: "サンキュー" },
+    { jp: "こんにちは", en: "hello", reading: "ハロー" },
+    { jp: "さようなら", en: "goodbye", reading: "グッバイ" }
+  ],
    verbs: [
      {jp:"〜である/いる", en:"be", reading:"ビー"},
       {jp:"〜になる", en:"become", reading:"ビカム"},
@@ -861,6 +866,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   const currentList = {
+    various: [...originalData.various],
     verbs: [...originalData.verbs],
     nouns: [...originalData.nouns],
     adverbs: [...originalData.adverbs],
