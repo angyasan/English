@@ -172,10 +172,8 @@
     <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
-<input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
+  <input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
 
-
-  
   <div id="controls" class="control-buttons">
     <button class="control-btn" id="shuffleBtn">シャッフル</button>
     <button class="control-btn" id="resetBtn">元に戻す</button>
@@ -1223,6 +1221,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const exampleModal = document.getElementById("exampleModal");
   const exampleFrame = document.getElementById("exampleFrame");
   const closeExampleModalBtn = document.getElementById("closeExampleModal");
+  const searchInput = document.getElementById("searchInput");
 
   let currentType = "verbs";
   let quizList = [];
@@ -1318,30 +1317,43 @@ document.addEventListener("DOMContentLoaded", () => {
     nextBtn.style.display = "none";
   }
 
-  // クイズ操作イベント
+  // 例文モーダル表示
+  function showExampleModal(word) {
+    const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
+    exampleFrame.src = url;
+    exampleModal.classList.remove("hidden");
+  }
+
+  // タブ切り替えイベント
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentType = btn.getAttribute("data-type");
+      searchInput.value = ""; // 検索リセット
+      currentList[currentType] = [...originalData[currentType]];
       renderList(currentType);
     });
   });
 
+  // シャッフル
   shuffleBtn.addEventListener("click", () => {
-    currentList[currentType] = shuffleArray(originalData[currentType]);
+    currentList[currentType] = shuffleArray(currentList[currentType]);
     renderList(currentType);
   });
 
+  // リセット（元に戻す）
   resetBtn.addEventListener("click", () => {
     currentList[currentType] = [...originalData[currentType]];
+    searchInput.value = "";
     renderList(currentType);
   });
 
+  // クイズ開始
   startQuizBtn.addEventListener("click", () => {
     quizList = shuffleArray([...currentList[currentType]]);
     currentQuizIndex = 0;
-    if(quizList.length === 0) {
+    if (quizList.length === 0) {
       alert("問題がありません");
       return;
     }
@@ -1349,6 +1361,7 @@ document.addEventListener("DOMContentLoaded", () => {
     quizOverlay.style.display = "flex";
   });
 
+  // 答えを見る
   showAnswerBtn.addEventListener("click", () => {
     enText.classList.remove("hidden");
     kanaText.classList.remove("hidden");
@@ -1361,9 +1374,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
+  // 次へ
   nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
-    if(currentQuizIndex >= quizList.length) {
+    if (currentQuizIndex >= quizList.length) {
       alert("全問終了！");
       quizOverlay.style.display = "none";
     } else {
@@ -1371,42 +1385,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // クイズやめる
   quitQuizBtn.addEventListener("click", () => {
     quizOverlay.style.display = "none";
   });
 
+  // 例文モーダル閉じる
   closeExampleModalBtn.addEventListener("click", () => {
     exampleModal.classList.add("hidden");
     exampleFrame.src = "";
   });
 
-  // 例文モーダル表示
-  function showExampleModal(word) {
-    const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
-    exampleFrame.src = url;
-    exampleModal.classList.remove("hidden");
-  }
+  // 検索処理
+  searchInput.addEventListener("input", () => {
+    const keyword = searchInput.value.trim().toLowerCase();
+    if (!keyword) {
+      // 空なら元に戻す
+      currentList[currentType] = [...originalData[currentType]];
+    } else {
+      currentList[currentType] = originalData[currentType].filter(item => {
+        return (
+          item.jp.toLowerCase().includes(keyword) ||
+          item.en.toLowerCase().includes(keyword) ||
+          (item.reading && item.reading.toLowerCase().includes(keyword))
+        );
+      });
+    }
+    renderList(currentType);
+  });
 
   // 初期表示
   renderList(currentType);
 });
-  // 検索処理
-document.getElementById("searchInput").addEventListener("input", function () {
-  const keyword = this.value.trim().toLowerCase();
-  const type = currentType;
-  const filtered = originalData[type].filter(item => {
-    return (
-      item.jp.toLowerCase().includes(keyword) ||
-      item.en.toLowerCase().includes(keyword) ||
-      (item.reading && item.reading.toLowerCase().includes(keyword))
-    );
-  });
-  currentList[type] = filtered;
-  renderList(type);
-});
-
-
-
 </script>
 
 </body>
