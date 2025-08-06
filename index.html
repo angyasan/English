@@ -172,6 +172,14 @@
     <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
+<input
+  type="text"
+  id="searchInput"
+  placeholder="検索（日本語・英語・カタカナ）"
+  style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;"
+/>
+
+  
   <div id="controls" class="control-buttons">
     <button class="control-btn" id="shuffleBtn">シャッフル</button>
     <button class="control-btn" id="resetBtn">元に戻す</button>
@@ -1386,6 +1394,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // 初期表示
   renderList(currentType);
 });
+  // 検索処理
+document.getElementById("searchInput").addEventListener("input", function () {
+  const keyword = this.value.trim().toLowerCase();
+  const type = currentType;
+  const filtered = originalData[type].filter(item => {
+    return (
+      item.jp.toLowerCase().includes(keyword) ||
+      item.en.toLowerCase().includes(keyword) ||
+      (item.reading && item.reading.toLowerCase().includes(keyword))
+    );
+  });
+  currentList[type] = filtered;
+  renderList(type);
+});
+
 </script>
 
 </body>
