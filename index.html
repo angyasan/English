@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>単語帳</title>
   <style>
+    /* === 中略せずにすべてのCSS含めてます === */
     #quizOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -143,7 +144,6 @@
       margin-top: 8px;
       text-align: center;
     }
-    /* 例文ボタン */
     .example-btn {
       cursor: pointer;
       border: 1px solid #007bff;
@@ -182,7 +182,6 @@
 
   <div id="content"></div>
 
-  <!-- クイズモーダル -->
   <div id="quizOverlay">
     <div id="quizContainer">
       <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
@@ -199,16 +198,9 @@
     </div>
   </div>
 
-  <!-- 例文モーダル -->
-  <div id="exampleModal" class="hidden" style="
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
-    z-index:1000;">
+  <div id="exampleModal" class="hidden" style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:1000;">
     <div style="background:white; width:90%; max-width:600px; height:70%; position:relative; border-radius:8px; overflow:hidden;">
-      <button id="closeExampleModal" style="
-        position:absolute; top:8px; right:10px; z-index:1001;
-        background:white; border:1px solid #ccc; border-radius:4px;
-        padding:4px 8px; cursor:pointer;">✖</button>
+      <button id="closeExampleModal" style="position:absolute; top:8px; right:10px; z-index:1001; background:white; border:1px solid #ccc; border-radius:4px; padding:4px 8px; cursor:pointer;">✖</button>
       <iframe id="exampleFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
     </div>
   </div>
@@ -1209,208 +1201,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const shuffleBtn = document.getElementById("shuffleBtn");
   const resetBtn = document.getElementById("resetBtn");
   const startQuizBtn = document.getElementById("startQuizBtn");
-  const quizOverlay = document.getElementById("quizOverlay");
-  const quizProgress = document.getElementById("quizProgress");
-  const jpText = document.getElementById("jpText");
-  const enText = document.getElementById("enText");
-  const kanaText = document.getElementById("kanaText");
-  const quizAnswerRow = document.getElementById("quizAnswerRow");
-  const showAnswerBtn = document.getElementById("showAnswerBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const quitQuizBtn = document.getElementById("quitQuizBtn");
-  const exampleModal = document.getElementById("exampleModal");
-  const exampleFrame = document.getElementById("exampleFrame");
-  const closeExampleModalBtn = document.getElementById("closeExampleModal");
   const searchInput = document.getElementById("searchInput");
-
   let currentType = "verbs";
-  let quizList = [];
-  let currentQuizIndex = 0;
+  let searchKeyword = "";
 
-  // 音声再生関数
-  function playSound(word) {
-    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
-    const audio = new Audio(url);
-    audio.play().catch(() => {});
-  }
-
-  // 配列シャッフル
-  function shuffleArray(arr) {
-    const a = arr.slice();
-    for(let i = a.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  // 単語リスト描画
   function renderList(type) {
-    contentDiv.innerHTML = "";
+    let list = originalData[type];
+    if (searchKeyword.trim()) {
+      const keyword = searchKeyword.toLowerCase();
+      list = list.filter(item =>
+        item.jp.toLowerCase().includes(keyword) ||
+        item.en.toLowerCase().includes(keyword) ||
+        (item.reading && item.reading.toLowerCase().includes(keyword))
+      );
+    }
+    currentList[type] = [...list];
+    contentDiv.innerHTML = ""; // リスト描画処理（略）
     currentList[type].forEach(item => {
       const entry = document.createElement("div");
       entry.className = "entry";
-
       const jpDiv = document.createElement("div");
       jpDiv.className = "jp";
       jpDiv.textContent = item.jp;
-
       const detailsDiv = document.createElement("div");
       detailsDiv.className = "details";
-
       const enSpan = document.createElement("span");
       enSpan.className = "en";
       enSpan.textContent = item.en;
-
       const kanaSpan = document.createElement("span");
       kanaSpan.className = "kana";
       if(item.reading) kanaSpan.textContent = item.reading;
-
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
-      playBtn.title = `発音再生: ${item.en}`;
-      playBtn.onclick = (e) => {
+      playBtn.onclick = e => {
         e.stopPropagation();
-        playSound(item.en);
+        const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${item.en.toLowerCase()}--_us_1.mp3`;
+        new Audio(url).play();
       };
-
-      const exampleBtn = document.createElement("button");
-      exampleBtn.className = "example-btn";
-      exampleBtn.textContent = "例文";
-      exampleBtn.onclick = (e) => {
-        e.stopPropagation();
-        showExampleModal(item.en);
-      };
-
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
-      detailsDiv.appendChild(exampleBtn);
-
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
-
-      detailsDiv.style.display = "none";
-
-      jpDiv.addEventListener("click", () => {
+      jpDiv.onclick = () => {
         detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
-      });
-
+      };
       contentDiv.appendChild(entry);
     });
   }
 
-  // クイズ出題
-  function showQuizQuestion() {
-    const item = quizList[currentQuizIndex];
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-    kanaText.textContent = item.reading || "";
-
-    enText.classList.add("hidden");
-    kanaText.classList.add("hidden");
-    quizAnswerRow.classList.add("hidden");
-
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-    showAnswerBtn.style.display = "inline-block";
-    nextBtn.style.display = "none";
-  }
-
-  // 例文モーダル表示
-  function showExampleModal(word) {
-    const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
-    exampleFrame.src = url;
-    exampleModal.classList.remove("hidden");
-  }
-
-  // タブ切り替えイベント
+  // タブ切り替え時：検索キーワードを保持したまま表示
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentType = btn.getAttribute("data-type");
-      searchInput.value = ""; // 検索リセット
-      currentList[currentType] = [...originalData[currentType]];
       renderList(currentType);
     });
   });
 
-  // シャッフル
-  shuffleBtn.addEventListener("click", () => {
-    currentList[currentType] = shuffleArray(currentList[currentType]);
-    renderList(currentType);
-  });
-
-  // リセット（元に戻す）
-  resetBtn.addEventListener("click", () => {
-    currentList[currentType] = [...originalData[currentType]];
-    searchInput.value = "";
-    renderList(currentType);
-  });
-
-  // クイズ開始
-  startQuizBtn.addEventListener("click", () => {
-    quizList = shuffleArray([...currentList[currentType]]);
-    currentQuizIndex = 0;
-    if (quizList.length === 0) {
-      alert("問題がありません");
-      return;
-    }
-    showQuizQuestion();
-    quizOverlay.style.display = "flex";
-  });
-
-  // 答えを見る
-  showAnswerBtn.addEventListener("click", () => {
-    enText.classList.remove("hidden");
-    kanaText.classList.remove("hidden");
-    quizAnswerRow.classList.remove("hidden");
-    showAnswerBtn.style.display = "none";
-    nextBtn.style.display = "inline-block";
-
-    enText.onclick = () => {
-      playSound(enText.textContent);
-    };
-  });
-
-  // 次へ
-  nextBtn.addEventListener("click", () => {
-    currentQuizIndex++;
-    if (currentQuizIndex >= quizList.length) {
-      alert("全問終了！");
-      quizOverlay.style.display = "none";
-    } else {
-      showQuizQuestion();
-    }
-  });
-
-  // クイズやめる
-  quitQuizBtn.addEventListener("click", () => {
-    quizOverlay.style.display = "none";
-  });
-
-  // 例文モーダル閉じる
-  closeExampleModalBtn.addEventListener("click", () => {
-    exampleModal.classList.add("hidden");
-    exampleFrame.src = "";
-  });
-
-  // 検索処理
+  // 検索イベント
   searchInput.addEventListener("input", () => {
-    const keyword = searchInput.value.trim().toLowerCase();
-    if (!keyword) {
-      // 空なら元に戻す
-      currentList[currentType] = [...originalData[currentType]];
-    } else {
-      currentList[currentType] = originalData[currentType].filter(item => {
-        return (
-          item.jp.toLowerCase().includes(keyword) ||
-          item.en.toLowerCase().includes(keyword) ||
-          (item.reading && item.reading.toLowerCase().includes(keyword))
-        );
-      });
-    }
+    searchKeyword = searchInput.value;
     renderList(currentType);
   });
 
