@@ -1325,16 +1325,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // タブ切り替えイベント
-  tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentType = btn.getAttribute("data-type");
-      searchInput.value = ""; // 検索リセット
+  const searchInput = document.getElementById("searchInput"); // これを追加で上に宣言してください
+
+tabButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    tabButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentType = btn.getAttribute("data-type");
+
+    const keyword = searchInput.value.trim().toLowerCase();
+
+    if (!keyword) {
       currentList[currentType] = [...originalData[currentType]];
-      renderList(currentType);
-    });
+    } else {
+      currentList[currentType] = originalData[currentType].filter(item => {
+        return (
+          item.jp.toLowerCase().includes(keyword) ||
+          item.en.toLowerCase().includes(keyword) ||
+          (item.reading && item.reading.toLowerCase().includes(keyword))
+        );
+      });
+    }
+    renderList(currentType);
   });
+});
 
   // シャッフル
   shuffleBtn.addEventListener("click", () => {
