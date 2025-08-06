@@ -172,16 +172,6 @@
     <div class="tab-btn" data-type="adjectives">形容詞</div>
   </div>
 
-<input type="text" id="searchBox" placeholder="検索（日本語・英語・カタカナ）" style="
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-">
-
-  
   <div id="controls" class="control-buttons">
     <button class="control-btn" id="shuffleBtn">シャッフル</button>
     <button class="control-btn" id="resetBtn">元に戻す</button>
@@ -1199,27 +1189,9 @@ document.addEventListener("DOMContentLoaded", () => {
   { jp: "欲張りな", en: "greedy", reading: "グリーディ" },
   { jp: "傷つきやすい", en: "vulnerable", reading: "ヴァルネラブル" },
   {jp:"食べ放題", en:"all-you-can-eat", reading:"オール ユー キャン イート"},
-    {jp:"飲み放題", en:"all-you-can-drink", reading:"オール ユー キャン ドリンク"}
-  ],
-};
-
-const searchBox = document.getElementById('searchBox');
-
-searchBox.addEventListener('input', () => {
-  const keyword = searchBox.value.toLowerCase();
-  const currentTab = document.querySelector(".tab-btn.active").dataset.type;
-  const currentWords = originalData[currentTab] || [];
-
-  const filtered = currentWords.filter(word =>
-    word.jp.includes(keyword) ||
-    word.en.toLowerCase().includes(keyword) ||
-    (word.reading || "").toLowerCase().includes(keyword)
-  );
-
-  renderWords(filtered);
-});
-
-}); 
+  {jp:"飲み放題", en:"all-you-can-drink", reading:"オール ユー キャン ドリンク"},
+    ],
+  };
 
 
   const currentList = {
