@@ -1391,7 +1391,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderList(currentType);
 });
   // 検索処理
-document.getElementById("searchBox").addEventListener("input", function () {
+document.getElementById("searchInput").addEventListener("input", function () {
   const keyword = this.value.trim().toLowerCase();
   const type = currentType;
   const filtered = originalData[type].filter(item => {
