@@ -4,13 +4,6 @@
   <meta charset="UTF-8" />
   <title>単語帳</title>
   <style>
-    #showAnswerBtn, #nextBtn {
-  height: 36px; /* ボタンの高さを固定 */
-  line-height: 36px; /* テキストを縦中央に */
-  min-width: 80px; /* ボタン幅の最小値 */
-  vertical-align: middle;
-  display: inline-block;
-}
     #quizOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -41,12 +34,13 @@
     .quiz-en {
       font-size: 1.2em;
       color: #444;
-      margin-bottom: 15px;
+      margin-bottom: 5px;
+      cursor: pointer;
     }
     .quiz-kana {
       font-size: 1em;
       color: #666;
-      margin-top: 5px;
+      margin-top: 2px;
     }
     body {
       font-family: -apple-system, sans-serif;
@@ -57,26 +51,25 @@
     h2 {
       margin-bottom: 15px;
     }
-  .tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin-bottom: 10px;
-}
-
-.tab-btn {
-  flex: 1 0 auto;
-  min-width: 100px;
-  padding: 10px 0;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  background: #f9f9f9;
-  text-align: center;
-  font-weight: bold;
-  user-select: none;
-  transition: background-color 0.3s;
-  white-space: nowrap;
-}
+    .tabs {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    .tab-btn {
+      flex: 1 0 auto;
+      min-width: 100px;
+      padding: 10px 0;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      text-align: center;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s;
+      white-space: nowrap;
+    }
     .tab-btn.active {
       background-color: #007bff;
       color: white;
@@ -143,32 +136,39 @@
     .play-btn:hover {
       color: #0056b3;
     }
+    /* 答え表示部分の高さ確保 */
     #quizAnswerRow {
+      min-height: 56px;  /* 英語＋カタカナ分の高さを固定 */
+      margin-bottom: 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      margin-bottom: 4px;
     }
-    #kanaText {
-      margin-top: 8px;
+    /* 答えは初期非表示 */
+    #enText, #kanaText {
+      display: none;
       text-align: center;
     }
-    /* 例文ボタン */
-    .example-btn {
+    #enText {
+      font-size: 1.2em;
+      color: #444;
       cursor: pointer;
-      border: 1px solid #007bff;
-      background: #e7f1ff;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #007bff;
-      user-select: none;
-      transition: background-color 0.2s;
+      margin-bottom: 2px;
     }
-    .example-btn:hover {
-      background-color: #c2dbff;
+    #kanaText {
+      font-size: 1em;
+      color: #666;
+      margin-top: 2px;
+    }
+    #showAnswerBtn, #nextBtn {
+      height: 36px;
+      line-height: 36px;
+      min-width: 80px;
+      vertical-align: middle;
+      display: inline-block;
+      margin-right: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -182,7 +182,7 @@
     <div class="tab-btn" data-type="nouns">名詞</div>
     <div class="tab-btn" data-type="adverbs">副詞</div>
     <div class="tab-btn" data-type="adjectives">形容詞</div>
-    <div class="tab-btn" data-type="tenses">時制</div>  <!-- ここ追加 -->
+    <div class="tab-btn" data-type="tenses">時制</div>
   </div>
 
   <input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
@@ -200,29 +200,15 @@
     <div id="quizContainer">
       <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
       <div id="jpText" class="quiz-jp"></div>
-      <div id="quizAnswerRow" class="hidden">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-          <div id="enText" class="quiz-en hidden" style="text-align: center;"></div>
-          <div id="kanaText" class="quiz-kana hidden" style="text-align: center; margin-top: 2px;"></div>
-        </div>
+
+      <div id="quizAnswerRow">
+        <div id="enText" class="quiz-en"></div>
+        <div id="kanaText" class="quiz-kana"></div>
       </div>
+
       <button id="showAnswerBtn">答えを見る</button>
       <button id="nextBtn" style="display:none;">次へ</button>
       <button id="quitQuizBtn">やめる</button>
-    </div>
-  </div>
-
-  <!-- 例文モーダル -->
-  <div id="exampleModal" class="hidden" style="
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
-    z-index:1000;">
-    <div style="background:white; width:90%; max-width:600px; height:70%; position:relative; border-radius:8px; overflow:hidden;">
-      <button id="closeExampleModal" style="
-        position:absolute; top:8px; right:10px; z-index:1001;
-        background:white; border:1px solid #ccc; border-radius:4px;
-        padding:4px 8px; cursor:pointer;">✖</button>
-      <iframe id="exampleFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
     </div>
   </div>
 
@@ -1308,9 +1294,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const showAnswerBtn = document.getElementById("showAnswerBtn");
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
-  const exampleModal = document.getElementById("exampleModal");
-  const exampleFrame = document.getElementById("exampleFrame");
-  const closeExampleModalBtn = document.getElementById("closeExampleModal");
   const searchInput = document.getElementById("searchInput");
 
   let currentType = "verbs";
@@ -1365,18 +1348,9 @@ document.addEventListener("DOMContentLoaded", () => {
         playSound(item.en);
       };
 
-      const exampleBtn = document.createElement("button");
-      exampleBtn.className = "example-btn";
-      exampleBtn.textContent = "例文";
-      exampleBtn.onclick = (e) => {
-        e.stopPropagation();
-        showExampleModal(item.en);
-      };
-
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
-      detailsDiv.appendChild(exampleBtn);
 
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
@@ -1398,20 +1372,13 @@ document.addEventListener("DOMContentLoaded", () => {
     enText.textContent = item.en;
     kanaText.textContent = item.reading || "";
 
-    enText.classList.add("hidden");
-    kanaText.classList.add("hidden");
-    quizAnswerRow.classList.add("hidden");
+    // 答えは隠すけど表示領域は固定済み
+    enText.style.display = "none";
+    kanaText.style.display = "none";
 
     quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
-  }
-
-  // 例文モーダル表示
-  function showExampleModal(word) {
-    const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
-    exampleFrame.src = url;
-    exampleModal.classList.remove("hidden");
   }
 
   // タブ切り替えイベント
@@ -1453,9 +1420,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 答えを見る
   showAnswerBtn.addEventListener("click", () => {
-    enText.classList.remove("hidden");
-    kanaText.classList.remove("hidden");
-    quizAnswerRow.classList.remove("hidden");
+    enText.style.display = "block";
+    kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
 
@@ -1480,17 +1446,10 @@ document.addEventListener("DOMContentLoaded", () => {
     quizOverlay.style.display = "none";
   });
 
-  // 例文モーダル閉じる
-  closeExampleModalBtn.addEventListener("click", () => {
-    exampleModal.classList.add("hidden");
-    exampleFrame.src = "";
-  });
-
   // 検索処理
   searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
     if (!keyword) {
-      // 空なら元に戻す
       currentList[currentType] = [...originalData[currentType]];
     } else {
       currentList[currentType] = originalData[currentType].filter(item => {
@@ -1507,8 +1466,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // 初期表示
   renderList(currentType);
 });
-
-
 </script>
 
 </body>
