@@ -53,6 +53,7 @@
     .tabs {
       display: flex;
       margin-bottom: 10px;
+      flex-wrap: wrap;
     }
     .tab-btn {
       flex: 1;
@@ -64,6 +65,7 @@
       font-weight: bold;
       user-select: none;
       transition: background-color 0.3s;
+      min-width: 80px;
     }
     .tab-btn.active {
       background-color: #007bff;
@@ -170,6 +172,7 @@
     <div class="tab-btn" data-type="nouns">名詞</div>
     <div class="tab-btn" data-type="adverbs">副詞</div>
     <div class="tab-btn" data-type="adjectives">形容詞</div>
+    <div class="tab-btn" data-type="tenses">時制</div>  <!-- ここ追加 -->
   </div>
 
   <input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
@@ -1241,8 +1244,13 @@ document.addEventListener("DOMContentLoaded", () => {
 { jp: "必死な、必死の", en: "desperate", reading: "デスプレイト" },
 { jp: "絶望的な、絶望的の", en: "hopeless", reading: "ホープレス" }, 
     ],
+    tenses: [  
+      {jp:"過去形", en:"past tense", reading:"パスト テンス"},
+      {jp:"現在形", en:"present tense", reading:"プレゼント テンス"},
+      {jp:"未来形", en:"future tense", reading:"フューチャー テンス"},
+      {jp:"現在完了形", en:"present perfect tense", reading:"プレゼント パーフェクト テンス"}
+    ]
   };
-
 
   const currentList = {
     various: [...originalData.various],
@@ -1250,6 +1258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     nouns: [...originalData.nouns],
     adverbs: [...originalData.adverbs],
     adjectives: [...originalData.adjectives],
+    tenses: [...originalData.tenses]
   };
 
   const contentDiv = document.getElementById("content");
@@ -1469,4 +1478,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-
