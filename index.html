@@ -50,23 +50,26 @@
     h2 {
       margin-bottom: 15px;
     }
-    .tabs {
-      display: flex;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px 0;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-      text-align: center;
-      font-weight: bold;
-      user-select: none;
-      transition: background-color 0.3s;
-      min-width: 80px;
-    }
+  .tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.tab-btn {
+  flex: 1 0 auto;
+  min-width: 100px;
+  padding: 10px 0;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  text-align: center;
+  font-weight: bold;
+  user-select: none;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
     .tab-btn.active {
       background-color: #007bff;
       color: white;
