@@ -1442,9 +1442,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // クイズやめる
-  quitQuizBtn.addEventListener("click", () => {
+  // クイズやめる
+quitQuizBtn.addEventListener("click", () => {
+  if (confirm("本当にクイズをやめますか？")) {
     quizOverlay.style.display = "none";
-  });
+  }
+});
 
   // 検索処理
   searchInput.addEventListener("input", () => {
