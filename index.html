@@ -183,6 +183,7 @@
     <div class="tab-btn" data-type="adverbs">副詞</div>
     <div class="tab-btn" data-type="adjectives">形容詞</div>
     <div class="tab-btn" data-type="tenses">時制</div>
+    <div class="tab-btn" data-type="pronouns">代名詞</div>
   </div>
 
   <input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
@@ -1307,7 +1308,16 @@ document.addEventListener("DOMContentLoaded", () => {
   { jp: "3秒前(過去の出来事から)", en: "three seconds before", reading: "スリー セカンズ ビフォー" },
   { jp: "3秒後(今から)", en: "in three seconds", reading: "イン スリー セカンズ" },
   { jp: "3秒後(過去の出来事から)", en: "three seconds later", reading: "スリー セカンズ レイター" }
-    ]
+    ],
+
+
+
+
+    
+  pronouns: [
+    { jp: "私", en: "I", reading: "アイ" },
+    { jp: "あなた", en: "you", reading: "ユー" },
+  ],
   };
 
   const currentList = {
@@ -1316,7 +1326,8 @@ document.addEventListener("DOMContentLoaded", () => {
     nouns: [...originalData.nouns],
     adverbs: [...originalData.adverbs],
     adjectives: [...originalData.adjectives],
-    tenses: [...originalData.tenses]
+    tenses: [...originalData.tenses],
+     pronouns: [...originalData.pronouns],
   };
 
   const contentDiv = document.getElementById("content");
