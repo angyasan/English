@@ -132,15 +132,13 @@
       user-select: none;
       color: #007bff;
       transition: color 0.2s;
-      padding: 0 6px;
-      line-height: 1;
     }
     .play-btn:hover {
       color: #0056b3;
     }
     /* 答え表示部分の高さ確保 */
     #quizAnswerRow {
-      min-height: 56px;
+      min-height: 56px;  /* 英語＋カタカナ分の高さを固定 */
       margin-bottom: 8px;
       display: flex;
       flex-direction: column;
@@ -210,28 +208,12 @@
         <div id="kanaText" class="quiz-kana"></div>
       </div>
 
-  
       <button id="showAnswerBtn">答えを見る</button>
       <button id="nextBtn" style="display:none;">次へ</button>
       <button id="quitQuizBtn">やめる</button>
     </div>
   </div>
 
-
-<!-- 例文モーダル -->
-<div id="exampleModal" class="hidden" style="
-  position: fixed; top:0; left:0; width:100%; height:100%;
-  background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
-  z-index:1000;">
-  <div style="background:white; width:90%; max-width:600px; height:70%; position:relative; border-radius:8px; overflow:hidden;">
-    <button id="closeExampleModal" style="
-      position:absolute; top:8px; right:10px; z-index:1001;
-      background:white; border:1px solid #ccc; border-radius:4px;
-      padding:4px 8px; cursor:pointer;">✖</button>
-    <iframe id="exampleFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
-  </div>
-</div>
-  
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // 元データ
@@ -1508,7 +1490,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ],
   };
 
- const currentList = {
+  const currentList = {
     others: [...originalData.others],
     various: [...originalData.various],
     verbs: [...originalData.verbs],
@@ -1516,7 +1498,7 @@ document.addEventListener("DOMContentLoaded", () => {
     adverbs: [...originalData.adverbs],
     adjectives: [...originalData.adjectives],
     tenses: [...originalData.tenses],
-    pronouns: [...originalData.pronouns],
+     pronouns: [...originalData.pronouns],
   };
 
   const contentDiv = document.getElementById("content");
@@ -1578,7 +1560,6 @@ document.addEventListener("DOMContentLoaded", () => {
       kanaSpan.className = "kana";
       if(item.reading) kanaSpan.textContent = item.reading;
 
-      // 発音再生ボタン
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
@@ -1588,25 +1569,9 @@ document.addEventListener("DOMContentLoaded", () => {
         playSound(item.en);
       };
 
-      // 例文モーダル関連
-const exampleModal = document.getElementById("exampleModal");
-const exampleFrame = document.getElementById("exampleFrame");
-const closeExampleModalBtn = document.getElementById("closeExampleModal");
-
-function showExampleModal(word) {
-  const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
-  exampleFrame.src = url;
-  exampleModal.classList.remove("hidden");
-}
-
-closeExampleModalBtn.addEventListener("click", () => {
-  exampleModal.classList.add("hidden");
-  exampleFrame.src = ""; // 閉じたときにiframeをリセット
-});
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
-      detailsDiv.appendChild(exampleBtn);
 
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
@@ -1628,6 +1593,7 @@ closeExampleModalBtn.addEventListener("click", () => {
     enText.textContent = item.en;
     kanaText.textContent = item.reading || "";
 
+    // 答えは隠すけど表示領域は固定済み
     enText.style.display = "none";
     kanaText.style.display = "none";
 
@@ -1636,13 +1602,13 @@ closeExampleModalBtn.addEventListener("click", () => {
     nextBtn.style.display = "none";
   }
 
-  // タブ切り替え
+  // タブ切り替えイベント
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentType = btn.getAttribute("data-type");
-      searchInput.value = "";
+      searchInput.value = ""; // 検索リセット
       currentList[currentType] = [...originalData[currentType]];
       renderList(currentType);
     });
@@ -1654,7 +1620,7 @@ closeExampleModalBtn.addEventListener("click", () => {
     renderList(currentType);
   });
 
-  // リセット
+  // リセット（元に戻す）
   resetBtn.addEventListener("click", () => {
     currentList[currentType] = [...originalData[currentType]];
     searchInput.value = "";
@@ -1697,13 +1663,14 @@ closeExampleModalBtn.addEventListener("click", () => {
   });
 
   // クイズやめる
-  quitQuizBtn.addEventListener("click", () => {
-    if (confirm("本当にクイズをやめますか？")) {
-      quizOverlay.style.display = "none";
-    }
-  });
+  // クイズやめる
+quitQuizBtn.addEventListener("click", () => {
+  if (confirm("本当にクイズをやめますか？")) {
+    quizOverlay.style.display = "none";
+  }
+});
 
-  // 検索
+  // 検索処理
   searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
     if (!keyword) {
