@@ -132,13 +132,15 @@
       user-select: none;
       color: #007bff;
       transition: color 0.2s;
+      padding: 0 6px;
+      line-height: 1;
     }
     .play-btn:hover {
       color: #0056b3;
     }
     /* 答え表示部分の高さ確保 */
     #quizAnswerRow {
-      min-height: 56px;  /* 英語＋カタカナ分の高さを固定 */
+      min-height: 56px;
       margin-bottom: 8px;
       display: flex;
       flex-direction: column;
@@ -1490,7 +1492,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ],
   };
 
-  const currentList = {
+ const currentList = {
     others: [...originalData.others],
     various: [...originalData.various],
     verbs: [...originalData.verbs],
@@ -1498,7 +1500,7 @@ document.addEventListener("DOMContentLoaded", () => {
     adverbs: [...originalData.adverbs],
     adjectives: [...originalData.adjectives],
     tenses: [...originalData.tenses],
-     pronouns: [...originalData.pronouns],
+    pronouns: [...originalData.pronouns],
   };
 
   const contentDiv = document.getElementById("content");
@@ -1560,6 +1562,7 @@ document.addEventListener("DOMContentLoaded", () => {
       kanaSpan.className = "kana";
       if(item.reading) kanaSpan.textContent = item.reading;
 
+      // 発音再生ボタン
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
@@ -1569,9 +1572,30 @@ document.addEventListener("DOMContentLoaded", () => {
         playSound(item.en);
       };
 
+      // 例文ボタン
+      const exampleBtn = document.createElement("button");
+      exampleBtn.className = "play-btn"; // 音声ボタンと同じ見た目に
+      exampleBtn.textContent = "📖";
+      exampleBtn.title = `例文を見る: ${item.en}`;
+      exampleBtn.onclick = (e) => {
+        e.stopPropagation();
+        const query = encodeURIComponent(item.en);
+        const url = `https://ejje.weblio.jp/content/${query}`;
+        const width = 800;
+        const height = 600;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        window.open(
+          url,
+          "_blank",
+          `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+        );
+      };
+
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
+      detailsDiv.appendChild(exampleBtn);
 
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
@@ -1593,7 +1617,6 @@ document.addEventListener("DOMContentLoaded", () => {
     enText.textContent = item.en;
     kanaText.textContent = item.reading || "";
 
-    // 答えは隠すけど表示領域は固定済み
     enText.style.display = "none";
     kanaText.style.display = "none";
 
@@ -1602,13 +1625,13 @@ document.addEventListener("DOMContentLoaded", () => {
     nextBtn.style.display = "none";
   }
 
-  // タブ切り替えイベント
+  // タブ切り替え
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentType = btn.getAttribute("data-type");
-      searchInput.value = ""; // 検索リセット
+      searchInput.value = "";
       currentList[currentType] = [...originalData[currentType]];
       renderList(currentType);
     });
@@ -1620,7 +1643,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderList(currentType);
   });
 
-  // リセット（元に戻す）
+  // リセット
   resetBtn.addEventListener("click", () => {
     currentList[currentType] = [...originalData[currentType]];
     searchInput.value = "";
@@ -1663,14 +1686,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // クイズやめる
-  // クイズやめる
-quitQuizBtn.addEventListener("click", () => {
-  if (confirm("本当にクイズをやめますか？")) {
-    quizOverlay.style.display = "none";
-  }
-});
+  quitQuizBtn.addEventListener("click", () => {
+    if (confirm("本当にクイズをやめますか？")) {
+      quizOverlay.style.display = "none";
+    }
+  });
 
-  // 検索処理
+  // 検索
   searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
     if (!keyword) {
