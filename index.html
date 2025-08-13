@@ -210,12 +210,28 @@
         <div id="kanaText" class="quiz-kana"></div>
       </div>
 
+  
       <button id="showAnswerBtn">答えを見る</button>
       <button id="nextBtn" style="display:none;">次へ</button>
       <button id="quitQuizBtn">やめる</button>
     </div>
   </div>
 
+
+<!-- 例文モーダル -->
+<div id="exampleModal" class="hidden" style="
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center;
+  z-index:1000;">
+  <div style="background:white; width:90%; max-width:600px; height:70%; position:relative; border-radius:8px; overflow:hidden;">
+    <button id="closeExampleModal" style="
+      position:absolute; top:8px; right:10px; z-index:1001;
+      background:white; border:1px solid #ccc; border-radius:4px;
+      padding:4px 8px; cursor:pointer;">✖</button>
+    <iframe id="exampleFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+  </div>
+</div>
+  
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   // 元データ
@@ -1572,26 +1588,21 @@ document.addEventListener("DOMContentLoaded", () => {
         playSound(item.en);
       };
 
-      // 例文ボタン
-      const exampleBtn = document.createElement("button");
-      exampleBtn.className = "play-btn"; // 音声ボタンと同じ見た目に
-      exampleBtn.textContent = "📖";
-      exampleBtn.title = `例文を見る: ${item.en}`;
-      exampleBtn.onclick = (e) => {
-        e.stopPropagation();
-        const query = encodeURIComponent(item.en);
-        const url = `https://ejje.weblio.jp/content/${query}`;
-        const width = 800;
-        const height = 600;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-        window.open(
-          url,
-          "_blank",
-          `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
-        );
-      };
+      // 例文モーダル関連
+const exampleModal = document.getElementById("exampleModal");
+const exampleFrame = document.getElementById("exampleFrame");
+const closeExampleModalBtn = document.getElementById("closeExampleModal");
 
+function showExampleModal(word) {
+  const url = `https://ejje.weblio.jp/sentence/content/${encodeURIComponent(word)}`;
+  exampleFrame.src = url;
+  exampleModal.classList.remove("hidden");
+}
+
+closeExampleModalBtn.addEventListener("click", () => {
+  exampleModal.classList.add("hidden");
+  exampleFrame.src = ""; // 閉じたときにiframeをリセット
+});
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
