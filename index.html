@@ -1776,13 +1776,23 @@ function closeExampleModal() {
 }
 
   const exampleModalDiv = document.getElementById("exampleModal");
+let pressTimer;
 
-// 背景をダブルクリックで閉じる
-exampleModalDiv.addEventListener("dblclick", (e) => {
-  // クリック対象が中身（子要素）でない場合に閉じる
-  if(e.target === exampleModalDiv){
-    closeExampleModal();
+// タッチ開始（スマホ対応）
+exampleModalDiv.addEventListener("touchstart", (e) => {
+  if (e.target === exampleModalDiv) {
+    pressTimer = setTimeout(() => {
+      closeExampleModal();
+    }, 800); // 0.8秒長押しで閉じる
   }
+});
+
+exampleModalDiv.addEventListener("touchend", () => {
+  clearTimeout(pressTimer);
+});
+
+exampleModalDiv.addEventListener("touchcancel", () => {
+  clearTimeout(pressTimer);
 });
 </script>
 
