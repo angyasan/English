@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <title>単語帳</title>
 <style>
-  /* 既存スタイルそのまま */
+  /* （既存スタイルそのまま） */
   #quizOverlay {
     position: fixed;
     top: 0; left: 0;
@@ -29,18 +29,7 @@
   .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
   .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
   body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
-  h2 { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-  .scroll-btn {
-    font-size: 20px;
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    color: #007bff;
-    padding: 0;
-    margin-left: 8px;
-    transition: color 0.2s;
-  }
-  .scroll-btn:hover { color: #0056b3; }
+  h2 { margin-bottom: 15px; }
   .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
   .tab-btn {
     flex: 1 0 auto;
@@ -94,10 +83,7 @@
 </head>
 <body>
 
-<h2>
-  📘 単語帳
-  <button class="scroll-btn" id="scrollBottomBtn">↓</button>
-</h2>
+<h2>📘 単語帳</h2>
 
 <div class="tabs">
   <div class="tab-btn" data-type="others">その他</div>
@@ -1480,15 +1466,15 @@ document.addEventListener("DOMContentLoaded", () => {
   ],
   };
 
-     const currentList = {
+      const currentList = {
     others: [...originalData.others],
-    various: [...originalData.various],
-    verbs: [...originalData.verbs],
-    nouns: [...originalData.nouns],
-    adverbs: [...originalData.adverbs],
-    adjectives: [...originalData.adjectives],
-    tenses: [...originalData.tenses],
-    pronouns: [...originalData.pronouns]
+    various: [...(originalData.various||[])],
+    verbs: [...(originalData.verbs||[])],
+    nouns: [...(originalData.nouns||[])],
+    adverbs: [...(originalData.adverbs||[])],
+    adjectives: [...(originalData.adjectives||[])],
+    tenses: [...(originalData.tenses||[])],
+    pronouns: [...(originalData.pronouns||[])],
   };
 
   const contentDiv = document.getElementById("content");
@@ -1505,11 +1491,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const searchInput = document.getElementById("searchInput");
-
-  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
-  scrollBottomBtn.addEventListener("click", () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  });
+  const exampleText = document.getElementById("exampleText");
 
   let currentType = "verbs";
   let quizList = [];
@@ -1517,14 +1499,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
-    new Audio(url).play().catch(() => {});
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
   }
 
   function shuffleArray(arr) {
     const a = arr.slice();
-    for (let i=a.length-1; i>0; i--) {
-      const j = Math.floor(Math.random()*(i+1));
-      [a[i],a[j]]=[a[j],a[i]];
+    for(let i = a.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
   }
@@ -1554,18 +1537,35 @@ document.addEventListener("DOMContentLoaded", () => {
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
       playBtn.title = `発音再生: ${item.en}`;
-      playBtn.onclick = (e)=>{ e.stopPropagation(); playSound(item.en); };
+      playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
+
+      // 例文ボタン
+      let exampleBtn = document.createElement("button");
+      exampleBtn.className = "control-btn";
+      exampleBtn.textContent = "例文";
+      exampleBtn.style.marginLeft = "8px";
+      exampleBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(type === "others" && item.example) {
+          showCustomExampleModal(item.exampleJp, item.example);
+        } else {
+          const query = encodeURIComponent(item.en);
+          const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
+          showWeblioExampleModal(exampleUrl);
+        }
+      };
 
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
+      detailsDiv.appendChild(exampleBtn);
 
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
 
       detailsDiv.style.display = "none";
-      jpDiv.addEventListener("click", ()=>{ 
-        detailsDiv.style.display = (detailsDiv.style.display==="flex")?"none":"flex"; 
+      jpDiv.addEventListener("click", () => {
+        detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
       });
 
       contentDiv.appendChild(entry);
@@ -1577,16 +1577,18 @@ document.addEventListener("DOMContentLoaded", () => {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
     kanaText.textContent = item.reading || "";
+
     enText.style.display = "none";
     kanaText.style.display = "none";
-    quizProgress.textContent = `${currentQuizIndex+1} / ${quizList.length} 問`;
+
+    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
   }
 
-  tabButtons.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      tabButtons.forEach(b=>b.classList.remove("active"));
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentType = btn.getAttribute("data-type");
       searchInput.value = "";
@@ -1595,53 +1597,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  shuffleBtn.addEventListener("click", ()=>{
+  shuffleBtn.addEventListener("click", () => {
     currentList[currentType] = shuffleArray(currentList[currentType]);
     renderList(currentType);
   });
 
-  resetBtn.addEventListener("click", ()=>{
+  resetBtn.addEventListener("click", () => {
     currentList[currentType] = [...(originalData[currentType]||[])];
     searchInput.value = "";
     renderList(currentType);
   });
 
-  startQuizBtn.addEventListener("click", ()=>{
+  startQuizBtn.addEventListener("click", () => {
     quizList = shuffleArray([...currentList[currentType]]);
-    currentQuizIndex=0;
-    if(quizList.length===0){ alert("問題がありません"); return; }
+    currentQuizIndex = 0;
+    if (quizList.length === 0) { alert("問題がありません"); return; }
     showQuizQuestion();
-    quizOverlay.style.display="flex";
+    quizOverlay.style.display = "flex";
   });
 
-  showAnswerBtn.addEventListener("click", ()=>{
-    enText.style.display="block";
-    kanaText.style.display="block";
-    showAnswerBtn.style.display="none";
-    nextBtn.style.display="inline-block";
-    enText.onclick = ()=>{ playSound(enText.textContent); };
+  showAnswerBtn.addEventListener("click", () => {
+    enText.style.display = "block";
+    kanaText.style.display = "block";
+    showAnswerBtn.style.display = "none";
+    nextBtn.style.display = "inline-block";
+    enText.onclick = () => { playSound(enText.textContent); };
   });
 
-  nextBtn.addEventListener("click", ()=>{
+  nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
-    if(currentQuizIndex>=quizList.length){
+    if (currentQuizIndex >= quizList.length) {
       alert("全問終了！");
-      quizOverlay.style.display="none";
+      quizOverlay.style.display = "none";
     } else {
       showQuizQuestion();
     }
   });
 
-  quitQuizBtn.addEventListener("click", ()=>{
-    if(confirm("本当にクイズをやめますか？")) quizOverlay.style.display="none";
+  quitQuizBtn.addEventListener("click", () => {
+    if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
   });
 
-  searchInput.addEventListener("input", ()=>{
+  searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
-    if(!keyword){
+    if (!keyword) {
       currentList[currentType] = [...(originalData[currentType]||[])];
     } else {
-      currentList[currentType] = (originalData[currentType]||[]).filter(item=>{
+      currentList[currentType] = (originalData[currentType]||[]).filter(item => {
         return item.jp.toLowerCase().includes(keyword) ||
                item.en.toLowerCase().includes(keyword) ||
                (item.reading && item.reading.toLowerCase().includes(keyword));
@@ -1651,11 +1653,31 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderList(currentType);
+
+  function showWeblioExampleModal(url) {
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.flex = "1";
+    iframe.style.border = "none";
+    exampleText.innerHTML = "";
+    exampleText.appendChild(iframe);
+    document.getElementById("exampleModal").style.display = "flex";
+  }
+
+  function showCustomExampleModal(textsJp, textsEn) {
+    let html = "";
+    for (let i = 0; i < textsJp.length; i++) {
+      html += `<p style="margin-bottom:2px;"><strong>${textsJp[i]}</strong></p>`;
+      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
+    }
+    exampleText.innerHTML = html;
+    document.getElementById("exampleModal").style.display = "flex";
+  }
 });
 
 function closeExampleModal() {
-  document.getElementById("exampleText").innerHTML="";
-  document.getElementById("exampleModal").style.display="none";
+  document.getElementById("exampleText").innerHTML = "";
+  document.getElementById("exampleModal").style.display = "none";
 }
 </script>
 
