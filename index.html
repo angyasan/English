@@ -1753,8 +1753,11 @@ scrollBottomBtn.addEventListener("click", () => {
   // ★ここを追加★：元の単語を一番上に横並びで表示
   if(originalJp && originalEn){
     html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
-  }
+    html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
+
+    // ★ここを追加★：元単語と例文の間にラインを入れる
+    html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
+}
 
   // 既存の例文を下に表示
   for (let i = 0; i < textsJp.length; i++) {
