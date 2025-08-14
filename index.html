@@ -90,6 +90,13 @@
     background: rgba(0,0,0,0.05); /* 半透明 */
     z-index: 998;
   }
+  #exampleModal {
+  user-select: none;           /* テキスト選択禁止 */
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  touch-action: manipulation;  /* 長押しでコピー出ないように */
+}
 </style>
 </head>
 <body>
