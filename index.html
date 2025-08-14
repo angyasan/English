@@ -83,7 +83,10 @@
 </head>
 <body>
 
-<h2>📘 単語帳</h2>
+<h2>
+  📘 単語帳
+  <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
+</h2>
 
 <div class="tabs">
   <div class="tab-btn" data-type="others">その他</div>
@@ -1607,6 +1610,11 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.value = "";
     renderList(currentType);
   });
+
+  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+scrollBottomBtn.addEventListener("click", () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
 
   startQuizBtn.addEventListener("click", () => {
     quizList = shuffleArray([...currentList[currentType]]);
