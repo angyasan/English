@@ -1774,6 +1774,16 @@ function closeExampleModal() {
   document.getElementById("exampleText").innerHTML = "";
   document.getElementById("exampleModal").style.display = "none";
 }
+
+  const exampleModalDiv = document.getElementById("exampleModal");
+
+// 背景をダブルクリックで閉じる
+exampleModalDiv.addEventListener("dblclick", (e) => {
+  // クリック対象が中身（子要素）でない場合に閉じる
+  if(e.target === exampleModalDiv){
+    closeExampleModal();
+  }
+});
 </script>
 
 </body>
