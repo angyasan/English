@@ -79,6 +79,13 @@
   #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
   /* 例文モーダル内テキスト用 */
   #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; }
+  /* リロードボタン用 */
+  #reloadBtn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    padding: 0;
+  }
 </style>
 </head>
 <body>
@@ -99,6 +106,7 @@
 <input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
 
 <div id="controls" class="control-buttons">
+  <button id="reloadBtn" class="control-btn">⟳</button>
   <button class="control-btn" id="shuffleBtn">シャッフル</button>
   <button class="control-btn" id="resetBtn">元に戻す</button>
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
@@ -1482,6 +1490,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const shuffleBtn = document.getElementById("shuffleBtn");
   const resetBtn = document.getElementById("resetBtn");
   const startQuizBtn = document.getElementById("startQuizBtn");
+  const reloadBtn = document.getElementById("reloadBtn");
   const quizOverlay = document.getElementById("quizOverlay");
   const quizProgress = document.getElementById("quizProgress");
   const jpText = document.getElementById("jpText");
@@ -1539,7 +1548,6 @@ document.addEventListener("DOMContentLoaded", () => {
       playBtn.title = `発音再生: ${item.en}`;
       playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
 
-      // 例文ボタン
       let exampleBtn = document.createElement("button");
       exampleBtn.className = "control-btn";
       exampleBtn.textContent = "例文";
@@ -1605,6 +1613,11 @@ document.addEventListener("DOMContentLoaded", () => {
   resetBtn.addEventListener("click", () => {
     currentList[currentType] = [...(originalData[currentType]||[])];
     searchInput.value = "";
+    renderList(currentType);
+  });
+
+  reloadBtn.addEventListener("click", () => {
+    currentList[currentType] = [...(originalData[currentType]||[])];
     renderList(currentType);
   });
 
