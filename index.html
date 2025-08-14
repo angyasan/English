@@ -77,6 +77,8 @@
     #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
     #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
     #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
+    /* 例文モーダル内テキスト用 */
+    #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -109,12 +111,10 @@
   <div id="quizContainer">
     <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
     <div id="jpText" class="quiz-jp"></div>
-
     <div id="quizAnswerRow">
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
@@ -126,26 +126,20 @@
   <div style="background:#fff; width:90%; max-width:800px; height:80%; border-radius:8px; overflow:hidden; display:flex; flex-direction:column;">
     <div style="padding:8px; background:#007bff; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
       <span>例文</span>
-     <button onclick="closeExampleModal()" style="
-background:none; border:none; color:white; 
-font-size:28px; line-height:1; padding:4px 8px; 
-cursor:pointer;">✖</button>
+      <button onclick="closeExampleModal()" style="background:none; border:none; color:white; font-size:28px; line-height:1; padding:4px 8px; cursor:pointer;">✖</button>
     </div>
-    <iframe id="exampleFrame" src="" style="flex:1; border:none;"></iframe>
+    <div id="exampleText"></div>
   </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // 元データ
   const originalData = {
-
     others: [
-    // ここにその他の単語やフレーズを追加
-      { jp: "〜したい", en: "wanna", reading: "ワナ" },
-  { jp: "〜したい(フォーマル)", en: "I'd like to＋動詞の原形", reading: "アイドゥ ライク トゥ" },
-  { jp: "〜してほしい", en: "I want you to", reading: "アイ ワント ユー トゥ" },
-  { jp: "するだろう(突然の決定)", en: "will + 動詞の原形", reading: "ウィル" },
+      { jp: "〜したい", en: "wanna", reading: "ワナ", example: "I wanna go home." },
+      { jp: "〜したい(フォーマル)", en: "I'd like to＋動詞の原形", reading: "アイドゥ ライク トゥ", example: "I'd like to drink some water." },
+      { jp: "〜してほしい", en: "I want you to", reading: "アイ ワント ユー トゥ", example: "I want you to help me." },
+      { jp: "するだろう(突然の決定)", en: "will + 動詞の原形", reading: "ウィル", example: "I will call you later." },
   { jp: "〜する予定(計画的)", en: "be gonna + 動詞の原形", reading: "ビー ガナ" },
   { jp: "〜しなきゃ", en: "I gotta", reading: "アイ ガダ" },
   { jp: "〜する必要がある", en: "need to + 動詞の原形", reading: "ニード トゥ" },
@@ -1471,7 +1465,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ],
   };
 
-    const currentList = {
+      const currentList = {
     others: [...originalData.others],
     various: [...(originalData.various||[])],
     verbs: [...(originalData.verbs||[])],
@@ -1496,6 +1490,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const searchInput = document.getElementById("searchInput");
+  const exampleText = document.getElementById("exampleText");
 
   let currentType = "verbs";
   let quizList = [];
@@ -1543,25 +1538,26 @@ document.addEventListener("DOMContentLoaded", () => {
       playBtn.title = `発音再生: ${item.en}`;
       playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
 
-      // 例文ボタン（その他タブ以外だけ表示）
-      let exampleBtn = null;
-      if(type !== "others") {
-        exampleBtn = document.createElement("button");
-        exampleBtn.className = "control-btn";
-        exampleBtn.textContent = "例文";
-        exampleBtn.style.marginLeft = "8px";
-        exampleBtn.onclick = (e) => {
-          e.stopPropagation();
+      // 例文ボタン
+      let exampleBtn = document.createElement("button");
+      exampleBtn.className = "control-btn";
+      exampleBtn.textContent = "例文";
+      exampleBtn.style.marginLeft = "8px";
+      exampleBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(type === "others") {
+          showCustomExampleModal(item.example || "例文がありません");
+        } else {
           const query = encodeURIComponent(item.en);
           const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
-          showExampleModal(exampleUrl);
-        };
-      }
+          showWeblioExampleModal(exampleUrl);
+        }
+      };
 
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
-      if(exampleBtn) detailsDiv.appendChild(exampleBtn);
+      detailsDiv.appendChild(exampleBtn);
 
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
@@ -1656,15 +1652,25 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderList(currentType);
+
+  function showWeblioExampleModal(url) {
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.flex = "1";
+    iframe.style.border = "none";
+    exampleText.innerHTML = "";
+    exampleText.appendChild(iframe);
+    document.getElementById("exampleModal").style.display = "flex";
+  }
+
+  function showCustomExampleModal(text) {
+    exampleText.innerHTML = `<p>${text}</p>`;
+    document.getElementById("exampleModal").style.display = "flex";
+  }
 });
 
-function showExampleModal(url) {
-  document.getElementById("exampleFrame").src = url;
-  document.getElementById("exampleModal").style.display = "flex";
-}
-
 function closeExampleModal() {
-  document.getElementById("exampleFrame").src = "";
+  document.getElementById("exampleText").innerHTML = "";
   document.getElementById("exampleModal").style.display = "none";
 }
 </script>
