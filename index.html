@@ -1692,14 +1692,15 @@ scrollBottomBtn.addEventListener("click", () => {
   renderList(currentType);
 
   function showWeblioExampleModal(url) {
-    const iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.style.flex = "1";
-    iframe.style.border = "none";
-    exampleText.innerHTML = "";
-    exampleText.appendChild(iframe);
-    document.getElementById("exampleModal").style.display = "flex";
-  }
+  const iframe = document.createElement("iframe");
+  iframe.src = url;
+  iframe.style.width = "100%";      // 横幅いっぱい
+  iframe.style.height = "100%";     // 高さいっぱい
+  iframe.style.border = "none";
+  exampleText.innerHTML = "";
+  exampleText.appendChild(iframe);
+  document.getElementById("exampleModal").style.display = "flex";
+}
 
   function showCustomExampleModal(textsJp, textsEn) {
     let html = "";
