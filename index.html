@@ -4,23 +4,56 @@
 <meta charset="UTF-8" />
 <title>単語帳</title>
 <style>
-  body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
-  h2 { margin-bottom: 15px; display:flex; align-items:center; justify-content:space-between; }
-  .scroll-down-btn {
-    cursor:pointer; font-size:20px; padding:4px 8px; border:none; background:none;
+  /* （既存スタイルそのまま） */
+  #quizOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
   }
+  #quizContainer {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .hidden { display: none !important; }
+  .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
+  .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
+  .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
+  body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; }
+  h2 { margin-bottom: 15px; }
   .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
   .tab-btn {
-    flex: 1 0 auto; min-width: 100px; padding: 10px 0; cursor: pointer;
-    border: 1px solid #ccc; background: #f9f9f9; text-align: center;
-    font-weight: bold; user-select: none; transition: background-color 0.3s;
+    flex: 1 0 auto;
+    min-width: 100px;
+    padding: 10px 0;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    text-align: center;
+    font-weight: bold;
+    user-select: none;
+    transition: background-color 0.3s;
     white-space: nowrap;
   }
   .tab-btn.active { background-color: #007bff; color: white; border-color: #007bff; }
   .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
   .control-btn {
-    cursor: pointer; background-color: #eee; border: 1px solid #ccc;
-    padding: 6px 12px; border-radius: 4px; font-size: 14px; transition: background-color 0.2s;
+    cursor: pointer;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s;
   }
   .control-btn:hover { background-color: #ddd; }
   .entry { margin-bottom: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; user-select: none; }
@@ -28,25 +61,29 @@
   .details { display: none; margin-top: 6px; color: #555; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; flex-wrap: wrap; }
   .en { font-weight: bold; font-size: 17px; }
   .kana { color: #666; font-size: 15px; }
-  .play-btn { margin-left: auto; cursor: pointer; border: none; background: transparent; font-size: 20px; user-select: none; color: #007bff; transition: color 0.2s; }
+  .play-btn {
+    margin-left: auto;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    user-select: none;
+    color: #007bff;
+    transition: color 0.2s;
+  }
   .play-btn:hover { color: #0056b3; }
-  #quizOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 999; }
-  #quizContainer { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-  .hidden { display: none !important; }
-  .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
-  .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
-  .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
   #quizAnswerRow { min-height: 56px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #enText, #kanaText { display: none; text-align: center; }
   #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
   #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
   #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
+  /* 例文モーダル内テキスト用 */
   #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; }
 </style>
 </head>
 <body>
 
-<h2>📘 単語帳 <button class="scroll-down-btn" id="scrollDownBtn">↓</button></h2>
+<h2>📘 単語帳</h2>
 
 <div class="tabs">
   <div class="tab-btn" data-type="others">その他</div>
@@ -96,7 +133,7 @@
 </div>
 
 <script>
-
+document.addEventListener("DOMContentLoaded", () => {
   const originalData = {
     others: [
       { jp: "〜したい", en: "wanna", reading: "ワナ", example: ["I wanna go to your home after you finish work.", "Do you wanna eat this?"], exampleJp: ["あなたの仕事が終わったら、あなたの家に行きたい", "これ食べたいですか？"] },
@@ -1429,7 +1466,6 @@
   ],
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
      const currentList = {
     others: [...originalData.others],
     various: [...(originalData.various||[])],
@@ -1455,22 +1491,33 @@
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const searchInput = document.getElementById("searchInput");
-  const scrollDownBtn = document.getElementById("scrollDownBtn");
+  const exampleText = document.getElementById("exampleText");
 
   let currentType = "verbs";
   let quizList = [];
   let currentQuizIndex = 0;
 
-  // スクロールボタン
-  scrollDownBtn.addEventListener("click", () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  });
+  function playSound(word) {
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
+  }
+
+  function shuffleArray(arr) {
+    const a = arr.slice();
+    for(let i = a.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
   function renderList(type) {
     contentDiv.innerHTML = "";
     currentList[type].forEach(item => {
       const entry = document.createElement("div");
       entry.className = "entry";
+
       const jpDiv = document.createElement("div");
       jpDiv.className = "jp";
       jpDiv.textContent = item.jp;
@@ -1481,6 +1528,7 @@
       const enSpan = document.createElement("span");
       enSpan.className = "en";
       enSpan.textContent = item.en;
+
       const kanaSpan = document.createElement("span");
       kanaSpan.className = "kana";
       if(item.reading) kanaSpan.textContent = item.reading;
@@ -1488,22 +1536,145 @@
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
+      playBtn.title = `発音再生: ${item.en}`;
+      playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
+
+      // 例文ボタン
+      let exampleBtn = document.createElement("button");
+      exampleBtn.className = "control-btn";
+      exampleBtn.textContent = "例文";
+      exampleBtn.style.marginLeft = "8px";
+      exampleBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(type === "others" && item.example) {
+          showCustomExampleModal(item.exampleJp, item.example);
+        } else {
+          const query = encodeURIComponent(item.en);
+          const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
+          showWeblioExampleModal(exampleUrl);
+        }
+      };
 
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
+      detailsDiv.appendChild(exampleBtn);
+
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
+
       detailsDiv.style.display = "none";
       jpDiv.addEventListener("click", () => {
-        detailsDiv.style.display = (detailsDiv.style.display==="flex")?"none":"flex";
+        detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
       });
+
       contentDiv.appendChild(entry);
     });
   }
 
+  function showQuizQuestion() {
+    const item = quizList[currentQuizIndex];
+    jpText.textContent = item.jp;
+    enText.textContent = item.en;
+    kanaText.textContent = item.reading || "";
+
+    enText.style.display = "none";
+    kanaText.style.display = "none";
+
+    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentType = btn.getAttribute("data-type");
+      searchInput.value = "";
+      currentList[currentType] = [...(originalData[currentType]||[])];
+      renderList(currentType);
+    });
+  });
+
+  shuffleBtn.addEventListener("click", () => {
+    currentList[currentType] = shuffleArray(currentList[currentType]);
+    renderList(currentType);
+  });
+
+  resetBtn.addEventListener("click", () => {
+    currentList[currentType] = [...(originalData[currentType]||[])];
+    searchInput.value = "";
+    renderList(currentType);
+  });
+
+  startQuizBtn.addEventListener("click", () => {
+    quizList = shuffleArray([...currentList[currentType]]);
+    currentQuizIndex = 0;
+    if (quizList.length === 0) { alert("問題がありません"); return; }
+    showQuizQuestion();
+    quizOverlay.style.display = "flex";
+  });
+
+  showAnswerBtn.addEventListener("click", () => {
+    enText.style.display = "block";
+    kanaText.style.display = "block";
+    showAnswerBtn.style.display = "none";
+    nextBtn.style.display = "inline-block";
+    enText.onclick = () => { playSound(enText.textContent); };
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentQuizIndex++;
+    if (currentQuizIndex >= quizList.length) {
+      alert("全問終了！");
+      quizOverlay.style.display = "none";
+    } else {
+      showQuizQuestion();
+    }
+  });
+
+  quitQuizBtn.addEventListener("click", () => {
+    if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
+  });
+
+  searchInput.addEventListener("input", () => {
+    const keyword = searchInput.value.trim().toLowerCase();
+    if (!keyword) {
+      currentList[currentType] = [...(originalData[currentType]||[])];
+    } else {
+      currentList[currentType] = (originalData[currentType]||[]).filter(item => {
+        return item.jp.toLowerCase().includes(keyword) ||
+               item.en.toLowerCase().includes(keyword) ||
+               (item.reading && item.reading.toLowerCase().includes(keyword));
+      });
+    }
+    renderList(currentType);
+  });
+
   renderList(currentType);
+
+  function showWeblioExampleModal(url) {
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.flex = "1";
+    iframe.style.border = "none";
+    exampleText.innerHTML = "";
+    exampleText.appendChild(iframe);
+    document.getElementById("exampleModal").style.display = "flex";
+  }
+
+  function showCustomExampleModal(textsJp, textsEn) {
+    let html = "";
+    for (let i = 0; i < textsJp.length; i++) {
+      html += `<p style="margin-bottom:2px;"><strong>${textsJp[i]}</strong></p>`;
+      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
+    }
+    exampleText.innerHTML = html;
+    document.getElementById("exampleModal").style.display = "flex";
+  }
 });
+
 function closeExampleModal() {
   document.getElementById("exampleText").innerHTML = "";
   document.getElementById("exampleModal").style.display = "none";
