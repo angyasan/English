@@ -1776,11 +1776,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const exampleModalDiv = document.getElementById("exampleModal");
-  exampleModalDiv.addEventListener("dblclick", (e) => {
-    if(e.target === exampleModalDiv){
-      closeExampleModal();
-    }
-  });
+  let pressTimer = null;
+
+// 共通で長押し判定
+function startPressTimer() {
+  pressTimer = setTimeout(() => {
+    closeExampleModal();
+  }, 150); // 0.15秒長押しで閉じる
+}
+
+function clearPressTimer() {
+  if (pressTimer) {
+    clearTimeout(pressTimer);
+    pressTimer = null;
+  }
+}
+
+// PC: マウス押下
+exampleModalDiv.addEventListener("mousedown", (e) => {
+  if(e.target === exampleModalDiv) startPressTimer();
+});
+exampleModalDiv.addEventListener("mouseup", clearPressTimer);
+exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
+
+// スマホ: タッチ開始
+exampleModalDiv.addEventListener("touchstart", (e) => {
+  if(e.target === exampleModalDiv) startPressTimer();
+});
+exampleModalDiv.addEventListener("touchend", clearPressTimer);
+exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
 
   // --- 新規：左端長押しで初期化 ---
   let leftPressTimer;
