@@ -79,6 +79,17 @@
   #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
   /* 例文モーダル内テキスト用 */
   #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; }
+
+  /* 左側長押し判定用 */
+  #leftTapZone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100%;
+    background: rgba(0,0,0,0.05); /* 半透明でわかるくらい */
+    z-index: 9998;
+  }
 </style>
 </head>
 <body>
@@ -135,11 +146,14 @@
   </div>
 </div>
   
+<!-- 左端長押し判定用 -->
+<div id="leftTapZone"></div>
+
 <!-- ↑ボタン -->
 <button id="scrollTopBtn" style="
   position: fixed;
   bottom: 20px;
-  left: calc(50% - 300px + 10px); /* さらに左に寄せた */
+  left: calc(50% - 300px + 10px); 
   display: none;
   font-size: 32px;
   cursor: pointer;
@@ -153,18 +167,18 @@
 document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
 
-// ページスクロールで表示/非表示切替
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 100) {
-    scrollTopBtn.style.display = "block";
-  } else {
-    scrollTopBtn.style.display = "none";
-  }
-});
+  // ページスクロールで表示/非表示切替
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 100) {
+      scrollTopBtn.style.display = "block";
+    } else {
+      scrollTopBtn.style.display = "none";
+    }
+  });
 
-// クリックで上にスクロール
-scrollTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // クリックで上にスクロール
+  scrollTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
   const originalData = {
     others: [
@@ -1622,15 +1636,15 @@ scrollTopBtn.addEventListener("click", () => {
       exampleBtn.textContent = "例文";
       exampleBtn.style.marginLeft = "8px";
       exampleBtn.onclick = (e) => {
-  e.stopPropagation();
-  if(type === "others" && item.example) {
-    showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-  } else {
-    const query = encodeURIComponent(item.en);
-    const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
-    showWeblioExampleModal(exampleUrl);
-  }
-};
+        e.stopPropagation();
+        if(type === "others" && item.example) {
+          showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+        } else {
+          const query = encodeURIComponent(item.en);
+          const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
+          showWeblioExampleModal(exampleUrl);
+        }
+      };
 
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
@@ -1686,9 +1700,9 @@ scrollTopBtn.addEventListener("click", () => {
   });
 
   const scrollBottomBtn = document.getElementById("scrollBottomBtn");
-scrollBottomBtn.addEventListener("click", () => {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-});
+  scrollBottomBtn.addEventListener("click", () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  });
 
   startQuizBtn.addEventListener("click", () => {
     quizList = shuffleArray([...currentList[currentType]]);
@@ -1737,37 +1751,34 @@ scrollBottomBtn.addEventListener("click", () => {
   renderList(currentType);
 
   function showWeblioExampleModal(url) {
-  const iframe = document.createElement("iframe");
-  iframe.src = url;
-  iframe.style.width = "100%";      // 横幅いっぱい
-  iframe.style.height = "100%";     // 高さいっぱい
-  iframe.style.border = "none";
-  exampleText.innerHTML = "";
-  exampleText.appendChild(iframe);
-  document.getElementById("exampleModal").style.display = "flex";
-}
-
- function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
-  let html = "";
-
-  // ★ここを追加★：元の単語を一番上に横並びで表示
-  if(originalJp && originalEn){
-    html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-    html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
-
-    // ★ここを追加★：元単語と例文の間にラインを入れる
-    html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
-}
-
-  // 既存の例文を下に表示
-  for (let i = 0; i < textsJp.length; i++) {
-    html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-    html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.width = "100%";      // 横幅いっぱい
+    iframe.style.height = "100%";     // 高さいっぱい
+    iframe.style.border = "none";
+    exampleText.innerHTML = "";
+    exampleText.appendChild(iframe);
+    document.getElementById("exampleModal").style.display = "flex";
   }
 
-  exampleText.innerHTML = html;
-  document.getElementById("exampleModal").style.display = "flex";
-}
+  function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
+    let html = "";
+
+    if(originalJp && originalEn){
+      html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
+      html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
+      html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
+    }
+
+    for (let i = 0; i < textsJp.length; i++) {
+      html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
+      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
+    }
+
+    exampleText.innerHTML = html;
+    document.getElementById("exampleModal").style.display = "flex";
+  }
+
 });
 
 function closeExampleModal() {
@@ -1775,25 +1786,42 @@ function closeExampleModal() {
   document.getElementById("exampleModal").style.display = "none";
 }
 
-  const exampleModalDiv = document.getElementById("exampleModal");
+// 左端長押しで初期化
+const leftTapZone = document.getElementById("leftTapZone");
 let pressTimer;
 
-// タッチ開始（スマホ対応）
-exampleModalDiv.addEventListener("touchstart", (e) => {
-  if (e.target === exampleModalDiv) {
-    pressTimer = setTimeout(() => {
-      closeExampleModal();
-    }, 100); // 0.8秒長押しで閉じる
+function resetToInitialState() {
+  // 全タブのリストを元データに戻す
+  for (let type in currentList) {
+    currentList[type] = [...(originalData[type] || [])];
   }
-});
 
-exampleModalDiv.addEventListener("touchend", () => {
-  clearTimeout(pressTimer);
-});
+  // 現在のタブに応じて表示更新
+  renderList(currentType);
 
-exampleModalDiv.addEventListener("touchcancel", () => {
+  // 検索バー初期化
+  searchInput.value = "";
+
+  // スクロール位置トップに
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startPressTimer() {
+  pressTimer = setTimeout(() => {
+    resetToInitialState();
+  }, 3000); // 3秒長押し
+}
+
+function clearPressTimer() {
   clearTimeout(pressTimer);
-});
+}
+
+leftTapZone.addEventListener("touchstart", startPressTimer);
+leftTapZone.addEventListener("touchend", clearPressTimer);
+leftTapZone.addEventListener("touchcancel", clearPressTimer);
+leftTapZone.addEventListener("mousedown", startPressTimer);
+leftTapZone.addEventListener("mouseup", clearPressTimer);
+leftTapZone.addEventListener("mouseleave", clearPressTimer);
 </script>
 
 </body>
