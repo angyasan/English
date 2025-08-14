@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>単語帳</title>
   <style>
+    /* 基本スタイル */
     #quizOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -57,7 +58,7 @@
     .control-btn:hover { background-color: #ddd; }
     .entry { margin-bottom: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; user-select: none; }
     .jp { font-size: 18px; color: #333; white-space: pre-line; }
-    .details { display: none; margin-top: 6px; color: #555; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; }
+    .details { display: none; margin-top: 6px; color: #555; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; flex-wrap: wrap; }
     .en { font-weight: bold; font-size: 17px; }
     .kana { color: #666; font-size: 15px; }
     .play-btn {
@@ -76,8 +77,7 @@
     #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
     #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
     #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
-    #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; }
-    #exampleText p { margin-bottom: 12px; }
+    #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -135,7 +135,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const originalData = {
     others: [
-      { jp: "〜したい", en: "wanna", reading: "ワナ", example: ["I wanna go home.", "Do you wanna eat this?"], exampleJp: ["私は家に帰りたい。", "これ食べたいですか？"] },
+      { jp: "〜したい", en: "wanna", reading: "ワナ", example: ["I wanna go to your home after you finish work.", "Do you wanna eat this?"], exampleJp: ["あなたの仕事が終わったら、あなたの家に行きたい", "これ食べたいですか？"] },
       { jp: "〜したい(フォーマル)", en: "I'd like to＋動詞の原形", reading: "アイドゥ ライク トゥ", example: "I'd like to drink some water.", exampleJp: "水を飲みたいです。" },
       { jp: "〜してほしい", en: "I want you to", reading: "アイ ワント ユー トゥ", example: "I want you to help me.", exampleJp: "あなたに手伝ってほしい。" },
       { jp: "するだろう(突然の決定)", en: "will + 動詞の原形", reading: "ウィル", example: "I will call you later.", exampleJp: "後で電話するよ。" },
@@ -1537,14 +1537,15 @@ document.addEventListener("DOMContentLoaded", () => {
       playBtn.title = `発音再生: ${item.en}`;
       playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
 
-      const exampleBtn = document.createElement("button");
+      // 例文ボタン
+      let exampleBtn = document.createElement("button");
       exampleBtn.className = "control-btn";
       exampleBtn.textContent = "例文";
       exampleBtn.style.marginLeft = "8px";
       exampleBtn.onclick = (e) => {
         e.stopPropagation();
         if(type === "others") {
-          showCustomExampleModal(item);
+          showCustomExampleModal(item.example || [], item.exampleJp || []);
         } else {
           const query = encodeURIComponent(item.en);
           const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
@@ -1661,11 +1662,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("exampleModal").style.display = "flex";
   }
 
-  function showCustomExampleModal(item) {
-    exampleText.innerHTML = `
-      <p><strong>英語:</strong> ${item.example || "例文がありません"}</p>
-      <p><strong>日本語訳:</strong> ${item.exampleJp || "訳がありません"}</p>
-    `;
+  function showCustomExampleModal(examples, examplesJp) {
+    let html = "";
+    for (let i = 0; i < examples.length; i++) {
+      html += `<p>${examples[i]}</p><p>${examplesJp[i] || ""}</p>`;
+    }
+    exampleText.innerHTML = html;
     document.getElementById("exampleModal").style.display = "flex";
   }
 });
