@@ -1863,7 +1863,7 @@ leftResetZone.addEventListener("mousedown", (e) => {
     renderList(currentType);
     searchInput.value = "";
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 300);
+  }, 150);
 });
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
