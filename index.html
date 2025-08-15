@@ -1726,8 +1726,8 @@ closeBtn.addEventListener("click", () => {
   });
 
   scrollBottomBtn.addEventListener("click", () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  });
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+});
 
   startQuizBtn.addEventListener("click", () => {
     quizList = shuffleArray([...currentList[currentType]]);
