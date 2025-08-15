@@ -87,16 +87,23 @@
     left: 0;
     width: 100px;
     height: 100%;
-    background: rgba(0,0,0,0.05); /* 半透明 */
+    background: rgba(0,0,0,0.05); /* 半透明表示そのまま */
     z-index: 998;
+    user-select: none;           /* テキスト選択禁止 */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    touch-action: manipulation;  /* 長押しコピー禁止 */
   }
+
+  /* 例文モーダルはコピー可能のまま */
   #exampleModal {
-  user-select: none;           /* テキスト選択禁止 */
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  touch-action: manipulation;  /* 長押しでコピー出ないように */
-}
+    user-select: text;          /* テキスト選択可能 */
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    -moz-user-select: text;
+    touch-action: auto;
+  }
 </style>
 </head>
 <body>
@@ -175,13 +182,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
 
-  // ページスクロールで表示/非表示切替
   window.addEventListener("scroll", () => {
     if (window.scrollY > 100) scrollTopBtn.style.display = "block";
     else scrollTopBtn.style.display = "none";
   });
 
-  // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
@@ -1761,74 +1766,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
-    let html = "";
-    if(originalJp && originalEn){
-      html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-      html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
-      html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
-    }
-    for (let i = 0; i < textsJp.length; i++) {
-      html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
-    }
-    exampleText.innerHTML = html;
+    exampleText.innerHTML = "";
+    textsJp.forEach((jp, idx) => {
+      const div = document.createElement("div");
+      div.style.marginBottom = "10px";
+      div.textContent = `${jp}  →  ${textsEn[idx]}`;
+      exampleText.appendChild(div);
+    });
     document.getElementById("exampleModal").style.display = "flex";
   }
 
-  function closeExampleModal() {
-    document.getElementById("exampleText").innerHTML = "";
+  window.closeExampleModal = function() {
     document.getElementById("exampleModal").style.display = "none";
-  }
-
-  const exampleModalDiv = document.getElementById("exampleModal");
-  let pressTimer = null;
-
-// 共通で長押し判定
-function startPressTimer() {
-  pressTimer = setTimeout(() => {
-    closeExampleModal();
-  }, 150); // 0.15秒長押しで閉じる
-}
-
-function clearPressTimer() {
-  if (pressTimer) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-  }
-}
-
-// PC: マウス押下
-exampleModalDiv.addEventListener("mousedown", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("mouseup", clearPressTimer);
-exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
-
-// スマホ: タッチ開始
-exampleModalDiv.addEventListener("touchstart", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("touchend", clearPressTimer);
-exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
-
-  // --- 新規：左端長押しで初期化 ---
-  let leftPressTimer;
-  leftResetZone.addEventListener("touchstart", (e) => {
-    leftPressTimer = setTimeout(() => {
-      // 初期状態に戻す
-      for (let type in currentList) {
-        currentList[type] = [...(originalData[type] || [])];
-      }
-      currentType = "verbs";
-      renderList(currentType);
-      searchInput.value = "";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 3000); // 3秒長押し
-  });
-
-  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
-  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
-
+  };
 });
 </script>
 </body>
