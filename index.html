@@ -91,11 +91,18 @@
     z-index: 998;
   }
   #exampleModal {
-  user-select: none;           /* テキスト選択禁止 */
+  user-select: none;           /* 背景は選択禁止 */
   -webkit-user-select: none;
   -ms-user-select: none;
   -moz-user-select: none;
   touch-action: manipulation;  /* 長押しでコピー出ないように */
+}
+
+#exampleText {
+  user-select: text !important;  /* 例文テキストだけ選択可能にする */
+  -webkit-user-select: text !important;
+  -ms-user-select: text !important;
+  -moz-user-select: text !important;
 }
 </style>
 </head>
