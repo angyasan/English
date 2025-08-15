@@ -169,15 +169,14 @@
 <button id="scrollTopBtn" style="
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-290px);
-  display: block;
+  left: calc(50% - 300px + 10px);
+  display: none;
   font-size: 32px;
   cursor: pointer;
   background: none;
   border: none;
   color: #007bff;
-  z-index: 99999;
+  z-index: 9999;
 ">↑</button>
   
 <script>
@@ -189,6 +188,11 @@ closeBtn.addEventListener("click", () => {
   closeExampleModal();
   });
 
+  // ページスクロールで表示/非表示切替
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 100) scrollTopBtn.style.display = "block";
+    else scrollTopBtn.style.display = "none";
+  });
 
   // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
