@@ -205,8 +205,8 @@ closeBtn.addEventListener("click", () => {
   });
 
   // クリックで上にスクロール
-  scrollTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+ scrollBottomBtn.addEventListener("click", () => {
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 });
   const originalData = {
     others: [
