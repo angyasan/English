@@ -170,7 +170,7 @@
   position: fixed;
   bottom: 20px;
   left: calc(50% - 300px + 10px);
-  display: none;
+  display: block;
   font-size: 32px;
   cursor: pointer;
   background: none;
@@ -188,11 +188,6 @@ closeBtn.addEventListener("click", () => {
   closeExampleModal();
   });
 
-  // ページスクロールで表示/非表示切替
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 100) scrollTopBtn.style.display = "block";
-    else scrollTopBtn.style.display = "none";
-  });
 
   // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
