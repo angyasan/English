@@ -1832,7 +1832,7 @@ exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
       renderList(currentType);
       searchInput.value = "";
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300); // 3秒長押し
+    }, 300); // 0.3秒長押し
   });
 
   leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
