@@ -1852,6 +1852,22 @@ exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
   leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
   leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
 
+  // --- PC用：マウス短押しで初期化 ---
+leftResetZone.addEventListener("mousedown", (e) => {
+  leftPressTimer = setTimeout(() => {
+    // 初期化処理
+    for (let type in currentList) {
+      currentList[type] = [...(originalData[type] || [])];
+    }
+    currentType = "verbs";
+    renderList(currentType);
+    searchInput.value = "";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 300);
+});
+leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
+leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
+
 });
 </script>
 </body>
