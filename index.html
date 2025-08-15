@@ -77,8 +77,7 @@
   #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
   #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
   #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
-  /* 例文モーダル内テキスト用 */
-  #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; }
+  
 
   /* 左端初期化ゾーン */
   #leftResetZone {
@@ -98,7 +97,10 @@
   touch-action: manipulation;  /* 長押しでコピー出ないように */
 }
 
+  
+/* 例文モーダル内テキスト用 */
 #exampleText {
+  padding: 16px; overflow-y: auto; flex: 1; font-size: 16px;
   user-select: text !important;  /* 例文テキストだけ選択可能にする */
   -webkit-user-select: text !important;
   -ms-user-select: text !important;
