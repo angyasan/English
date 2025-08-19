@@ -114,7 +114,37 @@
   -ms-user-select: text !important;
   -moz-user-select: text !important;
 }
-  
+
+  body {
+  background-color: #000;  /* 背景を黒に */
+  color: #fff;             /* 文字を白に */
+}
+
+/* 既存のentryやdetailsなどのテキストも白にする */
+.entry .jp,
+.entry .details,
+.details .en,
+.details .kana {
+  color: #fff;
+}
+
+/* ボタンやリンクは必要に応じて色調整 */
+.control-btn, .play-btn, #scrollTopBtn, #scrollBottomBtn {
+  color: #00bfff; /* 文字やアイコンを明るい色に */
+  border-color: #00bfff;
+  background-color: transparent;
+}
+
+.tabs .tab-btn {
+  color: #fff;
+  border-color: #444;
+  background: #222;
+}
+
+.tabs .tab-btn.active {
+  background-color: #007bff;
+  color: #fff;
+}
 
 </style>
 </head>
