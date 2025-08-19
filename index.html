@@ -120,13 +120,20 @@
   color: #e0e0e0;             /* 文字を明るめグレー */
 }
 
+/* 文字を濃くして見やすくする */
 .entry .jp,
 .entry .details,
 .details .en,
-.details .kana {
-  color: #e0e0e0;
+.details .kana,
+#jpText {
+  color: #000000;  /* 黒文字 */
+  font-weight: bold;
 }
 
+/* ボーダーも濃くする */
+.entry {
+  border-bottom: 1px solid #333;
+}
 .control-btn, .play-btn, #scrollTopBtn, #scrollBottomBtn {
   color: #00bfff;
   border-color: #00bfff;
