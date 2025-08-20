@@ -1734,49 +1734,6 @@ closeBtn.addEventListener("click", () => {
   const exampleText = document.getElementById("exampleText");
   const scrollBottomBtn = document.getElementById("scrollBottomBtn");
 
-  // --- その他タブのクイズ用：既存例文ボタンを追加 ---
-const quizContainer = document.getElementById("quizContainer");
-
-// 既存の単語帳用例文ボタンをクローンして使用
-const originalExampleBtn = document.querySelector(".control-btn"); // 単語帳にある最初の例文ボタン
-const quizExampleBtn = originalExampleBtn.cloneNode(true);
-
-// クイズモーダル用に位置調整
-quizExampleBtn.style.position = "absolute";
-quizExampleBtn.style.left = "16px";
-quizExampleBtn.style.bottom = "16px";
-
-// クリック時の動作
-quizExampleBtn.onclick = () => {
-  const item = quizList[currentQuizIndex];
-  if (item.example && currentType === "others") {
-    showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-  }
-};
-
-// クイズモーダルに追加
-quizContainer.appendChild(quizExampleBtn);
-
-// クイズ開始時に表示/非表示切り替え
-function showQuizQuestion() {
-  const item = quizList[currentQuizIndex];
-  jpText.textContent = item.jp;
-  enText.textContent = item.en;
-  kanaText.textContent = item.reading || "";
-
-  enText.style.display = "none";
-  kanaText.style.display = "none";
-
-  quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-  showAnswerBtn.style.display = "inline-block";
-  nextBtn.style.display = "none";
-
-  // その他タブかつ例文ありのときだけ表示
-  quizExampleBtn.style.display = (currentType === "others" && item.example) ? "inline-block" : "none";
-
-  enText.onclick = () => { playSound(enText.textContent); };
-}
-
   let currentType = "verbs";
   let quizList = [];
   let currentQuizIndex = 0;
