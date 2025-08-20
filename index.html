@@ -23,142 +23,60 @@
     max-width: 400px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    position: relative;
   }
   .hidden { display: none !important; }
-  .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
+  .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; color:#000; }
   .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
   .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
-  /* body初期スタイル + ズーム */
+
   body { 
     font-family: -apple-system, sans-serif; 
     padding: 20px; 
     max-width: 480px; 
     margin: auto; 
     zoom: 1.3; 
-  }/* ここ追加 */
-  
+    background-color: #1e1e1e;  
+    color: #e0e0e0;             
+  }
+
   h2 { margin-bottom: 15px; }
   .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
-  .tab-btn {
-    flex: 1 0 auto;
-    min-width: 100px;
-    padding: 10px 0;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    background: #f9f9f9;
-    text-align: center;
-    font-weight: bold;
-    user-select: none;
-    transition: background-color 0.3s;
-    white-space: nowrap;
-  }
+  .tab-btn { flex: 1 0 auto; min-width: 100px; padding: 10px 0; cursor: pointer; border: 1px solid #ccc; background: #f9f9f9; text-align: center; font-weight: bold; user-select: none; transition: background-color 0.3s; white-space: nowrap; color:#e0e0e0; border-color:#444; background:#2a2a2a;}
   .tab-btn.active { background-color: #007bff; color: white; border-color: #007bff; }
+
   .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
-  .control-btn {
-    cursor: pointer;
-    background-color: #eee;
-    border: 1px solid #ccc;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background-color 0.2s;
-  }
+  .control-btn { cursor: pointer; background-color: #eee; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 14px; transition: background-color 0.2s; color:#00bfff; border-color:#00bfff; background-color:transparent; }
   .control-btn:hover { background-color: #ddd; }
+
   .entry { margin-bottom: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; user-select: none; }
-  .jp { font-size: 18px; color: #333; white-space: pre-line; }
+  .jp { font-size: 18px; color: #e0e0e0; white-space: pre-line; }
   .details { display: none; margin-top: 6px; color: #555; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; flex-wrap: wrap; }
-  .en { font-weight: bold; font-size: 17px; }
+  .en { font-weight: bold; font-size: 17px; color:#e0e0e0; }
   .kana { color: #666; font-size: 15px; }
-  .play-btn {
-    margin-left: auto;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    font-size: 20px;
-    user-select: none;
-    color: #007bff;
-    transition: color 0.2s;
-  }
+  .play-btn { margin-left: auto; cursor: pointer; border: none; background: transparent; font-size: 20px; user-select: none; color: #007bff; transition: color 0.2s; }
   .play-btn:hover { color: #0056b3; }
+
   #quizAnswerRow { min-height: 56px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #enText, #kanaText { display: none; text-align: center; }
   #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
   #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
   #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
-  
 
   /* 左端初期化ゾーン */
-  #leftResetZone {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100px;
-    height: 100%;
-    background: rgba(200,200,200,0.2); /* 明るいグレーで少し透過 */
-    z-index: 998;
-  }
-  #exampleModal {
-  user-select: none;           /* 背景は選択禁止 */
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  touch-action: manipulation;  /* 長押しでコピー出ないように */
-}
+  #leftResetZone { position: fixed; top: 0; left: 0; width: 100px; height: 100%; background: rgba(200,200,200,0.2); z-index: 998; }
 
-  
-/* 例文モーダル内テキスト用 
-  */#exampleText {
-  padding: 16px;
-  overflow-y: auto;
-  flex: 1;
-  font-size: 16px;
-  user-select: text !important;
-  -webkit-user-select: text !important;
-  -ms-user-select: text !important;
-  -moz-user-select: text !important;
-  color: #000000; /* 黒文字にする */
-}
+  /* 例文モーダル */
+  #exampleModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center; user-select:none; touch-action: manipulation;}
+  #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; user-select:text !important; color:#000; }
 
-  body {
-  background-color: #1e1e1e;  /* 暗めグレー */
-  color: #e0e0e0;             /* 文字を明るめグレー */
-}
-
-.entry .jp,
-.entry .details,
-.details .en,
-.details .kana {
-  color: #e0e0e0;
-}
-.control-btn, .play-btn, #scrollTopBtn, #scrollBottomBtn {
-  color: #00bfff;
-  border-color: #00bfff;
-  background-color: transparent;
-}
-
-.tabs .tab-btn {
-  color: #e0e0e0;
-  border-color: #444;
-  background: #2a2a2a;
-}
-
-.tabs .tab-btn.active {
-  background-color: #007bff;
-  color: #fff;
-}
-
- /* ← ここを追加：クイズ画面の日本語は黒文字に */
-  #jpText {
-    color: #000000;  /* 黒文字 */
-    font-weight: bold; 
-  }
+  body { zoom:1.3; }
 
 </style>
 </head>
 <body>
 
-<h2>
-  📘 単語帳
+<h2>📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
 </h2>
 
@@ -192,6 +110,8 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
+    <!-- ここに「その他」タブだけの例文ボタンを追加 -->
+    <button id="quizExampleBtn" class="control-btn" style="position:absolute; bottom:12px; left:12px; display:none;">例文</button>
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
@@ -199,7 +119,7 @@
 </div>
 
 <!-- 例文モーダル -->
-<div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+<div id="exampleModal">
   <div style="background:#fff; width:90%; max-width:800px; height:80%; border-radius:8px; overflow:hidden; display:flex; flex-direction:column;">
     <div style="padding:8px; background:#007bff; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
       <span>例文</span>
@@ -208,13 +128,9 @@
     <div id="exampleText"></div>
   </div>
 </div>
-  
 
-  
-<!-- 左端初期化ゾーン -->
 <div id="leftResetZone"></div>
-  
-<!-- ↑ボタン -->
+
 <button id="scrollTopBtn" style="
   position: fixed;
   bottom: 20px;
@@ -227,26 +143,26 @@
   color: #007bff;
   z-index: 9999;
 ">↑</button>
-  
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
   const closeBtn = document.getElementById("closeExampleBtn");
-closeBtn.addEventListener("click", () => {
-  closeExampleModal();
-  });
+  const quizExampleBtn = document.getElementById("quizExampleBtn");
+  const quizOverlay = document.getElementById("quizOverlay");
+  const quizContainer = document.getElementById("quizContainer");
 
-  // ページスクロールで表示/非表示切替
+  closeBtn.addEventListener("click", () => { closeExampleModal(); });
+
   window.addEventListener("scroll", () => {
     if (window.scrollY > 100) scrollTopBtn.style.display = "block";
     else scrollTopBtn.style.display = "none";
   });
-
-  // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+
   const originalData = {
     others: [
       { jp: "〜したい", en: "wanna+動詞の原形", reading: "ワナ", example: ["I wanna go to your home after you finish work.", "Do you wanna eat this?"], exampleJp: ["あなたの仕事が終わったら、あなたの家に行きたい", "これ食べたいですか？"] },
@@ -1706,23 +1622,13 @@ closeBtn.addEventListener("click", () => {
   ],
   };
 
-      const currentList = {
-    others: [...originalData.others],
-    various: [...(originalData.various||[])],
-    verbs: [...(originalData.verbs||[])],
-    nouns: [...(originalData.nouns||[])],
-    adverbs: [...(originalData.adverbs||[])],
-    adjectives: [...(originalData.adjectives||[])],
-    tenses: [...(originalData.tenses||[])],
-    pronouns: [...(originalData.pronouns||[])],
-  };
+      const currentList = { others:[...originalData.others], various:[], verbs:[], nouns:[], adverbs:[], adjectives:[], tenses:[], pronouns:[] };
 
   const contentDiv = document.getElementById("content");
   const tabButtons = document.querySelectorAll(".tab-btn");
   const shuffleBtn = document.getElementById("shuffleBtn");
   const resetBtn = document.getElementById("resetBtn");
   const startQuizBtn = document.getElementById("startQuizBtn");
-  const quizOverlay = document.getElementById("quizOverlay");
   const quizProgress = document.getElementById("quizProgress");
   const jpText = document.getElementById("jpText");
   const enText = document.getElementById("enText");
@@ -1738,260 +1644,112 @@ closeBtn.addEventListener("click", () => {
   let quizList = [];
   let currentQuizIndex = 0;
 
-  function playSound(word) {
+  function playSound(word){
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
-    const audio = new Audio(url);
-    audio.play().catch(() => {});
+    new Audio(url).play().catch(()=>{});
   }
 
-  function shuffleArray(arr) {
-    const a = arr.slice();
-    for(let i = a.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
+  function shuffleArray(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
 
-  function renderList(type) {
+  function renderList(type){
     contentDiv.innerHTML = "";
-    currentList[type].forEach(item => {
-      const entry = document.createElement("div");
-      entry.className = "entry";
-
-      const jpDiv = document.createElement("div");
-      jpDiv.className = "jp";
-      jpDiv.textContent = item.jp;
-
-      const detailsDiv = document.createElement("div");
-      detailsDiv.className = "details";
-
-      const enSpan = document.createElement("span");
-      enSpan.className = "en";
-      enSpan.textContent = item.en;
-
-      const kanaSpan = document.createElement("span");
-      kanaSpan.className = "kana";
-      if(item.reading) kanaSpan.textContent = item.reading;
-
-      const playBtn = document.createElement("button");
-      playBtn.className = "play-btn";
-      playBtn.textContent = "▶️";
-      playBtn.title = `発音再生: ${item.en}`;
-      playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
-
-      let exampleBtn = document.createElement("button");
-      exampleBtn.className = "control-btn";
-      exampleBtn.textContent = "例文";
-      exampleBtn.style.marginLeft = "8px";
-      exampleBtn.onclick = (e) => {
-        e.stopPropagation();
-        if(type === "others" && item.example) {
-          showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-        } else {
-          const query = encodeURIComponent(item.en);
-          const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
-          showWeblioExampleModal(exampleUrl);
-        }
+    currentList[type].forEach(item=>{
+      const entry = document.createElement("div"); entry.className="entry";
+      const jpDiv = document.createElement("div"); jpDiv.className="jp"; jpDiv.textContent=item.jp;
+      const detailsDiv = document.createElement("div"); detailsDiv.className="details";
+      const enSpan = document.createElement("span"); enSpan.className="en"; enSpan.textContent=item.en;
+      const kanaSpan = document.createElement("span"); kanaSpan.className="kana"; if(item.reading) kanaSpan.textContent=item.reading;
+      const playBtn = document.createElement("button"); playBtn.className="play-btn"; playBtn.textContent="▶️"; playBtn.title=`発音再生: ${item.en}`; playBtn.onclick=(e)=>{e.stopPropagation(); playSound(item.en);}
+      let exampleBtn=document.createElement("button"); exampleBtn.className="control-btn"; exampleBtn.textContent="例文"; exampleBtn.style.marginLeft="8px";
+      exampleBtn.onclick=(e)=>{e.stopPropagation();
+        if(type==="others" && item.example){ showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en); }
+        else{ const query=encodeURIComponent(item.en); showWeblioExampleModal(`https://ejje.weblio.jp/sentence/content/${query}`); }
       };
-
-      detailsDiv.appendChild(enSpan);
-      if(item.reading) detailsDiv.appendChild(kanaSpan);
-      detailsDiv.appendChild(playBtn);
-      detailsDiv.appendChild(exampleBtn);
-
-      entry.appendChild(jpDiv);
-      entry.appendChild(detailsDiv);
-
-      detailsDiv.style.display = "none";
-      jpDiv.addEventListener("click", () => {
-        detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
-      });
-
+      detailsDiv.appendChild(enSpan); if(item.reading) detailsDiv.appendChild(kanaSpan); detailsDiv.appendChild(playBtn); detailsDiv.appendChild(exampleBtn);
+      entry.appendChild(jpDiv); entry.appendChild(detailsDiv); detailsDiv.style.display="none";
+      jpDiv.addEventListener("click", ()=>{ detailsDiv.style.display=(detailsDiv.style.display==="flex")?"none":"flex"; });
       contentDiv.appendChild(entry);
     });
   }
 
-  function showQuizQuestion() {
+  function showQuizQuestion(){
     const item = quizList[currentQuizIndex];
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-    kanaText.textContent = item.reading || "";
-
-    enText.style.display = "none";
-    kanaText.style.display = "none";
-
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-    showAnswerBtn.style.display = "inline-block";
-    nextBtn.style.display = "none";
+    jpText.textContent = item.jp; enText.textContent=item.en; kanaText.textContent=item.reading||"";
+    enText.style.display="none"; kanaText.style.display="none";
+    quizProgress.textContent = `${currentQuizIndex+1} / ${quizList.length} 問`;
+    showAnswerBtn.style.display="inline-block"; nextBtn.style.display="none";
+    // 「その他」タブのみ例文ボタン表示
+    if(currentType==="others" && item.example) { quizExampleBtn.style.display="inline-block"; } else { quizExampleBtn.style.display="none"; }
   }
 
-  tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentType = btn.getAttribute("data-type");
-      searchInput.value = "";
-      currentList[currentType] = [...(originalData[currentType]||[])];
-      renderList(currentType);
+  tabButtons.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      tabButtons.forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+      currentType=btn.getAttribute("data-type"); searchInput.value="";
+      currentList[currentType]=[...(originalData[currentType]||[])]; renderList(currentType);
     });
   });
 
-  shuffleBtn.addEventListener("click", () => {
-    currentList[currentType] = shuffleArray(currentList[currentType]);
-    renderList(currentType);
+  shuffleBtn.addEventListener("click",()=>{ currentList[currentType]=shuffleArray(currentList[currentType]); renderList(currentType); });
+  resetBtn.addEventListener("click",()=>{ currentList[currentType]=[...(originalData[currentType]||[])]; searchInput.value=""; renderList(currentType); });
+  scrollBottomBtn.addEventListener("click",()=>{ window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); });
+
+  startQuizBtn.addEventListener("click",()=>{
+    quizList=shuffleArray([...currentList[currentType]]); currentQuizIndex=0;
+    if(quizList.length===0){ alert("問題がありません"); return; }
+    showQuizQuestion(); quizOverlay.style.display="flex";
   });
 
-  resetBtn.addEventListener("click", () => {
-    currentList[currentType] = [...(originalData[currentType]||[])];
-    searchInput.value = "";
-    renderList(currentType);
+  showAnswerBtn.addEventListener("click",()=>{
+    enText.style.display="block"; kanaText.style.display="block";
+    showAnswerBtn.style.display="none"; nextBtn.style.display="inline-block";
+    enText.onclick=()=>{ playSound(enText.textContent); };
   });
 
-  scrollBottomBtn.addEventListener("click", () => {
-  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-});
-
-  startQuizBtn.addEventListener("click", () => {
-    quizList = shuffleArray([...currentList[currentType]]);
-    currentQuizIndex = 0;
-    if (quizList.length === 0) { alert("問題がありません"); return; }
-    showQuizQuestion();
-    quizOverlay.style.display = "flex";
+  nextBtn.addEventListener("click",()=>{
+    currentQuizIndex++; if(currentQuizIndex>=quizList.length){ alert("全問終了！"); quizOverlay.style.display="none"; } 
+    else{ showQuizQuestion(); }
   });
 
-  showAnswerBtn.addEventListener("click", () => {
-    enText.style.display = "block";
-    kanaText.style.display = "block";
-    showAnswerBtn.style.display = "none";
-    nextBtn.style.display = "inline-block";
-    enText.onclick = () => { playSound(enText.textContent); };
-  });
+  quitQuizBtn.addEventListener("click",()=>{ if(confirm("本当にクイズをやめますか？")) quizOverlay.style.display="none"; });
 
-  nextBtn.addEventListener("click", () => {
-    currentQuizIndex++;
-    if (currentQuizIndex >= quizList.length) {
-      alert("全問終了！");
-      quizOverlay.style.display = "none";
-    } else {
-      showQuizQuestion();
-    }
-  });
-
-  quitQuizBtn.addEventListener("click", () => {
-    if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
-  });
-
-  searchInput.addEventListener("input", () => {
-    const keyword = searchInput.value.trim().toLowerCase();
-    if (!keyword) currentList[currentType] = [...(originalData[currentType]||[])];
-    else currentList[currentType] = (originalData[currentType]||[]).filter(item => {
-      return item.jp.toLowerCase().includes(keyword) ||
-             item.en.toLowerCase().includes(keyword) ||
-             (item.reading && item.reading.toLowerCase().includes(keyword));
+  searchInput.addEventListener("input",()=>{
+    const keyword=searchInput.value.trim().toLowerCase();
+    if(!keyword) currentList[currentType]=[...(originalData[currentType]||[])];
+    else currentList[currentType]=(originalData[currentType]||[]).filter(item=>{
+      return item.jp.toLowerCase().includes(keyword) || item.en.toLowerCase().includes(keyword) || (item.reading && item.reading.toLowerCase().includes(keyword));
     });
     renderList(currentType);
   });
 
   renderList(currentType);
 
-  function showWeblioExampleModal(url) {
-    const iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-    iframe.style.border = "none";
-    exampleText.innerHTML = "";
-    exampleText.appendChild(iframe);
-    document.getElementById("exampleModal").style.display = "flex";
+  function showWeblioExampleModal(url){
+    const iframe=document.createElement("iframe"); iframe.src=url; iframe.style.width="100%"; iframe.style.height="100%"; iframe.style.border="none";
+    exampleText.innerHTML=""; exampleText.appendChild(iframe); exampleModal.style.display="flex";
   }
 
-  function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
-    let html = "";
-    if(originalJp && originalEn){
-      html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-      html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
-      html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
+  function showCustomExampleModal(jpArray, enArray, wordJp, wordEn){
+    exampleText.innerHTML="";
+    for(let i=0;i<jpArray.length;i++){
+      const p=document.createElement("p"); p.style.marginBottom="8px"; p.style.textAlign="left";
+      p.innerHTML=`${jpArray[i]}<br>${enArray[i]}`;
+      exampleText.appendChild(p);
     }
-    for (let i = 0; i < textsJp.length; i++) {
-      html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
-    }
-    exampleText.innerHTML = html;
-    document.getElementById("exampleModal").style.display = "flex";
+    exampleModal.style.display="flex";
   }
 
-  function closeExampleModal() {
-    document.getElementById("exampleText").innerHTML = "";
-    document.getElementById("exampleModal").style.display = "none";
-  }
+  function closeExampleModal(){ exampleModal.style.display="none"; exampleText.innerHTML=""; }
 
-  const exampleModalDiv = document.getElementById("exampleModal");
-  let pressTimer = null;
-
-// 共通で長押し判定
-function startPressTimer() {
-  pressTimer = setTimeout(() => {
-    closeExampleModal();
-  }, 150); // 0.15秒長押しで閉じる
-}
-
-function clearPressTimer() {
-  if (pressTimer) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-  }
-}
-
-// PC: マウス押下
-exampleModalDiv.addEventListener("mousedown", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("mouseup", clearPressTimer);
-exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
-
-// スマホ: タッチ開始
-exampleModalDiv.addEventListener("touchstart", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("touchend", clearPressTimer);
-exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
-
-  // --- 新規：左端長押しで初期化 ---
-  let leftPressTimer;
-  leftResetZone.addEventListener("touchstart", (e) => {
-    leftPressTimer = setTimeout(() => {
-      // 初期状態に戻す
-      for (let type in currentList) {
-        currentList[type] = [...(originalData[type] || [])];
-      }
-      currentType = "verbs";
-      renderList(currentType);
-      searchInput.value = "";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300); // 0.3秒長押し
+  quizExampleBtn.addEventListener("click", ()=>{
+    const item = quizList[currentQuizIndex];
+    if(item.example){ showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en); }
   });
 
-  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
-  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
-
-  // --- PC用：マウス短押しで初期化 ---
-leftResetZone.addEventListener("mousedown", (e) => {
-  leftPressTimer = setTimeout(() => {
-    // 初期化処理
-    for (let type in currentList) {
-      currentList[type] = [...(originalData[type] || [])];
-    }
-    currentType = "verbs";
-    renderList(currentType);
-    searchInput.value = "";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 150);
-});
-leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
-leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
+  leftResetZone.addEventListener("click",()=>{ resetBtn.click(); });
 
 });
 </script>
+
 </body>
 </html>
