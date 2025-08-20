@@ -125,7 +125,7 @@
       <span>例文</span>
       <button id="closeExampleBtn" style="background:none; border:none; color:white; font-size:28px; line-height:1; padding:4px 8px; cursor:pointer;">✖</button>
     </div>
-    <div id="exampleText"></div>
+    <div id="exampleText" style="padding:12px; overflow-y:auto; flex:1; font-size:16px; color:#000;"></div>
   </div>
 </div>
 
@@ -1729,15 +1729,39 @@ document.addEventListener("DOMContentLoaded", () => {
     exampleText.innerHTML=""; exampleText.appendChild(iframe); exampleModal.style.display="flex";
   }
 
-  function showCustomExampleModal(jpArray, enArray, wordJp, wordEn){
-    exampleText.innerHTML="";
-    for(let i=0;i<jpArray.length;i++){
-      const p=document.createElement("p"); p.style.marginBottom="8px"; p.style.textAlign="left";
-      p.innerHTML=`${jpArray[i]}<br>${enArray[i]}`;
-      exampleText.appendChild(p);
-    }
-    exampleModal.style.display="flex";
+function showCustomExampleModal(jpArray, enArray, wordJp, wordEn){
+  exampleText.innerHTML = "";
+
+  // 1. 単語の日本語と英語を横並びで表示
+  const topDiv = document.createElement("div");
+  topDiv.style.display = "flex";
+  topDiv.style.justifyContent = "space-between";
+  topDiv.style.fontWeight = "bold";
+  topDiv.style.fontSize = "18px";
+  topDiv.style.marginBottom = "6px";
+  topDiv.textContent = ""; // 子要素でセット
+  const jpSpan = document.createElement("span"); jpSpan.textContent = wordJp;
+  const enSpan = document.createElement("span"); enSpan.textContent = wordEn;
+  topDiv.appendChild(jpSpan); topDiv.appendChild(enSpan);
+  exampleText.appendChild(topDiv);
+
+  // 2. 区切り線
+  const hr = document.createElement("hr");
+  hr.style.border = "1px solid #ccc";
+  hr.style.margin = "6px 0";
+  exampleText.appendChild(hr);
+
+  // 3. 例文リスト
+  for(let i=0;i<jpArray.length;i++){
+    const p=document.createElement("p");
+    p.style.marginBottom="8px";
+    p.style.textAlign="left";
+    p.innerHTML=`${jpArray[i]}<br>${enArray[i]}`;
+    exampleText.appendChild(p);
   }
+
+  exampleModal.style.display="flex";
+}
 
   function closeExampleModal(){ exampleModal.style.display="none"; exampleText.innerHTML=""; }
 
