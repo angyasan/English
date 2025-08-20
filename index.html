@@ -1734,21 +1734,6 @@ closeBtn.addEventListener("click", () => {
   const exampleText = document.getElementById("exampleText");
   const scrollBottomBtn = document.getElementById("scrollBottomBtn");
 
-const quizExampleBtn = document.createElement("button");
-quizExampleBtn.textContent = "例文";
-quizExampleBtn.className = "control-btn";
-quizExampleBtn.style.position = "absolute";
-quizExampleBtn.style.left = "12px";
-quizExampleBtn.style.bottom = "12px";
-quizExampleBtn.style.zIndex = "10";
-quizExampleBtn.onclick = () => {
-  const item = quizList[currentQuizIndex];
-  if(item.example && currentType === "others") {
-    showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-  }
-};
-quizContainer.appendChild(quizExampleBtn);
-  
   let currentType = "verbs";
   let quizList = [];
   let currentQuizIndex = 0;
