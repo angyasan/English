@@ -24,6 +24,16 @@
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
+  #quizContainer {
+  position: relative; /* 絶対配置の基準にする */
+}
+
+#quizExampleBtn {
+  position: absolute;
+  bottom: 10px;   /* 下からの距離 */
+  left: 10px;     /* 左からの距離 */
+  z-index: 1001;  /* クイズ要素の上に表示 */
+}
   .hidden { display: none !important; }
   .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
   .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
@@ -1846,7 +1856,7 @@ closeBtn.addEventListener("click", () => {
     };
 
     // jpTextの横にボタンを追加（単語帳と同じ配置）
-    jpText.parentNode.insertBefore(exampleBtn, jpText.nextSibling);
+quizContainer.appendChild(exampleBtn);
 }
 
   tabButtons.forEach(btn => {
