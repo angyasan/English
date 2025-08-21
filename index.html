@@ -1812,7 +1812,23 @@ closeBtn.addEventListener("click", () => {
     });
   }
 
-  function showQuizQuestion() {
+ startQuizBtn.addEventListener("click", () => {
+    // クイズリストをシャッフルして準備
+    quizList = shuffleArray([...currentList[currentType]]);
+    currentQuizIndex = 0;
+
+    if(quizList.length === 0){
+        alert("問題がありません");
+        return;
+    }
+
+    // クイズ画面を表示
+    quizOverlay.style.display = "flex";
+    quizOverlay.style.position = "relative"; // 左下固定用
+    showQuizQuestion();
+});
+
+function showQuizQuestion() {
     const item = quizList[currentQuizIndex];
     if(!item) return;
 
@@ -1827,11 +1843,11 @@ closeBtn.addEventListener("click", () => {
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
 
-    // 例文ボタン削除
+    // 既存の例文ボタンを削除
     let existingBtn = document.getElementById("quizExampleBtn");
     if(existingBtn) existingBtn.remove();
 
-    // 例文ボタン作成
+    // 左下固定の例文ボタン作成
     const exampleBtn = document.createElement("button");
     exampleBtn.id = "quizExampleBtn";
     exampleBtn.className = "control-btn";
@@ -1849,12 +1865,7 @@ closeBtn.addEventListener("click", () => {
         }
     };
 
-    // overlay の relative 設定
-    quizOverlay.style.position = "relative";
     quizOverlay.appendChild(exampleBtn);
-
-    // quizOverlay 表示
-    quizOverlay.style.display = "flex";
 }
 
   tabButtons.forEach(btn => {
