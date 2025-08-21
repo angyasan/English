@@ -1824,7 +1824,30 @@ closeBtn.addEventListener("click", () => {
     quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
-  }
+
+    // --- 新規追加: クイズでも例文ボタンを表示 ---
+    // 既存のボタンを削除してから追加
+    let existingBtn = document.getElementById("quizExampleBtn");
+    if(existingBtn) existingBtn.remove();
+
+    const exampleBtn = document.createElement("button");
+    exampleBtn.id = "quizExampleBtn";
+    exampleBtn.className = "control-btn";
+    exampleBtn.textContent = "例文";
+    exampleBtn.style.marginLeft = "8px";
+    exampleBtn.onclick = () => {
+        if(item.example && item.exampleJp){
+            // 単語帳と同じモーダル表示
+            showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+        } else {
+            // 単語帳同様のWeblio例文もしくは空の処理
+            showCustomExampleModal([], [], item.jp, item.en);
+        }
+    };
+
+    // jpTextの横にボタンを追加（単語帳と同じ配置）
+    jpText.parentNode.insertBefore(exampleBtn, jpText.nextSibling);
+}
 
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
