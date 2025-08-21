@@ -1812,19 +1812,32 @@ closeBtn.addEventListener("click", () => {
     });
   }
 
-  function showQuizQuestion() {
-    const item = quizList[currentQuizIndex];
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-    kanaText.textContent = item.reading || "";
-
-    enText.style.display = "none";
-    kanaText.style.display = "none";
-
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-    showAnswerBtn.style.display = "inline-block";
-    nextBtn.style.display = "none";
+  function updateQuizExampleBtn() {
+  const item = quizList[currentQuizIndex];
+  const exampleBtn = document.querySelector(".entry .control-btn"); // 単語帳の既存例文ボタン取得
+  if(currentType === "others" && item.example && exampleBtn) {
+    if(!quizContainer.contains(exampleBtn)) {
+      quizContainer.appendChild(exampleBtn);  // クイズ画面に移動
+      exampleBtn.style.position = "absolute";
+      exampleBtn.style.left = "16px";
+      exampleBtn.style.bottom = "16px";
+      exampleBtn.style.zIndex = "1001";
+    }
+    exampleBtn.style.display = "inline-block";
+    exampleBtn.onclick = () => {
+      showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+    };
+  } else if(exampleBtn) {
+    exampleBtn.style.display = "none";
   }
+}
+
+// showQuizQuestion の修正版
+const originalShowQuizQuestion = showQuizQuestion;
+showQuizQuestion = function() {
+  originalShowQuizQuestion(); // 既存処理呼び出し
+  updateQuizExampleBtn();     // 例文ボタン移動/表示
+};
 const quizExampleBtn = document.createElement("button");
   quizExampleBtn.textContent = "例文";
   quizExampleBtn.className = "control-btn";
