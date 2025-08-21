@@ -1823,40 +1823,40 @@ closeBtn.addEventListener("click", () => {
   }
 
   function showQuizQuestion() {
-    const item = quizList[currentQuizIndex];
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-    kanaText.textContent = item.reading || "";
+  const item = quizList[currentQuizIndex];
+  jpText.textContent = item.jp;
+  enText.textContent = item.en;
+  kanaText.textContent = item.reading || "";
 
-    enText.style.display = "none";
-    kanaText.style.display = "none";
+  enText.style.display = "none";
+  kanaText.style.display = "none";
 
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-    showAnswerBtn.style.display = "inline-block";
-    nextBtn.style.display = "none";
+  quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+  showAnswerBtn.style.display = "inline-block";
+  nextBtn.style.display = "none";
 
-    // --- 新規追加: クイズでも例文ボタンを表示 ---
-    // 既存のボタンを削除してから追加
-    let existingBtn = document.getElementById("quizExampleBtn");
-    if(existingBtn) existingBtn.remove();
+  // --- その他タブだけ例文ボタンを追加 ---
+  let existingBtn = document.getElementById("quizExampleBtn");
+  if(existingBtn) existingBtn.remove();
 
+  if(currentType === "others") { // ← ここでタブをチェック
     const exampleBtn = document.createElement("button");
     exampleBtn.id = "quizExampleBtn";
     exampleBtn.className = "control-btn";
     exampleBtn.textContent = "例文";
     exampleBtn.style.marginLeft = "8px";
+
     exampleBtn.onclick = () => {
-        if(item.example && item.exampleJp){
-            // 単語帳と同じモーダル表示
-            showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-        } else {
-            // 単語帳同様のWeblio例文もしくは空の処理
-            showCustomExampleModal([], [], item.jp, item.en);
-        }
+      if(item.example && item.exampleJp){
+        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+      } else {
+        showCustomExampleModal([], [], item.jp, item.en);
+      }
     };
 
-    // jpTextの横にボタンを追加（単語帳と同じ配置）
-quizContainer.appendChild(exampleBtn);
+    // 好きな場所に追加（例: quizContainerの最後）
+    quizContainer.appendChild(exampleBtn);
+  }
 }
 
   tabButtons.forEach(btn => {
