@@ -152,13 +152,7 @@
     color: #000000;  /* 黒文字 */
     font-weight: bold; 
   }
-.quiz-example-btn {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  z-index: 1001;
-}
-  
+
 </style>
 </head>
 <body>
@@ -1830,12 +1824,6 @@ closeBtn.addEventListener("click", () => {
     quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
-
-    if(currentType === "others") {
-  addQuizExampleBtn(item);
-} else if(quizExampleBtn) {
-  quizExampleBtn.remove();
-}
   }
 
   tabButtons.forEach(btn => {
