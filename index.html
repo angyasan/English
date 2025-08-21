@@ -1818,35 +1818,45 @@ closeBtn.addEventListener("click", () => {
     enText.textContent = item.en;
     kanaText.textContent = item.reading || "";
 
+    // 答え部分を非表示に
     enText.style.display = "none";
     kanaText.style.display = "none";
 
+    // クイズ進行状況表示
     quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
 
-    // --- 新規追加: クイズでも例文ボタンを表示 ---
-    // 既存のボタンを削除してから追加
+    // --- 既存の例文ボタン削除 ---
     let existingBtn = document.getElementById("quizExampleBtn");
-    if(existingBtn) existingBtn.remove();
+    if (existingBtn) existingBtn.remove();
 
+    // --- 例文ボタン作成 ---
     const exampleBtn = document.createElement("button");
     exampleBtn.id = "quizExampleBtn";
     exampleBtn.className = "control-btn";
     exampleBtn.textContent = "例文";
-    exampleBtn.style.marginLeft = "8px";
+
+    // 左下固定スタイル
+    exampleBtn.style.position = "absolute";
+    exampleBtn.style.left = "16px";   // モーダル左端からの距離
+    exampleBtn.style.bottom = "16px"; // モーダル下端からの距離
+    exampleBtn.style.zIndex = "10";
+
+    // クリック時の挙動
     exampleBtn.onclick = () => {
-        if(item.example && item.exampleJp){
+        if (item.example && item.exampleJp) {
             // 単語帳と同じモーダル表示
             showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
         } else {
-            // 単語帳同様のWeblio例文もしくは空の処理
+            // 空でもモーダルを出す
             showCustomExampleModal([], [], item.jp, item.en);
         }
     };
 
-    // jpTextの横にボタンを追加（単語帳と同じ配置）
-    jpText.parentNode.insertBefore(exampleBtn, jpText.nextSibling);
+    // quizOverlay に追加
+    quizOverlay.style.position = "relative"; // モーダル自体に relative を付与
+    quizOverlay.appendChild(exampleBtn);
 }
 
   tabButtons.forEach(btn => {
