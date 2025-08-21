@@ -1825,39 +1825,7 @@ closeBtn.addEventListener("click", () => {
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
   }
-const quizExampleBtn = document.createElement("button");
-  quizExampleBtn.textContent = "例文";
-  quizExampleBtn.className = "control-btn";
-  quizExampleBtn.style.position = "absolute";
-  quizExampleBtn.style.left = "16px";
-  quizExampleBtn.style.bottom = "16px";
-  quizExampleBtn.style.zIndex = "1001";
 
-  quizExampleBtn.onclick = () => {
-    const item = quizList[currentQuizIndex];
-    if(item.example && currentType === "others") {
-      showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-    }
-  };
-
-  quizContainer.appendChild(quizExampleBtn);
-
-  function updateQuizExampleBtn() {
-    const item = quizList[currentQuizIndex];
-    if(currentType === "others" && item.example) {
-      quizExampleBtn.style.display = "inline-block";
-    } else {
-      quizExampleBtn.style.display = "none";
-    }
-  }
-
-  // showQuizQuestion をラップしてボタン表示更新
-  const originalShowQuizQuestion = showQuizQuestion;
-  showQuizQuestion = function() {
-    originalShowQuizQuestion();
-    updateQuizExampleBtn();
-  };
-  
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
@@ -1923,38 +1891,6 @@ const quizExampleBtn = document.createElement("button");
              (item.reading && item.reading.toLowerCase().includes(keyword));
     });
     renderList(currentType);
-    // --- その他タブクイズ用：既存例文ボタンを左下に追加 ---
-const quizContainer = document.getElementById("quizContainer");
-
-// 単語帳の例文ボタンを取得してクローン
-const originalExampleBtn = document.querySelector(".control-btn"); // 単語帳の最初の例文ボタン
-const quizExampleBtn = originalExampleBtn.cloneNode(true);
-
-// 左下に配置
-quizExampleBtn.style.position = "absolute";
-quizExampleBtn.style.left = "16px";
-quizExampleBtn.style.bottom = "16px";
-quizExampleBtn.style.zIndex = "1001"; // モーダルより前面
-
-// クイズ中にクリックされたときの動作
-quizExampleBtn.onclick = () => {
-  const item = quizList[currentQuizIndex];
-  if(item.example && currentType === "others") {
-    showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-  }
-};
-
-// クイズモーダルに追加
-quizContainer.appendChild(quizExampleBtn);
-
-// showQuizQuestion 内で表示/非表示切替
-const originalShowQuizQuestion = showQuizQuestion;
-showQuizQuestion = function() {
-  originalShowQuizQuestion();
-  const item = quizList[currentQuizIndex];
-  quizExampleBtn.style.display = (currentType === "others" && item.example) ? "inline-block" : "none";
-};
-    
   });
 
   renderList(currentType);
