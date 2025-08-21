@@ -1812,26 +1812,8 @@ closeBtn.addEventListener("click", () => {
     });
   }
 
- startQuizBtn.addEventListener("click", () => {
-    // クイズリストをシャッフルして準備
-    quizList = shuffleArray([...currentList[currentType]]);
-    currentQuizIndex = 0;
-
-    if(quizList.length === 0){
-        alert("問題がありません");
-        return;
-    }
-
-    // クイズ画面を表示
-    quizOverlay.style.display = "flex";
-    quizOverlay.style.position = "relative"; // 左下固定用
-    showQuizQuestion();
-});
-
-function showQuizQuestion() {
+  function showQuizQuestion() {
     const item = quizList[currentQuizIndex];
-    if(!item) return;
-
     jpText.textContent = item.jp;
     enText.textContent = item.en;
     kanaText.textContent = item.reading || "";
@@ -1843,29 +1825,28 @@ function showQuizQuestion() {
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
 
-    // 既存の例文ボタンを削除
+    // --- 新規追加: クイズでも例文ボタンを表示 ---
+    // 既存のボタンを削除してから追加
     let existingBtn = document.getElementById("quizExampleBtn");
     if(existingBtn) existingBtn.remove();
 
-    // 左下固定の例文ボタン作成
     const exampleBtn = document.createElement("button");
     exampleBtn.id = "quizExampleBtn";
     exampleBtn.className = "control-btn";
     exampleBtn.textContent = "例文";
-    exampleBtn.style.position = "absolute";
-    exampleBtn.style.left = "16px";
-    exampleBtn.style.bottom = "16px";
-    exampleBtn.style.zIndex = "10";
-
+    exampleBtn.style.marginLeft = "8px";
     exampleBtn.onclick = () => {
         if(item.example && item.exampleJp){
+            // 単語帳と同じモーダル表示
             showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
         } else {
+            // 単語帳同様のWeblio例文もしくは空の処理
             showCustomExampleModal([], [], item.jp, item.en);
         }
     };
 
-    quizOverlay.appendChild(exampleBtn);
+    // jpTextの横にボタンを追加（単語帳と同じ配置）
+    jpText.parentNode.insertBefore(exampleBtn, jpText.nextSibling);
 }
 
   tabButtons.forEach(btn => {
