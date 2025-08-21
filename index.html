@@ -23,6 +23,7 @@
     max-width: 400px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    position: relative; /* ← 追加: ボタン配置用 */
   }
   .hidden { display: none !important; }
   .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
@@ -195,6 +196,8 @@
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
+    <!-- ここに白いモーダル内左下に例文ボタン追加 -->
+    <button id="quizExampleBtn" class="control-btn" style="position:absolute; left:16px; bottom:16px; display:none;">例文</button>
   </div>
 </div>
 
@@ -233,8 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
   const closeBtn = document.getElementById("closeExampleBtn");
-closeBtn.addEventListener("click", () => {
-  closeExampleModal();
+  const quizExampleBtn = document.getElementById("quizExampleBtn");
+  closeBtn.addEventListener("click", () => {
+    closeExampleModal();
   });
 
   // ページスクロールで表示/非表示切替
@@ -246,7 +250,8 @@ closeBtn.addEventListener("click", () => {
   // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+  });
+
   const originalData = {
     others: [
       { jp: "〜したい", en: "wanna+動詞の原形", reading: "ワナ", example: ["I wanna go to your home after you finish work.", "Do you wanna eat this?"], exampleJp: ["あなたの仕事が終わったら、あなたの家に行きたい", "これ食べたいですか？"] },
@@ -1706,7 +1711,7 @@ closeBtn.addEventListener("click", () => {
   ],
   };
 
-      const currentList = {
+    const currentList = {
     others: [...originalData.others],
     various: [...(originalData.various||[])],
     verbs: [...(originalData.verbs||[])],
@@ -1824,39 +1829,15 @@ closeBtn.addEventListener("click", () => {
     quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
+
+    // 例文ボタン表示制御
+    quizExampleBtn.style.display = (currentType === "others" && item.example) ? "inline-block" : "none";
+    quizExampleBtn.onclick = () => {
+      if(item.example && currentType === "others") {
+        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+      }
+    };
   }
-const quizExampleBtn = document.createElement("button");
-  quizExampleBtn.textContent = "例文";
-  quizExampleBtn.className = "control-btn";
-  quizExampleBtn.style.position = "absolute";
-  quizExampleBtn.style.left = "16px";
-  quizExampleBtn.style.bottom = "16px";
-  quizExampleBtn.style.zIndex = "1001";
-
-  quizExampleBtn.onclick = () => {
-    const item = quizList[currentQuizIndex];
-    if(item.example && currentType === "others") {
-      showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-    }
-  };
-
-  quizContainer.appendChild(quizExampleBtn);
-
-  function updateQuizExampleBtn() {
-    const item = quizList[currentQuizIndex];
-    if(currentType === "others" && item.example) {
-      quizExampleBtn.style.display = "inline-block";
-    } else {
-      quizExampleBtn.style.display = "none";
-    }
-  }
-
-  // showQuizQuestion をラップしてボタン表示更新
-  const originalShowQuizQuestion = showQuizQuestion;
-  showQuizQuestion = function() {
-    originalShowQuizQuestion();
-    updateQuizExampleBtn();
-  };
   
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -1897,78 +1878,15 @@ const quizExampleBtn = document.createElement("button");
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
-    enText.onclick = () => { playSound(enText.textContent); };
   });
 
   nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
-    if (currentQuizIndex >= quizList.length) {
-      alert("全問終了！");
-      quizOverlay.style.display = "none";
-    } else {
-      showQuizQuestion();
-    }
+    if(currentQuizIndex >= quizList.length) { quizOverlay.style.display = "none"; }
+    else { showQuizQuestion(); }
   });
 
-  quitQuizBtn.addEventListener("click", () => {
-    if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
-  });
-
-  searchInput.addEventListener("input", () => {
-    const keyword = searchInput.value.trim().toLowerCase();
-    if (!keyword) currentList[currentType] = [...(originalData[currentType]||[])];
-    else currentList[currentType] = (originalData[currentType]||[]).filter(item => {
-      return item.jp.toLowerCase().includes(keyword) ||
-             item.en.toLowerCase().includes(keyword) ||
-             (item.reading && item.reading.toLowerCase().includes(keyword));
-    });
-    renderList(currentType);
-    // --- その他タブクイズ用：既存例文ボタンを左下に追加 ---
-const quizContainer = document.getElementById("quizContainer");
-
-// 単語帳の例文ボタンを取得してクローン
-const originalExampleBtn = document.querySelector(".control-btn"); // 単語帳の最初の例文ボタン
-const quizExampleBtn = originalExampleBtn.cloneNode(true);
-
-// 左下に配置
-quizExampleBtn.style.position = "absolute";
-quizExampleBtn.style.left = "16px";
-quizExampleBtn.style.bottom = "16px";
-quizExampleBtn.style.zIndex = "1001"; // モーダルより前面
-
-// クイズ中にクリックされたときの動作
-quizExampleBtn.onclick = () => {
-  const item = quizList[currentQuizIndex];
-  if(item.example && currentType === "others") {
-    showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-  }
-};
-
-// クイズモーダルに追加
-quizContainer.appendChild(quizExampleBtn);
-
-// showQuizQuestion 内で表示/非表示切替
-const originalShowQuizQuestion = showQuizQuestion;
-showQuizQuestion = function() {
-  originalShowQuizQuestion();
-  const item = quizList[currentQuizIndex];
-  quizExampleBtn.style.display = (currentType === "others" && item.example) ? "inline-block" : "none";
-};
-    
-  });
-
-  renderList(currentType);
-
-  function showWeblioExampleModal(url) {
-    const iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-    iframe.style.border = "none";
-    exampleText.innerHTML = "";
-    exampleText.appendChild(iframe);
-    document.getElementById("exampleModal").style.display = "flex";
-  }
+  quitQuizBtn.addEventListener("click", () => { quizOverlay.style.display = "none"; });
 
   function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
     let html = "";
@@ -1986,74 +1904,16 @@ showQuizQuestion = function() {
   }
 
   function closeExampleModal() {
-    document.getElementById("exampleText").innerHTML = "";
+    exampleText.innerHTML = "";
     document.getElementById("exampleModal").style.display = "none";
   }
 
-  const exampleModalDiv = document.getElementById("exampleModal");
-  let pressTimer = null;
-
-// 共通で長押し判定
-function startPressTimer() {
-  pressTimer = setTimeout(() => {
-    closeExampleModal();
-  }, 150); // 0.15秒長押しで閉じる
-}
-
-function clearPressTimer() {
-  if (pressTimer) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-  }
-}
-
-// PC: マウス押下
-exampleModalDiv.addEventListener("mousedown", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("mouseup", clearPressTimer);
-exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
-
-// スマホ: タッチ開始
-exampleModalDiv.addEventListener("touchstart", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("touchend", clearPressTimer);
-exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
-
-  // --- 新規：左端長押しで初期化 ---
-  let leftPressTimer;
-  leftResetZone.addEventListener("touchstart", (e) => {
-    leftPressTimer = setTimeout(() => {
-      // 初期状態に戻す
-      for (let type in currentList) {
-        currentList[type] = [...(originalData[type] || [])];
-      }
-      currentType = "verbs";
-      renderList(currentType);
-      searchInput.value = "";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300); // 0.3秒長押し
-  });
-
-  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
-  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
-
-  // --- PC用：マウス短押しで初期化 ---
-leftResetZone.addEventListener("mousedown", (e) => {
-  leftPressTimer = setTimeout(() => {
-    // 初期化処理
-    for (let type in currentList) {
-      currentList[type] = [...(originalData[type] || [])];
-    }
-    currentType = "verbs";
-    renderList(currentType);
+  // 左端初期化処理
+  leftResetZone.addEventListener("click", () => {
+    currentList[currentType] = [...(originalData[currentType]||[])];
     searchInput.value = "";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 150);
-});
-leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
-leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
+    renderList(currentType);
+  });
 
 });
 </script>
