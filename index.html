@@ -181,6 +181,7 @@
   <div class="tab-btn" data-type="adjectives">形容詞</div>
   <div class="tab-btn" data-type="tenses">時制</div>
   <div class="tab-btn" data-type="pronouns">代名詞</div>
+  <div class="tab-btn" data-type="conjunctions">接続詞</div>
 </div>
 
 <input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
@@ -1807,7 +1808,17 @@ closeBtn.addEventListener("click", () => {
     { jp: "お互い", en: "each other", reading: "イーチ アザー" },
     { jp: "なんでも、どんなものでも", en: "whatever", reading: "ワットエヴァー" }
   ],
-  };
+  
+  
+  
+  
+   conjunctions: [
+    { jp: "そして", en: "and", reading: "アンド" },
+    { jp: "しかし", en: "but", reading: "バット" },
+    { jp: "または", en: "or", reading: "オア" },
+    { jp: "なぜなら", en: "because", reading: "ビコーズ" }
+  ]
+};
 
       const currentList = {
     others: [...originalData.others],
