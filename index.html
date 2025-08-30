@@ -2137,6 +2137,42 @@ leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); 
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
 
 });
+  // --- 英語→日本語クイズ ---
+function showQuizQuestionEnJ() {
+    const item = quizList[currentQuizIndex];
+    enText.textContent = item.en;
+    jpText.textContent = "";
+    jpText.style.display = "block"; // 空欄のまま
+    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+
+    showAnswerBtn.onclick = () => {
+        jpText.textContent = item.jp;
+        showAnswerBtn.style.display = "none";
+        nextBtn.style.display = "inline-block";
+        enText.onclick = () => { playSound(enText.textContent); };
+    };
+
+    nextBtn.onclick = () => {
+        currentQuizIndex++;
+        if(currentQuizIndex >= quizList.length) {
+            alert("全問終了！");
+            quizOverlay.style.display = "none";
+            currentQuizIndex = 0;
+        } else {
+            showQuizQuestionEnJ();
+        }
+    };
+}
+
+startQuizEnJBtn.addEventListener("click", () => {
+    quizList = shuffleArray([...currentList[currentType]]);
+    currentQuizIndex = 0;
+    if (quizList.length === 0) { alert("問題がありません"); return; }
+    showQuizQuestionEnJ();
+    quizOverlay.style.display = "flex";
+});
 </script>
 </body>
 </html>
