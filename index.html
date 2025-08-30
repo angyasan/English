@@ -2183,6 +2183,10 @@ leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); 
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
 
 });
+enText.addEventListener("click", () => {
+    enText.style.border = "2px solid red";  // 英語部分に赤枠を付ける
+    console.log("英語テキスト要素:", enText); // 本当に取得できてるか確認
+});
 </script>
 </body>
 </html>
