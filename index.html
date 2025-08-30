@@ -1,3 +1,4 @@
+クイズあり
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -611,7 +612,7 @@ closeBtn.addEventListener("click", () => {
       
   ],
    verbs: [
-      {jp:"〜である/いる", en:"be", reading:"ビー"},
+      {jp:"〜である//いる", en:"be", reading:"ビー"},
       {jp:"〜になる", en:"become", reading:"ビカム"},
       {jp:"回す", en:"turn", reading:"ターン"},
       {jp:"持ってくる", en:"bring", reading:"ブリング"},
@@ -1949,39 +1950,11 @@ closeBtn.addEventListener("click", () => {
   kanaText.textContent = item.reading || "";
 
   enText.style.display = "none";
-kanaText.style.display = "none";
-
-// --- 追加部分 ---
-// --- ここだけ差し替え ---
-if (quizDirection === "E→J") {
-    // 英語クリックで常に音声再生
-    enText.onclick = () => playSound(enText.textContent);
-    // 日本語クリックは完全に無効
-    jpText.onclick = null;
-} else { // J→E
-    // 答え表示前は英語クリック無効、答え後に showAnswerBtn でセット
-    enText.onclick = null;
-    // 日本語は通常処理
-    jpText.onclick = () => {
-        const item = quizList[currentQuizIndex];
-        // ここに詳細開閉やその他処理を入れる
-    };
-}
+  kanaText.style.display = "none";
 
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
-  
-  // 日本語クリックは quizDirection に応じて切り替え
-if (quizDirection === "E→J") {
-    jpText.onclick = null; // E→Jではタップしても反応なし
-} else {
-    jpText.onclick = () => {
-        // J→Eクイズは通常通り
-        const item = quizList[currentQuizIndex];
-        // もし詳細開閉があればここで設定
-    };
-}
 
   // --- その他タブだけ例文ボタンを追加 ---
   let existingBtn = document.getElementById("quizExampleBtn");
@@ -2059,9 +2032,8 @@ function startQuiz(type){
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
-
-    
-});
+    enText.onclick = () => { playSound(enText.textContent); };
+  });
 
   nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
