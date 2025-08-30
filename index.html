@@ -2043,18 +2043,28 @@ function startQuiz(type){
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
-    enText.onclick = () => { playSound(enText.textContent); };
-  });
 
-  nextBtn.addEventListener("click", () => {
+    if (quizDirection === "J→E") {
+        // J→Eの場合：答え表示後のみ英語クリックで音声
+        enText.onclick = () => playSound(enText.textContent);
+        // 日本語は通常処理（詳細開閉など）に任せる
+    } else if (quizDirection === "E→J") {
+        // E→Jの場合：答え表示後も英語クリックで音声再生
+        enText.onclick = () => playSound(enText.textContent);
+        // 日本語クリックは完全無効
+        jpText.onclick = null;
+    }
+});
+
+nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
     if (currentQuizIndex >= quizList.length) {
-      alert("全問終了！");
-      quizOverlay.style.display = "none";
+        alert("全問終了！");
+        quizOverlay.style.display = "none";
     } else {
-      showQuizQuestion();
+        showQuizQuestion();
     }
-  });
+});
 
   quitQuizBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
