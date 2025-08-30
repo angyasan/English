@@ -1952,16 +1952,19 @@ closeBtn.addEventListener("click", () => {
 kanaText.style.display = "none";
 
 // --- 追加部分 ---
+// --- ここだけ差し替え ---
 if (quizDirection === "E→J") {
-    // 答え表示前でも後でも英語クリックで音声再生
-    enText.onclick = () => { playSound(enText.textContent); };
-    // E→Jでは日本語クリックは無効化
+    // 英語クリックで常に音声再生
+    enText.onclick = () => playSound(enText.textContent);
+    // 日本語クリックは完全に無効
     jpText.onclick = null;
-} else {
-    enText.onclick = null; // J→Eは答え表示後にセット
+} else { // J→E
+    // 答え表示前は英語クリック無効、答え後に showAnswerBtn でセット
+    enText.onclick = null;
+    // 日本語は通常処理
     jpText.onclick = () => {
-        // J→Eクイズは通常通り（例：詳細開閉）
         const item = quizList[currentQuizIndex];
+        // ここに詳細開閉やその他処理を入れる
     };
 }
 
@@ -2057,11 +2060,7 @@ function startQuiz(type){
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
 
-    if (quizDirection === "J→E") {
-        // J→Eの場合：答え表示後のみ英語クリックで音声
-        enText.onclick = () => { playSound(enText.textContent); };
-    }
-    // E→Jの場合は showQuizQuestion() で常に英語クリックで音声再生済みなので不要
+    
 });
 
   nextBtn.addEventListener("click", () => {
