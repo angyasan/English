@@ -190,6 +190,7 @@
   <button class="control-btn" id="shuffleBtn">シャッフル</button>
   <button class="control-btn" id="resetBtn">元に戻す</button>
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
+  <button id="startQuizEnJBtn" class="control-btn">E→Jクイズ</button>
 </div>
 
 <div id="content"></div>
@@ -1996,7 +1997,46 @@ closeBtn.addEventListener("click", () => {
   scrollBottomBtn.addEventListener("click", () => {
   window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 });
+const startQuizEnJBtn = document.getElementById("startQuizEnJBtn");
 
+  // --- 英語→日本語クイズ ---
+  startQuizEnJBtn.addEventListener("click", () => {
+    quizList = shuffleArray([...currentList[currentType]]);
+    currentQuizIndex = 0;
+    if (quizList.length === 0) { alert("問題がありません"); return; }
+    showQuizQuestionEnJ();
+    quizOverlay.style.display = "flex";
+  });
+
+  function showQuizQuestionEnJ() {
+    const item = quizList[currentQuizIndex];
+    jpText.textContent = ""; // 答え隠す
+    enText.textContent = item.en; // 英語を表示
+    kanaText.style.display = "none"; // カタカナ非表示
+
+    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+
+    // 答えを見るボタン
+    showAnswerBtn.onclick = () => {
+      jpText.textContent = item.jp; // 日本語表示
+      showAnswerBtn.style.display = "none";
+      nextBtn.style.display = "inline-block";
+      enText.onclick = () => { playSound(enText.textContent); };
+    };
+
+    // 次へボタン
+    nextBtn.onclick = () => {
+      currentQuizIndex++;
+      if (currentQuizIndex >= quizList.length) {
+        alert("全問終了！");
+        quizOverlay.style.display = "none";
+      } else {
+        showQuizQuestionEnJ();
+      }
+    };
+ 
   startQuizBtn.addEventListener("click", () => {
     quizList = shuffleArray([...currentList[currentType]]);
     currentQuizIndex = 0;
