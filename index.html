@@ -1939,29 +1939,21 @@ closeBtn.addEventListener("click", () => {
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
-  
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
-    enText.style.display = "none";  // 答え前は非表示
-    kanaText.style.display = "none";
-    jpText.style.cursor = "pointer";
-    jpText.onclick = null;           // 日本語クリックで音声なし
   } else { // E→J
-    jpText.textContent = item.en;    // 英語→日本語の順
+    jpText.textContent = item.en;
     enText.textContent = item.jp;
-    enText.style.display = "block";  // 最初から表示
-    kanaText.style.display = "none"; // カタカナは非表示
-    jpText.style.cursor = "default";
-    jpText.onclick = null;           // 日本語タップは無効
-    // 英語タップで音声再生
-    enText.onclick = () => playSound(item.en);
   }
+  kanaText.textContent = item.reading || "";
+
+  enText.style.display = "none";
+  kanaText.style.display = "none";
 
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
-}
 
   // --- ここが追加部分 ---
 if (quizDirection === "E→J") {
@@ -2045,7 +2037,7 @@ function startQuiz(type){
   quizOverlay.style.display = "flex";
 }
 
-showAnswerBtn.addEventListener("click", () => {
+ showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
@@ -2054,9 +2046,11 @@ showAnswerBtn.addEventListener("click", () => {
     if (quizDirection === "J→E") {
         // J→E: 答え表示後のみ英語クリックで音声
         enText.onclick = () => playSound(enText.textContent);
+    } else if (quizDirection === "E→J") {
+        // E→J: 英語を再生する
+        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+        jpText.onclick = null;
     }
-    // E→Jの場合は showQuizQuestion() ですでに enText.onclick がセットされているので変更不要
-    jpText.onclick = null; // 日本語タップで音声は無効化
 });
 
 nextBtn.addEventListener("click", () => {
