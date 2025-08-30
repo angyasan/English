@@ -1948,7 +1948,7 @@ closeBtn.addEventListener("click", () => {
   }
   kanaText.textContent = item.reading || "";
 
-  enText.style.display = "block";
+  enText.style.display = "none";
   kanaText.style.display = "none";
 
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
@@ -1957,11 +1957,16 @@ closeBtn.addEventListener("click", () => {
 
   // --- ここが追加部分 ---
 if (quizDirection === "E→J") {
-    // 英語を常に再生可能に
+    enText.style.display = "block";
+    enText.style.visibility = "visible";
+    enText.style.pointerEvents = "auto";
+    enText.style.cursor = "pointer";
     enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-    // 日本語はクリック無効化
+    
+    // 日本語はクリック無効
     jpText.onclick = null;
     jpText.style.cursor = "default";
+}
 } else { // J→E
     enText.onclick = null;
     jpText.onclick = null;
