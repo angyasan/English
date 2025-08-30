@@ -1939,12 +1939,12 @@ closeBtn.addEventListener("click", () => {
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
-  if(quizDirection === "J→E") {
+  if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
   } else { // E→J
-    jpText.textContent = item.en;  // 日本語に英語を表示
-    enText.textContent = item.jp;  // 英語に日本語を表示
+    jpText.textContent = item.en;
+    enText.textContent = item.jp;
   }
   kanaText.textContent = item.reading || "";
 
@@ -1955,29 +1955,24 @@ closeBtn.addEventListener("click", () => {
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
 
-  // --- クリック動作の制御 ---
+  // --- ここが追加部分 ---
   if (quizDirection === "E→J") {
-    // 英語クリック → 常に音声再生
+    // 英語クリックで常に音声再生
     enText.onclick = () => playSound(enText.textContent);
-    // 日本語クリック → 無効
+    // 日本語はタップしても反応なし
     jpText.onclick = null;
-    jpText.style.cursor = "default";  // 見た目も押せない感じに
+    jpText.style.cursor = "default";
   } else { // J→E
-    // 答え表示前は英語クリック無効（showAnswerBtn内でセット）
-    enText.onclick = null;
-    // 日本語クリックは従来どおり
-    jpText.onclick = () => {
-      // 従来処理（詳細開閉など）
-    };
+    enText.onclick = null;  // 答え表示前は無効
+    jpText.onclick = null;  // 単語帳用のクリックは renderList() に依存
     jpText.style.cursor = "pointer";
   }
-}
 
-  // --- その他タブだけ例文ボタンを追加 ---
+  // 例文ボタンの処理は元と同じ
   let existingBtn = document.getElementById("quizExampleBtn");
   if(existingBtn) existingBtn.remove();
 
-  if(currentType === "others") { // ← ここでタブをチェック
+  if(currentType === "others") {
     const exampleBtn = document.createElement("button");
     exampleBtn.id = "quizExampleBtn";
     exampleBtn.className = "control-btn";
@@ -1992,7 +1987,6 @@ closeBtn.addEventListener("click", () => {
       }
     };
 
-    // 好きな場所に追加（例: quizContainerの最後）
     quizContainer.appendChild(exampleBtn);
   }
 }
