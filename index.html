@@ -1949,11 +1949,30 @@ closeBtn.addEventListener("click", () => {
   kanaText.textContent = item.reading || "";
 
   enText.style.display = "none";
-  kanaText.style.display = "none";
+kanaText.style.display = "none";
+
+// --- 追加部分 ---
+if (quizDirection === "E→J") {
+    // 答え表示前でも後でも英語クリックで音声再生
+    enText.onclick = () => { playSound(enText.textContent); };
+} else {
+    enText.onclick = null; // J→Eは答え表示後にセット
+}
 
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
+  
+  // 日本語クリックは quizDirection に応じて切り替え
+if (quizDirection === "E→J") {
+    jpText.onclick = null; // E→Jではタップしても反応なし
+} else {
+    jpText.onclick = () => {
+        // J→Eクイズは通常通り
+        const item = quizList[currentQuizIndex];
+        // もし詳細開閉があればここで設定
+    };
+}
 
   // --- その他タブだけ例文ボタンを追加 ---
   let existingBtn = document.getElementById("quizExampleBtn");
@@ -2031,8 +2050,13 @@ function startQuiz(type){
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
-    enText.onclick = () => { playSound(enText.textContent); };
-  });
+
+    if (quizDirection === "J→E") {
+        // J→Eの場合：答え表示後のみ英語クリックで音声
+        enText.onclick = () => { playSound(enText.textContent); };
+    }
+    // E→Jの場合は showQuizQuestion() で常に英語クリックで音声再生済みなので不要
+});
 
   nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
