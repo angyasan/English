@@ -247,6 +247,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeBtn = document.getElementById("closeExampleBtn");
 closeBtn.addEventListener("click", () => {
   closeExampleModal();
+  const startQuizEnJBtn = document.getElementById("startQuizEnJBtn");
+
+  startQuizEnJBtn.addEventListener("click", () => {
+    quizList = shuffleArray([...currentList[currentType]]);
+    currentQuizIndex = 0;
+    if (quizList.length === 0) { 
+      alert("問題がありません"); 
+      return; 
+    }
+    showQuizQuestionEnJ();
+    quizOverlay.style.display = "flex";
   });
 
   // ページスクロールで表示/非表示切替
