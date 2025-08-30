@@ -1098,7 +1098,9 @@ closeBtn.addEventListener("click", () => {
   { "jp": "貰う、〜になる、着く、理解する、〜させる", "en": "get", "reading": "ゲット" },
   { "jp": "進化する", "en": "evolve", "reading": "イヴォルブ" },
   { "jp": "退化する", "en": "devolve", "reading": "ディヴォルブ" },
-  { "jp": "達成する", "en": "achieve", "reading": "アチーヴ" }
+  { "jp": "達成する", "en": "achieve", "reading": "アチーヴ" },
+  { "jp": "完成する", "en": "get completed", "reading": "ゲット コンプリーテッド" },
+  { "jp": "完成させる、仕上げる", "en": "complete", "reading": "コンプリート" }
       ],
 
 
@@ -1957,17 +1959,22 @@ closeBtn.addEventListener("click", () => {
 
   // --- ここが追加部分 ---
 if (quizDirection === "E→J") {
-    // 英語を常に再生可能に
+    enText.style.display = "block";        // 表示
+    enText.style.visibility = "visible";   // 見えるように
+    enText.style.pointerEvents = "auto";   // タップ可能に
+    enText.style.cursor = "pointer";       // 視覚的に押せる
     enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-    // 日本語はクリック無効化
+
+    // 日本語はタップ無効化
     jpText.onclick = null;
     jpText.style.cursor = "default";
-} else { // J→E
+} else {
+    // J→E
+    enText.style.display = "none";         // 最初は非表示
     enText.onclick = null;
     jpText.onclick = null;
     jpText.style.cursor = "pointer";
 }
-
   // 例文ボタンの処理は元と同じ
   let existingBtn = document.getElementById("quizExampleBtn");
   if(existingBtn) existingBtn.remove();
@@ -2177,6 +2184,10 @@ leftResetZone.addEventListener("mousedown", (e) => {
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
 
+});
+enText.addEventListener("click", () => {
+    enText.style.border = "2px solid red";  // 英語部分に赤枠を付ける
+    console.log("英語テキスト要素:", enText); // 本当に取得できてるか確認
 });
 </script>
 </body>
