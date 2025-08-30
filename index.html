@@ -1955,8 +1955,14 @@ kanaText.style.display = "none";
 if (quizDirection === "E→J") {
     // 答え表示前でも後でも英語クリックで音声再生
     enText.onclick = () => { playSound(enText.textContent); };
+    // E→Jでは日本語クリックは無効化
+    jpText.onclick = null;
 } else {
     enText.onclick = null; // J→Eは答え表示後にセット
+    jpText.onclick = () => {
+        // J→Eクイズは通常通り（例：詳細開閉）
+        const item = quizList[currentQuizIndex];
+    };
 }
 
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
