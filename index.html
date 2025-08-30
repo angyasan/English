@@ -4,55 +4,7 @@
 <meta charset="UTF-8" />
 <title>単語帳</title>
 <style>
-  /* 共通スタイル */
-  body { 
-    font-family: -apple-system, sans-serif; 
-    padding: 20px; 
-    max-width: 480px; 
-    margin: auto; 
-    zoom: 1.3; 
-    background-color: #1e1e1e;
-    color: #e0e0e0;
-  }
-
-  h2 { margin-bottom: 15px; }
-  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
-  .tab-btn {
-    flex: 1 0 auto;
-    min-width: 100px;
-    padding: 10px 0;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    background: #2a2a2a;
-    text-align: center;
-    font-weight: bold;
-    color: #e0e0e0;
-    transition: background-color 0.3s;
-    white-space: nowrap;
-  }
-  .tab-btn.active { background-color: #007bff; color: #fff; border-color: #007bff; }
-
-  .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; }
-  .control-btn {
-    cursor: pointer;
-    background-color: transparent;
-    border: 1px solid #00bfff;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #00bfff;
-    transition: background-color 0.2s;
-  }
-  .control-btn:hover { background-color: #0056b3; color: #fff; }
-
-  .entry { margin-bottom: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; }
-  .jp { font-size: 18px; color: #e0e0e0; white-space: pre-line; }
-  .details { display: none; margin-top: 6px; color: #555; font-size: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .en { font-weight: bold; font-size: 17px; color: #e0e0e0; }
-  .kana { color: #666; font-size: 15px; }
-  .play-btn { margin-left: auto; cursor: pointer; border: none; background: transparent; font-size: 20px; color: #00bfff; }
-  .play-btn:hover { color: #0056b3; }
-
+  /* ここは元のスタイルをそのまま保持 */
   #quizOverlay {
     position: fixed;
     top: 0; left: 0;
@@ -73,40 +25,39 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     position: relative;
   }
-  .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; color: #000; }
+  #quizExampleBtn { position: absolute; bottom: 10px; left: 10px; z-index: 1001; }
+  .hidden { display: none !important; }
+  .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
   .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
   .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
+  body { font-family: -apple-system, sans-serif; padding: 20px; max-width: 480px; margin: auto; zoom: 1.3; background-color:#1e1e1e; color:#e0e0e0;}
+  h2 { margin-bottom: 15px; }
+  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
+  .tab-btn { flex: 1 0 auto; min-width: 100px; padding: 10px 0; cursor: pointer; border: 1px solid #ccc; background: #f9f9f9; text-align: center; font-weight: bold; user-select: none; transition: background-color 0.3s; white-space: nowrap; }
+  .tab-btn.active { background-color: #007bff; color: white; border-color: #007bff; }
+  .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
+  .control-btn { cursor: pointer; background-color: #eee; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 14px; transition: background-color 0.2s; }
+  .control-btn:hover { background-color: #ddd; }
+  .entry { margin-bottom: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; user-select: none; }
+  .jp { font-size: 18px; color: #e0e0e0; white-space: pre-line; }
+  .details { display: none; margin-top: 6px; color: #e0e0e0; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; flex-wrap: wrap; }
+  .en { font-weight: bold; font-size: 17px; }
+  .kana { color: #666; font-size: 15px; }
+  .play-btn { margin-left: auto; cursor: pointer; border: none; background: transparent; font-size: 20px; user-select: none; color: #007bff; transition: color 0.2s; }
+  .play-btn:hover { color: #0056b3; }
   #quizAnswerRow { min-height: 56px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #enText, #kanaText { display: none; text-align: center; }
   #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
   #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
-  #showAnswerBtn, #nextBtn, #quitQuizBtn { height: 36px; line-height: 36px; min-width: 80px; display: inline-block; margin-right: 8px; cursor: pointer; }
-
-  #exampleModal {
-    display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;
-    user-select: none; touch-action: manipulation;
-  }
-  #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; user-select: text !important; color:#000; }
-
-  #leftResetZone {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100px;
-    height: 100%;
-    background: rgba(200,200,200,0.2);
-    z-index: 998;
-  }
-
-  #scrollTopBtn { position: fixed; bottom: 20px; left: calc(50% - 300px + 10px); display: none; font-size: 32px; cursor: pointer; background: none; border: none; color: #007bff; z-index: 9999; }
-
+  #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
+  #leftResetZone { position: fixed; top: 0; left: 0; width: 100px; height: 100%; background: rgba(200,200,200,0.2); z-index: 998; }
+  #exampleModal { user-select: none; -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; touch-action: manipulation; }
+  #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; user-select: text !important; -webkit-user-select: text !important; -ms-user-select: text !important; -moz-user-select: text !important; color: #000000; }
 </style>
 </head>
 <body>
-<h2>
-  📘 単語帳
-  <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
-</h2>
+<h2>📘 単語帳
+<button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button></h2>
 
 <div class="tabs">
   <div class="tab-btn" data-type="others">その他</div>
@@ -131,7 +82,6 @@
 
 <div id="content"></div>
 
-<!-- クイズモーダル -->
 <div id="quizOverlay">
   <div id="quizContainer">
     <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
@@ -146,8 +96,7 @@
   </div>
 </div>
 
-<!-- 例文モーダル -->
-<div id="exampleModal">
+<div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
   <div style="background:#fff; width:90%; max-width:800px; height:80%; border-radius:8px; overflow:hidden; display:flex; flex-direction:column;">
     <div style="padding:8px; background:#007bff; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
       <span>例文</span>
@@ -158,23 +107,16 @@
 </div>
 
 <div id="leftResetZone"></div>
-<button id="scrollTopBtn">↑</button>
+<button id="scrollTopBtn" style="position: fixed; bottom: 20px; left: calc(50% - 300px + 10px); display: none; font-size: 32px; cursor: pointer; background: none; border: none; color: #007bff; z-index: 9999;">↑</button>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const scrollTopBtn = document.getElementById("scrollTopBtn");
-  const leftResetZone = document.getElementById("leftResetZone");
-  const closeBtn = document.getElementById("closeExampleBtn");
-  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
-
-  const searchInput = document.getElementById("searchInput");
+  const contentDiv = document.getElementById("content");
+  const tabButtons = document.querySelectorAll(".tab-btn");
   const shuffleBtn = document.getElementById("shuffleBtn");
   const resetBtn = document.getElementById("resetBtn");
   const startQuizBtn = document.getElementById("startQuizBtn");
   const startQuizEnJBtn = document.getElementById("startQuizEnJBtn");
-  const contentDiv = document.getElementById("content");
-  const tabButtons = document.querySelectorAll(".tab-btn");
-
   const quizOverlay = document.getElementById("quizOverlay");
   const quizProgress = document.getElementById("quizProgress");
   const jpText = document.getElementById("jpText");
@@ -183,7 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const showAnswerBtn = document.getElementById("showAnswerBtn");
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
+  const searchInput = document.getElementById("searchInput");
   const exampleText = document.getElementById("exampleText");
+  const scrollTopBtn = document.getElementById("scrollTopBtn");
+  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+  const leftResetZone = document.getElementById("leftResetZone");
+  const closeExampleBtn = document.getElementById("closeExampleBtn");
 
   let currentType = "verbs";
   let quizList = [];
@@ -1759,226 +1706,157 @@ document.addEventListener("DOMContentLoaded", () => {
   ]
 };
 
-      let currentList = JSON.parse(JSON.stringify(originalData));
+     const currentList = {};
+  for (let key in originalData) currentList[key] = [...originalData[key]];
+
+  function playSound(word) {
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
+  }
+
+  function shuffleArray(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
   function renderList(type) {
     contentDiv.innerHTML = "";
-    const list = currentList[type];
-    list.forEach((item, idx) => {
-      const entryDiv = document.createElement("div");
-      entryDiv.className = "entry";
-
+    currentList[type].forEach(item => {
+      const entry = document.createElement("div");
+      entry.className = "entry";
       const jpDiv = document.createElement("div");
       jpDiv.className = "jp";
       jpDiv.textContent = item.jp;
 
       const detailsDiv = document.createElement("div");
       detailsDiv.className = "details";
-
       const enSpan = document.createElement("span");
       enSpan.className = "en";
       enSpan.textContent = item.en;
-
       const kanaSpan = document.createElement("span");
       kanaSpan.className = "kana";
-      kanaSpan.textContent = item.reading;
-
+      if (item.reading) kanaSpan.textContent = item.reading;
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
-      playBtn.textContent = "🔊";
-      playBtn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        const utterance = new SpeechSynthesisUtterance(item.en);
-        utterance.lang = 'en-US';
-        speechSynthesis.speak(utterance);
-      });
+      playBtn.textContent = "▶️";
+      playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
 
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
 
-      entryDiv.appendChild(jpDiv);
-      entryDiv.appendChild(detailsDiv);
+      jpDiv.onclick = () => {
+        detailsDiv.style.display = detailsDiv.style.display === "flex" ? "none" : "flex";
+      };
 
-      entryDiv.addEventListener("click", ()=> {
-        if(item.example){
-          exampleText.innerHTML = item.example.map((ex,i)=>`<div style="margin-bottom:6px;"><b>${item.exampleJp[i]||''}</b><br>${ex}</div>`).join("");
+      if(item.example){
+        const exampleBtn = document.createElement("button");
+        exampleBtn.textContent = "例文";
+        exampleBtn.onclick = (e) => {
+          e.stopPropagation();
+          exampleText.innerHTML = "";
+          item.example.forEach((ex, idx) => {
+            const p = document.createElement("p");
+            p.textContent = ex + (item.exampleJp ? " → " + item.exampleJp[idx] : "");
+            exampleText.appendChild(p);
+          });
           document.getElementById("exampleModal").style.display = "flex";
-        }else{
-          detailsDiv.style.display = detailsDiv.style.display === "flex" ? "none" : "flex";
-        }
-      });
+        };
+        detailsDiv.appendChild(exampleBtn);
+      }
 
-      contentDiv.appendChild(entryDiv);
+      entry.appendChild(jpDiv);
+      entry.appendChild(detailsDiv);
+      contentDiv.appendChild(entry);
     });
   }
 
-  function shuffleArray(arr) {
-    for(let i=arr.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function showQuizQuestionEnJ(){
-    const item = quizList[currentQuizIndex];
-    jpText.textContent = item.en;
-    enText.textContent = item.jp;
-    kanaText.textContent = item.reading || "";
-    showAnswerBtn.style.display="inline-block";
-    nextBtn.style.display="none";
-    enText.style.display="none";
-    kanaText.style.display="none";
-    quizProgress.textContent = `${currentQuizIndex+1}/${quizList.length}`;
-  }
-
-  function showQuizQuestionJ(){
-    const item = quizList[currentQuizIndex];
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-    kanaText.textContent = item.reading || "";
-    showAnswerBtn.style.display="inline-block";
-    nextBtn.style.display="none";
-    enText.style.display="none";
-    kanaText.style.display="none";
-    quizProgress.textContent = `${currentQuizIndex+1}/${quizList.length}`;
-  }
-
-  // 初回レンダリング
   renderList(currentType);
 
-  // タブ切替
-  tabButtons.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      tabButtons.forEach(b=>b.classList.remove("active"));
+  tabButtons.forEach(btn => {
+    btn.onclick = () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       currentType = btn.dataset.type;
       renderList(currentType);
-    });
+    };
   });
 
-  // 検索
-  searchInput.addEventListener("input", ()=>{
-    const val = searchInput.value.trim().toLowerCase();
-    if(!val){ renderList(currentType); return; }
-    const filtered = currentList[currentType].filter(item=>
-      (item.jp && item.jp.toLowerCase().includes(val)) ||
-      (item.en && item.en.toLowerCase().includes(val)) ||
-      (item.reading && item.reading.toLowerCase().includes(val))
-    );
-    contentDiv.innerHTML="";
-    filtered.forEach((item)=>{
-      const entryDiv = document.createElement("div");
-      entryDiv.className = "entry";
-
-      const jpDiv = document.createElement("div");
-      jpDiv.className="jp";
-      jpDiv.textContent = item.jp;
-
-      const detailsDiv = document.createElement("div");
-      detailsDiv.className="details";
-
-      const enSpan = document.createElement("span");
-      enSpan.className="en";
-      enSpan.textContent = item.en;
-
-      const kanaSpan = document.createElement("span");
-      kanaSpan.className="kana";
-      kanaSpan.textContent = item.reading;
-
-      const playBtn = document.createElement("button");
-      playBtn.className="play-btn";
-      playBtn.textContent="🔊";
-      playBtn.addEventListener("click",(e)=>{
-        e.stopPropagation();
-        const utterance = new SpeechSynthesisUtterance(item.en);
-        utterance.lang='en-US';
-        speechSynthesis.speak(utterance);
-      });
-
-      detailsDiv.appendChild(enSpan);
-      if(item.reading) detailsDiv.appendChild(kanaSpan);
-      detailsDiv.appendChild(playBtn);
-
-      entryDiv.appendChild(jpDiv);
-      entryDiv.appendChild(detailsDiv);
-
-      entryDiv.addEventListener("click", ()=>{
-        if(item.example){
-          exampleText.innerHTML = item.example.map((ex,i)=>`<div style="margin-bottom:6px;"><b>${item.exampleJp[i]||''}</b><br>${ex}</div>`).join("");
-          document.getElementById("exampleModal").style.display = "flex";
-        }else{
-          detailsDiv.style.display = detailsDiv.style.display === "flex" ? "none" : "flex";
-        }
-      });
-
-      contentDiv.appendChild(entryDiv);
-    });
-  });
-
-  // シャッフル
-  shuffleBtn.addEventListener("click", ()=>{
-    currentList[currentType] = shuffleArray([...currentList[currentType]]);
+  shuffleBtn.onclick = () => {
+    currentList[currentType] = shuffleArray(currentList[currentType]);
     renderList(currentType);
-  });
+  };
 
-  // 元に戻す
-  resetBtn.addEventListener("click", ()=>{
-    currentList[currentType] = JSON.parse(JSON.stringify(originalData[currentType]));
+  resetBtn.onclick = () => {
+    currentList[currentType] = [...originalData[currentType]];
     renderList(currentType);
-  });
+  };
 
-  // J→Eクイズ
-  startQuizBtn.addEventListener("click", ()=>{
-    quizList = shuffleArray([...currentList[currentType]]);
-    if(quizList.length===0){ alert("問題がありません"); return; }
-    currentQuizIndex=0;
-    showQuizQuestionJ();
-    quizOverlay.style.display="flex";
-  });
+  function startQuiz(type) {
+    quizList = shuffleArray(currentList[currentType]);
+    currentQuizIndex = 0;
+    quizOverlay.style.display = "flex";
+    showQuiz(type);
+  }
 
-  // E→Jクイズ
-  startQuizEnJBtn.addEventListener("click", ()=>{
-    quizList = shuffleArray([...currentList[currentType]]);
-    if(quizList.length===0){ alert("問題がありません"); return; }
-    currentQuizIndex=0;
-    showQuizQuestionEnJ();
-    quizOverlay.style.display="flex";
-  });
-
-  // クイズ操作
-  showAnswerBtn.addEventListener("click", ()=>{
-    enText.style.display="block";
-    if(kanaText.textContent) kanaText.style.display="block";
-    showAnswerBtn.style.display="none";
-    nextBtn.style.display="inline-block";
-  });
-
-  nextBtn.addEventListener("click", ()=>{
-    currentQuizIndex++;
-    if(currentQuizIndex>=quizList.length){
-      quizOverlay.style.display="none";
+  function showQuiz(type) {
+    if(currentQuizIndex >= quizList.length){
+      alert("クイズ終了！");
+      quizOverlay.style.display = "none";
       return;
     }
-    const jpFirst = quizOverlay.dataset.type==="EnJ";
-    if(jpFirst) showQuizQuestionEnJ(); else showQuizQuestionJ();
+    const item = quizList[currentQuizIndex];
+    jpText.textContent = item.jp;
+    enText.textContent = type==="J→E"?item.en:item.jp;
+    kanaText.textContent = item.reading || "";
+    enText.style.display = "none";
+    kanaText.style.display = "none";
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    quizProgress.textContent = `${currentQuizIndex+1}/${quizList.length}`;
+  }
+
+  showAnswerBtn.onclick = () => {
+    enText.style.display = "block";
+    if(kanaText.textContent) kanaText.style.display = "block";
+    nextBtn.style.display = "inline-block";
+    showAnswerBtn.style.display = "none";
+  };
+
+  nextBtn.onclick = () => {
+    currentQuizIndex++;
+    showQuiz(startQuizBtn.dataset.quizType);
+  };
+
+  quitQuizBtn.onclick = () => {
+    quizOverlay.style.display = "none";
+  };
+
+  startQuizBtn.onclick = () => { startQuiz("J→E"); startQuizBtn.dataset.quizType = "J→E"; };
+  startQuizEnJBtn.onclick = () => { startQuiz("E→J"); startQuizEnJBtn.dataset.quizType = "E→J"; };
+
+  closeExampleBtn.onclick = () => { document.getElementById("exampleModal").style.display = "none"; };
+
+  searchInput.addEventListener("input", () => {
+    const keyword = searchInput.value.toLowerCase();
+    contentDiv.querySelectorAll(".entry").forEach(entry => {
+      const jp = entry.querySelector(".jp").textContent.toLowerCase();
+      const en = entry.querySelector(".en").textContent.toLowerCase();
+      const kana = entry.querySelector(".kana") ? entry.querySelector(".kana").textContent.toLowerCase() : "";
+      entry.style.display = jp.includes(keyword) || en.includes(keyword) || kana.includes(keyword) ? "block" : "none";
+    });
   });
 
-  quitQuizBtn.addEventListener("click", ()=>{ quizOverlay.style.display="none"; });
-
-  // 例文モーダル閉じる
-  closeBtn.addEventListener("click", ()=>{ document.getElementById("exampleModal").style.display="none"; });
-
-  // 左端タッチでトップにスクロール
-  leftResetZone.addEventListener("click", ()=>{ window.scrollTo({top:0, behavior:"smooth"}); });
-
-  // 下矢印ボタンで下へ
-  scrollBottomBtn.addEventListener("click", ()=>{ window.scrollTo({top:document.body.scrollHeight, behavior:"smooth"}); });
-
-  // スクロールでトップボタン表示
-  window.addEventListener("scroll", ()=>{ scrollTopBtn.style.display = window.scrollY>200 ? "block" : "none"; });
-  scrollTopBtn.addEventListener("click", ()=>{ window.scrollTo({top:0, behavior:"smooth"}); });
+  scrollBottomBtn.onclick = () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  scrollTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  window.addEventListener("scroll", () => {
+    scrollTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
+  });
 });
 </script>
 </body>
