@@ -184,13 +184,12 @@
   <div class="tab-btn" data-type="conjunctions">接続詞</div>
 </div>
 
-<input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; [...]">
+<input type="text" id="searchInput" placeholder="検索（日本語・英語・カタカナ）" style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 16px;">
 
 <div id="controls" class="control-buttons">
   <button class="control-btn" id="shuffleBtn">シャッフル</button>
   <button class="control-btn" id="resetBtn">元に戻す</button>
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
-  <button id="startQuizEtoJBtn" class="control-btn">E→Jクイズ</button>
 </div>
 
 <div id="content"></div>
@@ -221,6 +220,7 @@
   </div>
 </div>
   
+
   
 <!-- 左端初期化ゾーン -->
 <div id="leftResetZone"></div>
@@ -260,4 +260,1883 @@ closeBtn.addEventListener("click", () => {
 });
   const originalData = {
     others: [
-      { jp: "〜したい", en: "wanna+動詞の原形", reading: "ワナ", example: ["I wanna go to your home after you finish work.", "Do you wanna eat this?"], exampleJp: ["あなたの仕事…
+      { jp: "〜したい", en: "wanna+動詞の原形", reading: "ワナ", example: ["I wanna go to your home after you finish work.", "Do you wanna eat this?"], exampleJp: ["あなたの仕事が終わったら、あなたの家に行きたい", "これ食べたいですか？"] },
+  { jp: "〜したい(フォーマル)", en: "I'd like to＋動詞の原形", reading: "アイドゥ ライク トゥ", example: ["I’d like to go to the station"], exampleJp: ["駅まで行きたいです"] },
+  { jp: "〜してほしい", en: "I want you to", reading: "アイ ワント ユー トゥ", example: ["I want you to help me."], exampleJp: ["あなたに手伝ってほしい。"] },
+  { jp: "するだろう(突然の決定)", en: "will + 動詞の原形", reading: "ウィル", example: ["I will call you later."], exampleJp: ["後で電話するよ。"] },
+  { jp: "〜する予定(計画的)", en: "be gonna + 動詞の原形", reading: "ビー ガナ", example: ["I'm gonna study abroad.", "I'm not gonna study abroad.", "What are you gonna do now?"], exampleJp: ["私は留学する予定だ", "私は留学する予定はありません", "これから何する予定ですか？"] },
+  { jp: "〜しなきゃ", en: "gotta+動詞の原形", reading: "ガダ", example: ["I gotta pay the check soon"], exampleJp: ["そろそろお会計しなきゃ。"] },
+  { jp: "〜する必要がある", en: "need to + 動詞の原形", reading: "ニード トゥ", example: ["You need to pay."], exampleJp: ["あなたは払う必要がある"] },
+  { jp: "したほうがいい(アドバイス)", en: "You should + 動詞の原形", reading: "ユー シュッド", example: ["You should apologize to her soon."], exampleJp: ["あなたはもう彼女に謝った方がいいよ"] },
+  { jp: "〜していいよ", en: "You can+動詞の原形", reading: "ユー キャン", example: ["You can go home"], exampleJp: ["家に帰っていいよ"] },
+  { jp: "〜させて！", en: "Let me", reading: "レット ミー", example: ["Let me try"], exampleJp: ["私にやらせて"] },
+  { jp: "まさに(もうすぐ)〜ところ", en: "be about to + 動詞の原形", reading: "ビー アバウト トゥ", example: ["I'm about to finish work.", "My phone battery is about to die"], exampleJp: ["今まさに仕事が終わるところです", "スマホの充電が切れそう"] },
+  { jp: "〜したことがある", en: "have + 過去分詞", reading: "ハブ", example: ["I have been to Vietnam."], exampleJp: ["私はベトナムに行ったことがある"] },
+  { jp: "〜一度もしたことがない", en: "have never + 過去分詞", reading: "ハブ ネバー", example: ["I have never eaten Thai food."], exampleJp: ["私はタイ料理を一度も食べたことがない"] },
+  { jp: "まだ〜してない", en: "haven't + 過去分詞 + yet", reading: "ハブント イェット", example: ["I haven't eaten yet."], exampleJp: ["まだご飯を食べていません"] },
+  { jp: "だんだん〜になってきた(物や天気)", en: "It's getting + 形容詞", reading: "イッツ ゲッティング", example: ["It's getting cold."], exampleJp: ["だんだん寒くなってきた"] },
+  { jp: "だんだん〜になってきた(自分)", en: "I'm getting + 形容詞", reading: "アイム ゲッティング", example: ["I'm getting sleepy."], exampleJp: ["だんだん眠くなってきた"] },
+  { jp: "〜みたいに見える(外見)", en: "look like + 名詞", reading: "ルック ライク", example: ["You look like a model."], exampleJp: ["モデルみたいに見えるよ"] },
+  { jp: "〜みたい(状態)", en: "be + like + 名詞", reading: "ビー ライク", example: ["You are like a child."], exampleJp: ["子供みたい"] },
+  { jp: "〜みたいに感じる", en: "feel like + 名詞", reading: "フィール ライク", example: ["I feel like a fool."], exampleJp: ["バカみたいだ"] },
+  { jp: "〜してた(今はやってない習慣)", en: "used to + 動詞の原形", reading: "ユーストゥ", example: ["She used to live in Tokyo.", "I didn't use to like a coffee.", "Did you use to go to that school?" ], exampleJp: ["彼女は東京に住んでいた", "コーヒーは嫌いだった", "昔、学校に通ってましたか？"] },
+  { jp: "〜に慣れている", en: "be used to + 名詞/動名詞(ing)", reading: "ビー ユーストゥ", example: ["I'm used to (eating) spicy food.", "I'm not used to spicy food.", "Are you used to working here?" ], exampleJp: ["私は辛い食べ物に慣れている", "私は辛い食べ物に慣れていない", "ここで働くの慣れた？"] },
+  { "jp": "〜に慣れる", "en": "get used to + 動名詞(ing)", "reading": "ゲット ユースド トゥ", "example": ["I’m getting used to living alone.", "I can't get used to speaking in public."], "exampleJp": ["私は一人暮らしに慣れてきている", "私は人前で話すことに慣れられない。"] },
+  { jp: "〜そう", en: "That looks + 形容詞", reading: "ザット ルックス", example: ["That looks difficult.", "That looks delicious."], exampleJp: ["難しそう", "美味しそう"] },
+  { jp: "人に〜するように言う", en: "tell + 人 + to + 動詞の原形", reading: "テル", example: ["He told me to wait."], exampleJp: ["彼は私に待つように言った"] },
+  { jp: "人に〜するように頼む", en: "ask + 人 + to + 動詞の原形", reading: "アスク", example: ["She asked me to help her."], exampleJp: ["彼女は私に手伝ってくれるよう頼んだ"] },
+  { jp: "人に〜だということを示す", en: "show + 人 + that + S + V", reading: "ショウ", example: ["I will show you that I can do it."], exampleJp: ["私がそれをできるってことを君に見せてやる"] },
+  { jp: "〜は〜をさせる", en: "make + 人・物 + 形容詞", reading: "メイク", example: ["You make me happy.", "Don't make me angry."], exampleJp: ["あなたは私を幸せにしてくれる", "私を怒らせないで"] },
+  { jp: "何をしたらいいか", en: "what to + 動詞の原形", reading: "ホワット トゥ ドゥ", example: ["I'm not sure what to say in this situation."], exampleJp: ["この状況で何をいえばいいか分からない"] },
+  { jp: "いつしたらいいか", en: "when to + 動詞の原形", reading: "ホエン トゥ ドゥ", example: ["We need to decide when to meet."], exampleJp: ["いつ会うか決める必要がある"] },
+  { jp: "どこでしたらいいか", en: "where to + 動詞の原形", reading: "ウェア トゥ ドゥ", example: ["I don't know where to go."], exampleJp: ["どこに行けばいいかわからない"] },
+  { jp: "どうやってするか", en: "how to + 動詞の原形", reading: "ハウ トゥ ドゥ", example: ["Can you teach me how to cook?"], exampleJp: ["料理の仕方を教えてくれませんか？"] },
+  { jp: "何をするか", en: "what + S + will + 動詞の原形", reading: "ホワット", example: ["I wanna know where she will go."], exampleJp: ["彼女がどこにいくか知りたい"] },
+  { jp: "いつ〜するか", en: "when + S + will + 動詞の原形", reading: "ホエン", example: ["Do you know when this train will leave?"], exampleJp: ["あなたはこの電車がいつ出発するか知ってる？"] },
+  { jp: "どこで〜するか", en: "where + S + will + 動詞の原形", reading: "ウェア", example: ["Do you know where this bus will go?"], exampleJp: ["あなたはこのバスがどこに行くか知ってる？"] },
+  { jp: "〜がどうやってするか", en: "how + S + will + 動詞の原形", reading: "ハウ", example: ["I don't know how he will go home."], exampleJp: ["彼がどうやって家に帰るか知らないよ"] },
+  { jp: "〜がある、いる", en: "there is / are", reading: "ゼア イズ／アー", example: ["There was something behind you.", "How many chairs are there in this room?"], exampleJp: ["君の後ろになにかいたよ", "この部屋にはいくつの椅子がありますか？"] },
+  { jp: "あまり〜すぎて、〜できない", en: "too + 形容詞 + to + 動詞", reading: "トゥー", example: ["I'm too hungry to run fast."], exampleJp: ["私はあまりにも空腹すぎて、早く走れない"] },
+  { jp: "もし〜(現実的にありえる)", en: "If + 現在形, S + will + 動詞の原形", reading: "イフ", example: ["If you don't pay, I will kill you."], exampleJp: ["もし払わなかったら、私は貴方を殺す"] },
+  { jp: "もし〜だったら〜なのに(仮定法)", en: "If + 過去形, S + could/would + 動詞の原形", reading: "イフ", example: ["If I were a bird, I could fly in the sky."], exampleJp: ["もし私が鳥なら、空を飛べるのに"] },
+  { jp: "〜ください", en: "Can I get", reading: "キャン アイ ゲット", example: ["Can I get a coffee?"], exampleJp: ["コーヒーください"] },
+  { jp: "〜していただけますか？", en: "Could you", reading: "クッド ユー", example: ["Could you take a picture?", "Could you keep my baggage?"], exampleJp: ["写真撮っていただけますか？", "荷物を預かってもらえますか？"] },
+  { jp: "〜しない？", en: "Do you wanna", reading: "ドゥ ユー ワナ", example: ["Do you wanna go to the cafe?"], exampleJp: ["カフェに行かない？"] },
+  { jp: "いつ〜できる？", en: "When can I", reading: "ホエン キャン アイ", example: ["When can I check in?"], exampleJp: ["いつチェックインできますか？"] },
+  { jp: "どれくらいの長さ", en: "How long", reading: "ハウ ロング", example: ["How long does it take?", "How long have you been working here?"], exampleJp: ["どれくらい時間かかる？", "ここで何年間働いていますか？"] },
+  { jp: "どれくらいの量", en: "How much", reading: "ハウ マッチ", example: ["How much do you eat?"], exampleJp: ["どれくらい食べる？"] },
+  { jp: "何歳", en: "How old", reading: "ハウ オールド", example: ["How old is she?"], exampleJp: ["彼女は何歳ですか？"] },
+  { jp: "どれくらいの距離", en: "How far", reading: "ハウ ファー", example: ["How far is it from here?"], exampleJp: ["それはここからどれくらいの距離ですか？"] },
+  { jp: "どれくらいの頻度", en: "How often", reading: "ハウ オフン", example: ["How often do you play with yourself?"], exampleJp: ["どれくらいの頻度で〇〇しますか？"] },
+  { jp: "〜するのはどう？", en: "How about + 動詞ing", reading: "ハウ アバウト", example: ["How about coming to my hotel tonight", "How about drinking at your place after you finish work"], exampleJp: ["今夜、ホテルに来ない？", "仕事が終わったら、君の家で飲むのはどう？"] },
+  { jp: "どんな〜", en: "What kind of", reading: "ワット カインド", example: ["What kind of guys do you like?"], exampleJp: ["どんな男性がタイプですか？"] },
+  { jp: "〜しましょうか？", en: "Would you like me to", reading: "ウッド ユー ライク ミー トゥ", example: ["Would you like me to help?"], exampleJp: ["手伝いましょうか？"] },
+  { jp: "〜いかがでしたか？", en: "How did you like", reading: "ハウ ディド ユー ライク", example: ["How did you like the weather in Philippines"], exampleJp: ["フィリピンの天気はどうだった？"] },
+  { jp: "〜は何時から始まりますか？", en: "What time does 〜 start?", reading: "ワット タイム ダズ スタート", example: ["What time does tour start?"], exampleJp: ["ツアーは何時から始まりますか？"] },
+  { jp: "〜に違いない、きっと〜だ", en: "must be", reading: "マスト ビー", example: ["It must be difficult to learn a new language."], exampleJp: ["新しい言語を学ぶのは大変に違いない"] },
+  { jp: "〜に注意する", en: "beware of＋名詞", reading: "ビウェア オブ", example: ["beware of dogs"], exampleJp: ["犬に気をつけろ"] },
+  { jp: "絶対〜だと思う(100%)", en: "I'm positive", reading: "アイム ポジティブ", example: ["I'm positive this is the right answer."], exampleJp: ["これは正しい答えだと確信しています。"] },
+{ jp: "〜だと思う(60%)", en: "I think", reading: "アイ シンク", example: ["I think he will come today."], exampleJp: ["彼は今日来ると思います。"] },
+{ jp: "〜かもしれない(40%)", en: "I might", reading: "アイ マイト", example: ["I might visit my parents this weekend."], exampleJp: ["今週末は両親の家に行くかもしれません。"] },
+{ jp: "〜かなぁ(30%)", en: "I guess", reading: "アイ ゲス", example: ["I guess it will rain tomorrow."], exampleJp: ["明日は雨が降るかな。"] },
+{ jp: "とても〜ので", en: "so 形容詞/副詞 that 文", reading: "ソウ ... ザット", example: ["He ran so fast that nobody could catch him."], exampleJp: ["彼はとても速く走ったので、誰も彼を捕まえられなかった。"] },
+{ jp: "〜するために、〜すること", en: "to 不定詞(動詞の原形)", reading: "トゥ プラス 動詞の原形", example: ["I went to the store to buy some milk.", "He promised to help me.", "It is important to follow the instructions."], exampleJp: ["牛乳を買うために店に行きました。", "彼は私を手伝うと約束しました。", "指示に従うことが重要です。"] },
+{ jp: "〜のために", en: "for + 名詞", reading: "フォー プラス 名詞", example: ["This gift is for you."], exampleJp: ["この贈り物はあなたのためです。"] },
+{ jp: "だから、そのために、それが理由で(前文を説明)", en: "That's why S V", reading: "ザッツ ワイ S V", example: ["I was sick. That's why I stayed home."], exampleJp: ["体調が悪かった。それで家にいたんです。"] },
+{ jp: "〜のように見える、思える（印象、状況から推測）", en: "主語+seem like +名詞/名詞句/節(S+V)", reading: "スィーム ライク", example: ["It seems like he is angry."], exampleJp: ["彼は怒っているように見える。"] },
+{ jp: "ひどく疲れさせる", en: "really take a lot out of 人", reading: "リアリー テイク ア ロット アウト オブ 人", example: ["That workout really took a lot out of me."], exampleJp: ["あの運動で本当に疲れ果てた。"] },
+{ jp: "〜に向いている", en: "be suited for〜", reading: "ビー スーテッド フォー", example: ["She is suited for this job."], exampleJp: ["彼女はこの仕事に向いている。"] },
+{ jp: "〜するつもり", en: "主語 + intend + to 不定詞（動詞の原形）", reading: "インテンド トゥ〜", example: ["I intend to study abroad next year."], exampleJp: ["来年留学するつもりです。"] },
+{ jp: "私は〜を探しています", en: "I'm looking for +名詞/名詞句", reading: "アイム ルッキン フォー〜", example: ["I'm looking for my keys."], exampleJp: ["鍵を探しています。"] }, 
+{ jp: "私は楽しみにしています", en: "I'm looking forward to +名詞/名詞句/動名詞", reading: "アイム ルッキン フォーワードゥ トゥ〜", example: ["I'm looking forward to meeting you."], exampleJp: ["お会いできるのを楽しみにしています。"] },  
+{ jp: "〜の代わりに", en: "instead of + 名詞 / 名詞句 / 動名詞", reading: "インステッド オブ", example: ["I drank tea instead of coffee this morning.", "She walked to work instead of taking the bus."], exampleJp: ["今朝、コーヒーの代わりにお茶を飲みました。", "彼女はバスに乗る代わりに歩いて仕事に行きました。"] },
+{ "jp": "〜してくれませんか？(依頼)", "en": "Will you〜", "reading": "ウィル ユー" },
+{ "jp": "〜するつもりですか？(予定だが意思を重視)", "en": "Will you〜", "reading": "ウィル ユー" },
+{ "jp": "〜してもいいですか？", "en": "May I〜", "reading": "メイ アイ" },
+{ "jp": "私が〜しましょうか？", "en": "Shall I〜", "reading": "シャル アイ" },
+{ "jp": "一緒に〜しませんか？", "en": "Shall we〜", "reading": "シャル ウィ" },
+{ jp: "〜させる", en: "make + 人 + 動詞の原形", reading: "メイク", example: ["She made me cry."], exampleJp: ["彼女は私を泣かせた"] },
+{ jp: "〜した方がいい、すべき(強めの助言)", en: "You had better + 動詞の原形", reading: "ユーハド ベラー", example: ["You had better stop wasting time."], exampleJp: ["時間を無駄にしない方がいいよ"] },
+  ],
+      
+
+
+
+
+    
+    various: [
+{jp:"私は英語を上手く話せません", en:"I can't speak English well", reading:"アイ キャントゥ スピーク イングリッシュ ウェル"},
+  {jp:"何？", en:"What is it?", reading:"ワッ イジッ？"},
+  {jp:"どこ？", en:"Where is it?", reading:"ウェアリッ？"},
+  {jp:"いつ？", en:"When is it?", reading:"ウェニッ？"},
+  {jp:"何言ってるの？", en:"What are you talking about?", reading:"ワッ チャー トーキン アバウッ？"},
+  {jp:"何してるの？", en:"What are you up to?", reading:"ワッ チャー アップ トゥ？"},
+  {jp:"何してるの？", en:"What are you doing?", reading:"ワッ チャー ドゥーイン？"},
+  {jp:"なにしたい？", en:"What do you wanna do?", reading:"ワッ チュ ワナ ドゥ？"},
+  {jp:"どこいきたい？", en:"Where do you wanna go?", reading:"ウェア ドゥ ユ ワナ ゴー？"},
+  {jp:"何時に仕事終わるの？", en:"What time do you finish work?", reading:"ワッ タイム ドゥ ユ フィニッシュ ワーク？"},
+  {jp:"どれくらいかかりますか？", en:"How long does it take?", reading:"ハウ ロング ダズ イッ テイク？"},
+  {jp:"何分残ってますか？", en:"How long left?", reading:"ハウ ロング レフト？"},
+  {jp:"あと何分？", en:"How many more minutes?", reading:"ハウ メニー モア ミニッツ？"},
+  {jp:"この後予定ある？", en:"Do you have any plans after this?", reading:"ドゥ ユ ハブ エニ プランズ アフター ディス？"},
+  {jp:"仕事終わったら暇？", en:"Are you free after work?", reading:"アー ユ フリー アフター ワーク？"},
+  {jp:"もう1回言ってください", en:"Can you say that again?", reading:"キャン ユ セイ ザゲン？"},
+  {jp:"もう少しゆっくり言ってください", en:"Can you say that more slowly, please?", reading:"キャン ユ セイ ザ モア スローリー プリーズ？"},
+  {jp:"どうやって食べるの？", en:"How can I eat?", reading:"ハウ キャナイ イート？"},
+  {jp:"分かりました", en:"I got it", reading:"アイ ガラリッ"},
+  {jp:"わからない", en:"I'm not sure / no idea", reading:"アイム ノー シュア / ノー アイディア"},
+  {jp:"意味わからん", en:"I don't get it", reading:"アイ ドン ゲリッ"},
+  {jp:"何を言ってるかわかりません", en:"I don't understand what you're saying", reading:"アイ ドン アンダスタン ワッ チャー セイイン"},
+  {jp:"今向かってるよ", en:"I'm on my way", reading:"アイム オン マイ ウェイ"},
+  {jp:"質問いい？", en:"Can I ask you a question?", reading:"キャナイ アスク ユー ア クウェスチョン？"},
+  {jp:"私の言ってることを理解してますか？", en:"Am I making sense?", reading:"アム アイ メイキン センス？"},
+  {jp:"写真撮ってもらえますか？", en:"Could you take a picture for me?", reading:"クッジャ テイク ア ピクチャ フォー ミー？"},
+  {jp:"あなたの写真撮っていい？", en:"Can I take your picture?", reading:"キャナイ テイク ユア ピクチャ？"},
+  {jp:"一緒に写真撮りたいです", en:"I'd like to take a picture with you.", reading:"アイド ライク トゥ テイク ア ピクチャ ウィズ ユー"},
+  {jp:"予約は出来ますか？", en:"Can I make a reservation?", reading:"キャナイ メイク ア レザベイション？"},
+  {jp:"予約してないけど、2名入れますか？", en:"We don't have a reservation, but is it possible to get a table for two?", reading:"ウィ ドン ハブ ア レザベイション バッ イジ イッ ポッシブル トゥ ゲッ ア テイブル フォー トゥ？"},
+  {jp:"待ち時間は？", en:"How long is the wait?", reading:"ハウ ロング イズ ザ ウェイト？"},
+  {jp:"メニューを見せてください", en:"Can I see the menu?", reading:"キャナイ シー ザ メニュー？"},
+  {jp:"オススメはなんですか？", en:"What do you recommend?", reading:"ワッ ドゥ ユー レカメンド？"},
+  {jp:"お会計お願いします", en:"Check please.", reading:"チェック プリーズ"},
+  {jp:"おつりもらえる？", en:"Can I get my change?", reading:"キャナイ ゲッ マイ チェンジ？"},
+  {jp:"おつりは要らないよ", en:"Keep the change.", reading:"キープ ザ チェンジ"},
+  {jp:"最高！", en:"Awesome!", reading:"オーサム！"},
+  {jp:"最悪", en:"That sucks.", reading:"ザッ サックス"},
+  {jp:"普通かな", en:"It's okay / so-so.", reading:"イッツ オーケイ / ソーソー"},
+  {jp:"微妙", en:"Not great / meh.", reading:"ノッ グレイ / メー"},
+  {jp:"最高だったよ(感情メイン)", en:"It was awesome!", reading:"イッワズ オーサム！"},
+  {jp:"最悪だった", en:"That sucked.", reading:"ザッ サックト"},
+  {jp:"まぁまぁだったよ", en:"It was alright.", reading:"イッワズ オールライト"},
+  {jp:"普通だったかな", en:"It was okay.", reading:"イッワズ オーケイ"},
+  {jp:"微妙だったかな", en:"It was kind of meh.", reading:"イッワズ カインダ メー"},
+  {jp:"めちゃくちゃ楽しかった", en:"I had so much fun.", reading:"アイ ハッ ソー マッチ ファン"},
+  {jp:"最高だったよ(比較メイン)", en:"That was the best.", reading:"ザッ ワズ ザ ベスト"},
+  {jp:"思ったより良かった", en:"It was better than expected.", reading:"イッワズ ベッダ ザン エクスペクティッド"},
+  {jp:"ちょっとがっかりした", en:"I was a bit disappointed.", reading:"アイ ワズ ア ビッ ディスアポイントゥド"},
+  {jp:"感動しました", en:"I was really moved.", reading:"アイ ワズ リアリー ムーブド"},
+  {jp:"あなたに一目惚れしました。", en:"I fell in love with you at first sight.", reading:"アイ フェリン ラブ ウィズ ユー アット ファースト サイト"},
+  {jp:"あなたの髪はあなたに似合ってるね", en:"Your hair looks great on you.", reading:"ユア ヘア ルックス グレイト オン ユー"},
+  {jp:"あなたは20歳にみえます", en:"You look 20.", reading:"ユー ルック トゥエンティ"},
+  {jp:"あなたは若く見える", en:"You look young.", reading:"ユー ルック ヤング"},
+  {jp:"優しいね", en:"You're kind.", reading:"ユア カインド"},
+  {jp:"美味しい", en:"Good, tasty, delicious, it's fire.", reading:"グッド、テイスティ、ディリシャス、イッツ ファイア"},
+  {jp:"美味しくない", en:"Not tasty.", reading:"ノッ テイスティ"},
+  {jp:"まずい", en:"Bad tasting.", reading:"バッド テイスティング"},
+  {jp:"甘い", en:"Sweet.", reading:"スウィート"},
+  {jp:"辛い", en:"Spicy.", reading:"スパイシー"},
+  {jp:"酸っぱい", en:"Sour.", reading:"サワー"},
+  {jp:"しょっぱい", en:"Salty.", reading:"ソルティ"},
+  {jp:"苦い", en:"Bitter.", reading:"ビター"},
+  {jp:"やわらかい", en:"Soft.", reading:"ソフト"},
+  {jp:"もちもち", en:"Chewy.", reading:"チューイ"},
+  {jp:"ふわふわ", en:"Fluffy.", reading:"フラッフィ"},
+  {jp:"弾力がある", en:"Spongy.", reading:"スポンジー"},
+  {jp:"サクサク", en:"Crispy.", reading:"クリスピー"},
+  {jp:"ねばねば", en:"Sticky.", reading:"スティッキー"},
+  {jp:"ぷるぷる", en:"Jiggly.", reading:"ジグリー"},
+  {jp:"どういたしまして(フォーマル)", en:"You're welcome.", reading:"ユア ウェルカム"},
+  {jp:"全然(感謝された時カジュアル)", en:"You bet", reading:"ユー ベット"},
+  {jp:"問題ないよ(感謝された時カジュアル)", en:"No problem", reading:"ノー プロブレム"},
+  {jp:"もちろん、いいよ(頼み事を承諾)", en:"Sure.", reading:"シュア"},
+  {jp:"〜じゃなくて", en:"I mean", reading:"アイ ミーン"},
+  {jp:"覚えてる？", en:"Do you remember me?", reading:"ドゥ ユー リメンバ ミー？"},
+  {jp:"会うのは2回目だよ", en:"It's the second time we've met.", reading:"イッツ ザ セカンド タイム ウィーブ メット"},
+  {jp:"ベトナムに来るのは2回目です", en:"It's the second time I've been to Vietnam.", reading:"イッツ ザ セカンド タイム アイヴ ビーン トゥ ベトナム"},
+  {jp:"彼氏はいますか？", en:"Do you have a boyfriend?", reading:"ドゥ ユ ハブ ア ボーイフレンド？"},
+  {jp:"最後に彼氏がいたのはいつですか？", en:"When was the last time you had a boyfriend?", reading:"ウェン ワズ ザ ラスト タイム ユー ハッド ア ボーイフレンド？"},
+  {jp:"いつから？", en:"Since when?", reading:"シンス ウェン？"},
+  {jp:"これはなんですか？", en:"What is this?", reading:"ワッ イジス？"},
+  {jp:"ちょっとまって", en:"Wait a minute.", reading:"ウェイッ タ ミニッ"},
+  {jp:"少々お待ちください", en:"Just a moment, please.", reading:"ジャスタ モーメン プリーズ"},
+  {jp:"見てください", en:"Please take a look.", reading:"プリーズ テイク ア ルック"},
+  {jp:"見せてください", en:"Please show me.", reading:"プリーズ ショウ ミー"},
+  {jp:"聞いてください", en:"Please listen.", reading:"プリーズ リッスン"},
+  {jp:"同じ", en:"Same.", reading:"セイム"},
+  {jp:"違う、異なる", en:"Different.", reading:"ディファレント"},
+  {jp:"合ってる", en:"That's right.", reading:"ザッツ ライト"},
+  {jp:"間違ってる", en:"Wrong.", reading:"ロング"},
+  {jp:"これはなんと呼ばれていますか？", en:"What's this called?", reading:"ワッツ ディス コールド？"},
+  {jp:"散歩", en:"Stroll.", reading:"ストロール"},
+  {jp:"払うわけねぇだろ！", en:"No way I'm paying!", reading:"ノー ウェイ アイム ペイイン！"},
+  {jp:"ぼったくり人", en:"Rip-off artist.", reading:"リップオフ アーティスト"},
+  {jp:"あなたは詐欺師？", en:"What are you, some kind of scammer?", reading:"ワッ アー ユー サム カインド オブ スキャマー？"},
+  {jp:"〜の隣に", en:"Next to.", reading:"ネクストゥ"},
+  {jp:"横に", en:"Beside.", reading:"ビサイド"},
+  {jp:"そば", en:"By.", reading:"バイ"},
+  {jp:"〜の間", en:"Between.", reading:"ビトウィーン"},
+  {jp:"正面", en:"In front of.", reading:"イン フロントゥ オブ"},
+  {jp:"背面", en:"Behind.", reading:"ビハインド"},
+  {jp:"下", en:"Under.", reading:"アンダー"},
+  {jp:"空間を通る", en:"Through.", reading:"スルー"},
+  {jp:"横切る", en:"Across.", reading:"アクロス"},
+  {jp:"流れに沿う", en:"Along.", reading:"アロング"},
+  {jp:"〜に夢中である", en:"Be into.", reading:"ビー イントゥ"},
+  { "jp": "〜として", "en": "as", "reading": "アズ" }, 
+  { "jp": "〜なしで", "en": "without", "reading": "ウィザウト" }, 
+  {jp:"こんな感じ？", en:"Like this?", reading:"ライク ディス？"},
+  {jp:"そんな感じ、そんな風に", en:"Like that.", reading:"ライク ザッ"},
+  { jp: "人による", en: "It depends on the person.", reading: "" },
+  {jp:"場合による", en:"It depends.", reading:"イット ディペンズ"},
+  {jp:"これもらっていいの？", en:"Can I have this? Is it okay?", reading:"キャナイ ハヴ ディス？ イズ イッ オーケイ？"},
+  {jp:"お先にどうぞ", en:"After you.", reading:"アフター ユー"},
+  {jp:"あなたの番です", en:"Over to you.", reading:"オーバー トゥ ユー"},
+  {jp:"嘘でしょ？", en:"No way?", reading:"ノー ウェイ？"},
+  {jp:"本当だよ", en:"It's true.", reading:"イッツ トゥルー"},
+  {jp:"冗談だよ", en:"It's a joke.", reading:"イッツ ア ジョーク"},
+  {jp:"可哀想だよ", en:"Poor thing.", reading:"プア シング"},
+  {jp:"もちろん！", en:"Of course!", reading:"オブ コース！"},
+  {jp:"当然のことをしたまでさ", en:"I just did what anyone would do.", reading:"アイ ジャスト ディド ワッ エニワン ウッドゥ ドゥ"},
+  {jp:"私は正しいことをした。", en:"I did the right thing.", reading:"アイ ディド ザ ライト シング"},
+  {jp:"それは当然のことだよ（相手に対して使う）", en:"It's only natural.", reading:"イッツ オンリー ナチュラル"},
+  {jp:"恥ずかしい", en:"I'm shy.", reading:"アイム シャイ"},
+  {jp:"照れちゃう", en:"I'm kinda shy.", reading:"アイム カインダ シャイ"},
+  {jp:"ここはなに？", en:"What's this place?", reading:"ワッツ ディス プレイス？"},
+  {jp:"あなた/おれのせいで", en:"Because of you / me.", reading:"ビコーズ オブ ユー / ミー"},
+  {jp:"服を脱ぐ", en:"Take off clothes.", reading:"テイク オフ クロウズ"},
+  {jp:"また戻ってくるよ", en:"I'll be back later.", reading:"アイル ビー バック レイター"},
+  {jp:"ちょーだい", en:"Give me.", reading:"ギブ ミー"},
+  {jp:"あなたのこと食べていい？", en:"Can I eat you?", reading:"キャナイ イート ユー？"},
+  {jp:"あなた真面目だね", en:"You are so serious.", reading:"ユー アー ソー シリアス"},
+  {jp:"このフレーズしかわからない( ´∀｀ )", en:"I only know this phrase.", reading:"アイ オンリー ノウ ディス フレーズ"},
+  {jp:"大丈夫だよ", en:"It's all good.", reading:"イッツ オール グッド"},
+  {jp:"だから何？", en:"Good for you.", reading:"グッド フォー ユー"},
+  {jp:"良かったぁ", en:"Thank God.", reading:"サンク ガッド"},
+  {jp:"私の考えでは", en:"In my opinion.", reading:"イン マイ オピニオン"},
+  {jp:"休憩しよう", en:"Take a break.", reading:"テイク ア ブレイク"},
+  {jp:"ゆっくりでいいよ", en:"Take your time.", reading:"テイク ユア タイム"},
+  {jp:"仕方ないよ", en:"It is what it is.", reading:"イッツ ワッ イッツ"},
+  {jp:"どう思う？", en:"What do you think?", reading:"ワッ ドゥ ユー シンク？"},
+  {jp:"気にしないで(話を切る時)", en:"Never mind.", reading:"ネバ マインド"},
+  {jp:"気にしないで(謝られた時)", en:"No worries.", reading:"ノー ウリーズ"},
+  {jp:"気にしないで(感謝された時)", en:"Don't mention it!", reading:"ドント メンション イット"},
+  {jp:"気にしてないよ", en:"I don't care.", reading:"アイ ドン ケア"},
+  {jp:"念の為にね", en:"Just in case.", reading:"ジャス イン ケース"},
+  {jp:"奢るよ!", en:"It's on me!", reading:"イッツ オン ミー！"},
+  {jp:"具合が悪い", en:"I feel sick.", reading:"アイ フィール シック"},
+  {jp:"全部終わったよ", en:"I'm all done.", reading:"アイム オール ダン"},
+  {jp:"似合う！", en:"You look great.", reading:"ユー ルック グレイト"},
+  {jp:"知らんけど", en:"Not sure though.", reading:"ノッ シュア ソウ"},
+  {jp:"確かにね", en:"That's for sure.", reading:"ザッツ フォー シュア"},
+  {jp:"どっちでもいいよ(選択肢が2つ)", en:"Either is fine.", reading:"アイザー イズ ファイン"},
+  {jp:"どれでもいいよ(選択肢が3つ以上)", en:"Anything is fine.", reading:"エニシング イズ ファイン"},
+  {jp:"やばい、困ったな", en:"I'm in trouble.", reading:"アイム イン トラブル"},
+  {jp:"とにかくやってみて", en:"Just do it.", reading:"ジャス ドゥ イット"},
+  {jp:"久しぶり", en:"Long time no see.", reading:"ロング タイム ノウ シー"},
+  {jp:"どこいくの？", en:"Where are you going?", reading:"ウェア アー ユー ゴーイン？"},
+  {jp:"我慢できない！", en:"I can't take this anymore.", reading:"アイ キャント テイク ディス エニモア"},
+  {jp:"我慢しなくていいよ", en:"Don't hold it in.", reading:"ドント ホールド イット イン"},
+  {jp:"家に着く", en:"Get home.", reading:"ゲット ホーム"},
+  {jp:"道に迷う", en:"Get lost.", reading:"ゲット ロスト"},
+  {jp:"あなたはどう？(質問を返す時)", en:"How about you?", reading:"ハウ アバウト ユー？"},
+  {jp:"まだだよ", en:"Not yet.", reading:"ノット イェット"},
+  {jp:"なんて呼べばいい？", en:"What should I call you?", reading:"ワッ シュッド アイ コール ユー？"},
+  {jp:"どうすればいい？", en:"What should I do?", reading:"ワッ シュッド アイ ドゥ？"},
+  {jp:"どうすればいいのよ", en:"What am I supposed to do?", reading:"ワッ アム アイ サポーズ トゥ ドゥ？"},
+  {jp:"冷静にね", en:"Keep your cool.", reading:"キープ ユア クール"},
+  {jp:"触ってよ", en:"Touch me.", reading:"タッチ ミー"},
+  {jp:"並んでる？", en:"Are you in line?", reading:"アー ユー イン ライン？"},
+  {jp:"ここ空いてる？", en:"Is this taken?", reading:"イズ ディス テイケン？"},
+  {jp:"ここ座ってもいい？", en:"Can I sit here?", reading:"キャン アイ シット ヒア？"},
+  {jp:"今すぐ", en:"Right now.", reading:"ライト ナウ"},
+  {jp:"えーと", en:"Let me see.", reading:"レット ミー シー"},
+  {jp:"そう思う", en:"I think so.", reading:"アイ シンク ソウ"},
+  {jp:"気軽にどうぞ", en:"Feel free.", reading:"フィール フリー"},
+  {jp:"絶対ムリ", en:"Not a chance.", reading:"ノット ア チャンス"},
+  {jp:"なるほど", en:"I see.", reading:"アイ シー"},
+  {jp:"マジそれな", en:"Exactly.", reading:"イグザクトリー"},
+  {jp:"これら", en:"These.", reading:"ディーズ"},
+  {jp:"あれら", en:"Those.", reading:"ゾーズ"},
+  {jp:"〜どちらもない", en:"Neither.", reading:"ニーザー"},
+  {jp:"どちらか", en:"Either.", reading:"アイザー"},
+  {jp:"両方", en:"Both.", reading:"ボウズ"},
+  {jp:"ごめんね", en:"My bad.", reading:"マイ バッド"},
+  {jp:"あなたは正しかった", en:"You did right.", reading:"ユー ディド ライト"},
+  {jp:"それで決まりだ", en:"It's a deal.", reading:"イッツ ア ディール"},
+  {jp:"じゃあ、そうしよう", en:"Ok then.", reading:"オーケー ゼン"},
+  {jp:"そんな感じ", en:"Kind of.", reading:"カインド オブ"},
+  {jp:"無理しないで", en:"Take it easy.", reading:"テイク イット イージー"},
+  {jp:"じっとしてて", en:"Keep still.", reading:"キープ スティル"},
+  {jp:"避ける", en:"Keep off.", reading:"キープ オフ"},
+  {jp:"近寄るな", en:"Keep away.", reading:"キープ アウェイ"},
+  {jp:"先払いですか？", en:"Do I have to pay first?", reading:"ドゥ アイ ハブ トゥ ペイ ファースト？"},
+  {jp:"後払い", en:"Pay later.", reading:"ペイ レイター"},
+  {jp:"横並びの空席3つが2列ありますか？", en:"Do you have two rows with three adjacent empty seats?", reading:"ドゥ ユー ハブ トゥ ロウズ ウィズ スリー アジェイセント エンプティー シーツ？"},
+  {jp:"連絡してね", en:"Hit me up.", reading:"ヒット ミー アップ"},
+  {jp:"俺のせいじゃない", en:"Not my fault.", reading:"ノット マイ フォルト"},
+  {jp:"本気だよ", en:"I mean it.", reading:"アイ ミーン イット"},
+  {jp:"考えてみて", en:"Think about it.", reading:"シンク アバウト イット"},
+  {jp:"気をつけて", en:"Take care.", reading:"テイク ケア"},
+  {jp:"あと少し", en:"Almost.", reading:"オールモスト"},
+  {jp:"強調を表す単語", en:"Such.", reading:"サッチ"},
+  {jp:"キッモ！", en:"Disgusting.", reading:"ディスガスティング"},
+  {jp:"まだ食べれる？", en:"Can you still eat?", reading:"キャン ユー スティル イート？"},
+  {jp:"どこの部分食べれるの？", en:"Which part can you eat?", reading:"ウィッチ パート キャン ユー イート？"},
+  {jp:"これなに味？", en:"What flavor is this?", reading:"ワット フレイバー イズ ディス？"},
+  {jp:"どれにする？", en:"Which one?", reading:"ウィッチ ワン？"},
+  {jp:"これ外して〜", en:"Take this off me.", reading:"テイク ディス オフ ミー"},
+  {jp:"もう行くね", en:"I'm off.", reading:"アイム オフ"},
+  {jp:"あっという間だね", en:"Time flies.", reading:"タイム フライズ"},
+  {jp:"もう着くよ", en:"Almost there.", reading:"オールモスト ゼア"},
+  {jp:"その気持ちわかる", en:"I feel you.", reading:"アイ フィール ユー"},
+  {jp:"トイレを使ってもいいですか？", en:"Can I use the restroom?", reading:"キャン アイ ユーズ ザ レストルーム？"},
+  {jp:"なんで今？", en:"Why now?", reading:"ホワイ ナウ？"},
+  {jp:"まぁいっか", en:"Oh well.", reading:"オー ウェル"},
+  {jp:"調べてみる", en:"I will look it up.", reading:"アイ ウィル ルック イット アップ"},
+  {jp:"時間が余る", en:"Have time left.", reading:"ハブ タイム レフト"},
+  {jp:"お酒強い？", en:"Are you good at drinking?", reading:"アー ユー グッド アット ドリンキング？"},
+  {jp:"撫でていい？", en:"Can I pet it?", reading:"キャン アイ ペット イット？"},
+  {jp:"場違い", en:"Out of place.", reading:"アウト オブ プレイス"},
+  {jp:"それ取ってー", en:"Pass me that.", reading:"パス ミー ザット"},
+  {jp:"どうしたの？", en:"What's wrong?", reading:"ワッツ ロング？"},
+  {jp:"何探してるの？", en:"What are you looking for?", reading:"ワッ アー ユー ルッキング フォー？"},
+  {jp:"今日の夜、あなたの家に泊めてもらえますか？", en:"Can you let me stay at your place tonight?", reading:"キャン ユー レット ミー ステイ アット ユア プレイス トゥナイト？"},
+  {jp:"これだれのー？", en:"Whose is this?", reading:"フーズ イズ ディス？"},
+  {jp:"あそこだよ", en:"Over there.", reading:"オーバー ゼア"},
+  {jp: "今何時？", en: "Do you have the time?", reading: "ドゥー ユー ハブ ザ タイム？"},
+{jp: "時間ある？", en: "Do you have time?", reading: "ドゥー ユー ハブ タイム？"},
+{jp: "ほとんど時間ない", en: "little time", reading: "リトル タイム"},
+{jp: "少し時間あるよ", en: "a little time", reading: "ア リトル タイム"},
+{jp: "任せて", en: "You got it", reading: "ユー ガディ"},
+{ jp: "やっぱ大丈夫！", en: "Don't worry about it", reading: "ドンウォリィアバウディッ" },
+{ "jp": "羨ましいなぁ、いいなぁ", "en": "I'm jealous.", "reading": "アイム ジェラス" },
+{ jp: "君次第", en: "It's up to you", reading: "イッツ アプ トゥ ユー" },
+{ jp: "得意", en: "good at", reading: "グッド アット" },
+{ jp: "苦手", en: "not good at", reading: "ノット グッド アット" },
+{ jp: "特に何も", en: "nothing much", reading: "ナッシング マッチ" },
+{ jp: "あなたに惚れた", en: "fell for you", reading: "フェル フォー ユー" },
+{ jp: "とりあえず来いや", en: "come on over for now", reading: "カム オン オーバー フォー ナウ" },  
+{ jp: "遠回りな言い方はやめて、ちゃんと伝えて", en: "Stop beating around the bush", reading: "ストップ ビーティング アラウンド ザ ブッシュ" },
+{ jp: "なんて？", en: "Say again?", reading: "セイ アゲイン?" },    
+{ "jp": "さぁね、もしかしたら、誰にも分からない", "en": "who knows", "reading": "フー ノウズ" },
+{ jp: "どうでもいい", en: "whatever", reading: "ワットエヴァー" },
+{ "jp": "よし、行こう", "en": "alright, Let's go", "reading": "オーライト、レッツ ゴー" },
+{ "jp": "ところで", "en": "by the way", "reading": "バイ ザ ウェイ" },
+{ "jp": "確認してください", "en": "Could you please check?", "reading": "クッヂュー プリーズ チェック?" },
+{ "jp": "とりあえず", "en": "for now", "reading": "フォー ナウ" },
+{ "jp": "〜なので（文頭）", "en": "because, since, as", "reading": "ビコーズ、シンス、アズ" },
+{ "jp": "マジで？", "en": "for real?", "reading": "フォー リアル?" },
+{ "jp": "それは違う", "en": "That's not true", "reading": "ザッツ ノット トゥルー" },
+{ "jp": "そんなことないよ", "en": "Oh, not at all", "reading": "オー ノット アット オール" },
+{ "jp": "任せるね", "en": "I'll leave it to you", "reading": "アル リーヴィッ トゥ ユー" },
+{ "jp": "勿体ない(物を無駄にして)", "en": "It's a waste", "reading": "イッツ ア ウェイスト" },
+{ "jp": "勿体ない(ありがたすぎて)", "en": "I don't deserve it.", "reading": "アイ ドント ディザーブ イット" },
+{ "jp": "勿体ない(機会を逃す)", "en": "It would be a waste not to.", "reading": "イット ウッド ビ ア ウェイスト ナット トゥ" }, 
+{ "jp": "今日は何日ですか？", "en": "What date is it today?", "reading": "ワット デイト イズ イット トゥデイ?" },
+{ "jp": "今日は何曜日ですか？", "en": "What day is it today?", "reading": "ワット デイ イズ イット トゥデイ?" }   
+
+
+
+      
+  ],
+   verbs: [
+      {jp:"〜である//いる", en:"be", reading:"ビー"},
+      {jp:"〜になる", en:"become", reading:"ビカム"},
+      {jp:"回す", en:"turn", reading:"ターン"},
+      {jp:"持ってくる", en:"bring", reading:"ブリング"},
+      {jp:"持っていく", en:"take", reading:"テイク"},
+      {jp:"運ぶ", en:"carry", reading:"キャリー"},
+      {jp:"目が覚める", en:"wake up", reading:"ウェイク アップ"},
+      {jp:"起き上がる", en:"get up", reading:"ゲット アップ"},
+      {jp:"増える", en:"increase", reading:"インクリース"},
+      {jp:"減る", en:"decrease", reading:"ディクリース"},
+      {jp:"減らす", en:"reduce", reading:"リデュース"},
+      {jp:"支持する、支援する", en:"support", reading:"サポート"},
+      {jp:"反対する", en:"oppose", reading:"アポウズ"},
+      {jp:"従う", en:"obey", reading:"オベイ"},
+      {jp:"逆らう", en:"disobey", reading:"ディソベイ"},
+      {jp:"貸す", en:"lend", reading:"レンド"},
+      {jp:"借りる", en:"borrow", reading:"バロウ"},
+      {jp:"貸す借りる(有料)", en:"rent", reading:"レント"},
+      {jp:"受け入れる", en:"accept", reading:"アクセプト"},
+      {jp:"拒否する", en:"refuse", reading:"リフューズ"},
+      {jp:"建てる、構築する(関係、システム)", en:"build", reading:"ビルド"},
+      {jp:"破壊する", en:"destroy", reading:"ディストロイ"},
+      {jp:"値する", en:"deserve", reading:"ディザーブ"},
+      {jp:"決める", en:"decide", reading:"ディサイド"},
+      {jp:"埋める、満たす", en:"fill", reading:"フィル"},
+      {jp:"輝く(柔らかく)", en:"glow", reading:"グロウ"},
+      {jp:"入る", en:"enter", reading:"エンター"},
+      {jp:"出る", en:"exit", reading:"エグジット"},
+      {jp:"参加する、加わる", en:"join", reading:"ジョイン"},
+      {jp:"隠す", en:"hide", reading:"ハイド"},
+      {jp:"見せる", en:"show", reading:"ショウ"},
+      {jp:"捕まえる", en:"catch", reading:"キャッチ"},
+      {jp:"逃す", en:"miss", reading:"ミス"},
+      {jp:"逃げる", en:"run away", reading:"ラン アウェイ"},
+      {jp:"保存する、貯める、節約する、省く", en:"save", reading:"セイブ"},
+      {jp:"費やす、使う", en:"spend", reading:"スペンド"},
+      {jp:"強く主張する", en:"insist", reading:"インシスト"},
+      {jp:"招待する、誘う", en:"invite", reading:"インヴァイト"},
+      {jp:"謝る", en:"apologize", reading:"アポロジャイズ"},
+      {jp:"握る、咥える、手に持つ、開催する", en:"hold", reading:"ホールド"},
+      {jp:"持ってた物を離す", en:"let go of", reading:"レット ゴー オブ"},
+      {jp:"落とす", en:"drop", reading:"ドロップ"},
+      {jp:"落ちる", en:"fall", reading:"フォール"},
+      {jp:"含める", en:"include", reading:"インクルード"},
+      {jp:"除外する", en:"exclude", reading:"イクスクルード"},
+      {jp:"成功する", en:"succeed", reading:"サクシード"},
+      {jp:"失敗する", en:"fail", reading:"フェイル"},
+      {jp:"前進する", en:"advance", reading:"アドバンス"},
+      {jp:"後退する", en:"retreat", reading:"リトリート"},
+      {jp:"攻撃する", en:"attack", reading:"アタック"},
+      {jp:"防御する", en:"defend", reading:"ディフェンド"},
+      {jp:"現れる、出現する", en:"appear", reading:"アピア"},
+      {jp:"消える、消失する", en:"disappear", reading:"ディスアピア"},
+      {jp:"気づく(頭で)", en:"realize", reading:"リアライズ"},
+      {jp:"気づく(五感で)", en:"notice", reading:"ノーティス"},
+      {jp:"始める始まる(日常会話)", en:"start", reading:"スタート"},
+      {jp:"始める始まる(フォーマル、書き言葉)", en:"begin", reading:"ビギン"},
+      {jp:"終える/終わる(物事、時間)", en:"end", reading:"エンド"},
+      {jp:"終わる(やり遂げる)", en:"finish", reading:"フィニッシュ"},
+      {jp:"上がる(書き言葉、フォーマル)", en:"rise", reading:"ライズ"},
+      {jp:"上がる(口語的、カジュアル)", en:"go up", reading:"ゴー アップ"},
+      {jp:"下がる(フォーマル、自然現象)", en:"fall", reading:"フォール"},
+      {jp:"下がる(口語的、カジュアル)", en:"go down", reading:"ゴー ダウン"},
+      {jp:"上げる", en:"raise", reading:"レイズ"},
+      {jp:"下げる", en:"lower", reading:"ロウアー"},
+      {jp:"与える", en:"give", reading:"ギブ"},
+      {jp:"受け取る", en:"receive", reading:"リシーブ"},
+      {jp:"見つける(探す)", en:"find", reading:"ファインド"},
+      {jp:"失う", en:"lose", reading:"ルーズ"},
+      {jp:"教える", en:"teach", reading:"ティーチ"},
+      {jp:"学ぶ", en:"learn", reading:"ラーン"},
+      {jp:"入れる(カジュアル)", en:"put in", reading:"プット イン"},
+      {jp:"入れる(精密な操作)", en:"insert", reading:"インサート"},
+      {jp:"取り出す(カジュアル)", en:"take out", reading:"テイク アウト"},
+      {jp:"取り除く(汚れ、アプリ)", en:"remove", reading:"リムーブ"},
+      {jp:"着る", en:"put on", reading:"プット オン"},
+      {jp:"着ている", en:"wear", reading:"ウェア"},
+      {jp:"脱ぐ", en:"take off", reading:"テイク オフ"},
+      {jp:"登る", en:"climb up", reading:"クライム アップ"},
+      {jp:"降りる", en:"climb down", reading:"クライム ダウン"},
+      {jp:"車に乗る", en:"get in", reading:"ゲット イン"},
+      {jp:"電車に乗る", en:"get on", reading:"ゲット オン"},
+      {jp:"バイクに乗る", en:"ride", reading:"ライド"},
+      {jp:"車から降りる", en:"get out", reading:"ゲット アウト"},
+      {jp:"電車、バイクから降りる", en:"get off", reading:"ゲット オフ"},
+      {jp:"笑う(声を出して)", en:"laugh", reading:"ラフ"},
+      {jp:"泣く", en:"cry", reading:"クライ"},
+      {jp:"挑戦する", en:"try", reading:"トライ"},
+      {jp:"諦める", en:"give up", reading:"ギヴ アップ"},
+      {jp:"押す", en:"push", reading:"プッシュ"},
+      {jp:"引く", en:"pull", reading:"プル"},
+      {jp:"出発する", en:"leave", reading:"リーブ"},
+      {jp:"到着する", en:"arrive", reading:"アライヴ"},
+      {jp:"成長する", en:"grow", reading:"グロウ"},
+      {jp:"縮む", en:"shrink", reading:"シュリンク"},
+      {jp:"捨てる", en:"throw away", reading:"スロー アウェイ"},
+      {jp:"拾う", en:"pick up", reading:"ピック アップ"},
+      {jp:"温める", en:"warm", reading:"ウォーム"},
+      {jp:"冷ます", en:"cool", reading:"クール"},
+      {jp:"温まる", en:"warm up", reading:"ウォーム アップ"},
+      {jp:"冷める", en:"cool down", reading:"クール ダウン"},
+      {jp:"加熱する", en:"heat up", reading:"ヒート アップ"},
+      {jp:"冷却する", en:"cool down", reading:"クール ダウン"},
+      {jp:"続ける", en:"continue", reading:"コンティニュー"},
+      {jp:"中止する", en:"discontinue", reading:"ディスコンティニュー"},
+      {jp:"変える、変わる", en:"change", reading:"チェンジ"},
+      {jp:"交換する", en:"exchange", reading:"エクスチェンジ"},
+      {jp:"取り替える", en:"replace", reading:"リプレイス"},
+      {jp:"改善する、良くする", en:"improve", reading:"インプルーヴ"},
+      {jp:"悪化する", en:"worsen", reading:"ワーサン"},
+      {jp:"同意する", en:"agree", reading:"アグリー"},
+      {jp:"否定する", en:"deny", reading:"ディナイ"},
+      {jp:"提案する", en:"suggest", reading:"サジェスト"},
+      {jp:"提出する", en:"submit", reading:"サブミット"},
+      {jp:"提供する", en:"provide", reading:"プロヴァイド"},
+      {jp:"紹介する", en:"introduce", reading:"イントロデュース"},
+      {jp:"説明する", en:"explain", reading:"エクスプレイン"},
+      {jp:"接続する", en:"connect", reading:"コネクト"},
+      {jp:"切断する", en:"disconnect", reading:"ディスコネクト"},
+      {jp:"発展する、開発する", en:"develop", reading:"ディヴェロップ"},
+      {jp:"拡大する", en:"expand", reading:"イクスパンド"},
+      { "jp": "拡大する(視覚的に)", "en": "zoom in", "reading": "ズーム イン" },
+      {jp:"認める", en:"admit", reading:"アドミット"},
+      {jp:"発表する", en:"announce", reading:"アナウンス"},
+      {jp:"制御する", en:"control", reading:"コントロール"},
+      {jp:"望む", en:"hope", reading:"ホープ"},
+      {jp:"責める", en:"blame", reading:"ブレイム"},
+      {jp:"許す", en:"forgive", reading:"ファーギヴ"},
+      {jp:"無視する", en:"ignore", reading:"イグノア"},
+      {jp:"頼る、依存する", en:"depend", reading:"ディペンド"},
+      {jp:"噛む(歯でかじる)", en:"bite", reading:"バイト"},
+      {jp:"噛む(咀嚼する)", en:"chew", reading:"チュー"},
+      {jp:"甘噛み", en:"nibble", reading:"ニブル"},
+      {jp:"吐く(カジュアル)", en:"throw up", reading:"スロー アップ"},
+      {jp:"吐く(医学的)", en:"vomit", reading:"ヴァミット"},
+      {jp:"匂いを嗅ぐ", en:"smell", reading:"スメル"},
+      {jp:"味わう", en:"taste", reading:"テイスト"},
+      {jp:"認識する", en:"recognize", reading:"レコグナイズ"},
+      {jp:"想像する", en:"imagine", reading:"イマジン"},
+      {jp:"観察する", en:"observe", reading:"オブザーヴ"},
+      {jp:"実行する", en:"perform", reading:"パフォーム"},
+      {jp:"要求する", en:"require", reading:"リクワイア"},
+      {jp:"言及する", en:"mention", reading:"メンション"},
+      {jp:"防ぐ", en:"prevent", reading:"プリベント"},
+      {jp:"予期する、期待する", en:"expect", reading:"エクスペクト"},
+      {jp:"巻き込む", en:"involve", reading:"インヴォルヴ"},
+      {jp:"配達する", en:"deliver", reading:"デリヴァー"},
+      {jp:"維持する", en:"maintain", reading:"メインテイン"},
+      {jp:"逆転する", en:"reverse", reading:"リヴァース"},
+      {jp:"〜を引き起こす、原因となる", en:"cause", reading:"コーズ"},
+      {jp:"裏切る", en:"betray", reading:"ビトレイ"},
+      {jp:"ビンタする", en:"slap", reading:"スラップ"},
+      {jp:"拳で殴る", en:"punch", reading:"パンチ"},
+      {jp:"軽く突く", en:"poke", reading:"ポーク"},
+      {jp:"つねる", en:"pinch", reading:"ピンチ"},
+      {jp:"強く押す", en:"shove", reading:"ショヴ"},
+      {jp:"息が詰まる", en:"choke", reading:"チョーク"},
+      {jp:"踏む", en:"step on", reading:"ステップ オン"},
+      {jp:"前に出る", en:"come forward", reading:"カム フォワード"},
+      {jp:"後ろに下がる(命令もできる)", en:"back up", reading:"バック アップ"},
+      {jp:"後ろに下がる(1歩下がる)", en:"step back", reading:"ステップ バック"},
+      {jp:"回転する", en:"spin around", reading:"スピン アラウンド"},
+      {jp:"横になる", en:"lie down", reading:"ライ ダウン"},
+      {jp:"ハイタッチ", en:"high five", reading:"ハイ ファイブ"},
+      {jp:"グータッチ", en:"fist bump", reading:"フィスト バンプ"},
+      {jp:"点ける", en:"turn on", reading:"ターン オン"},
+      {jp:"消す", en:"turn off", reading:"ターン オフ"},
+      {jp:"延長する", en:"extend", reading:"イクステンド"},
+      {jp:"短縮する", en:"shorten", reading:"ショーテン"},
+      {jp:"延期する", en:"postpone", reading:"ポストポーン"},
+      {jp:"前倒しする、昇進する(カジュアル)", en:"move up", reading:"ムーブ アップ"},
+      {jp:"前倒しする、提示する(フォーマル)", en:"bring forward", reading:"ブリング フォワード"},
+      {jp:"別れる", en:"break up", reading:"ブレイク アップ"},
+      {jp:"伸ばす", en:"stretch", reading:"ストレッチ"},
+      {jp:"曲げる", en:"bend", reading:"ベンド"},
+      {jp:"折る", en:"break", reading:"ブレイク"},
+      {jp:"舐める", en:"lick", reading:"リック"},
+      {jp:"吸う", en:"suck", reading:"サック"},
+      {jp:"吹く", en:"blow", reading:"ブロウ"},
+      {jp:"扱う、対処する", en:"deal", reading:"ディール"},
+      {jp:"活用する、利用する", en:"avail", reading:"アヴェイル"},
+      {jp:"検査する", en:"examine", reading:"イグザミン"},
+      {jp:"表現する、速達", en:"express", reading:"エクスプレス"},
+      {jp:"爆発する", en:"explode", reading:"エクスプロウド"},
+      {jp:"超える", en:"exceed", reading:"イクシード"},
+      {jp:"興奮する", en:"get excited", reading:"ゲット エクサイテッド"},
+      {jp:"注ぐ", en:"pour", reading:"ポア"},
+      {jp:"焼く", en:"bake", reading:"ベイク"},
+      {jp:"ゆでる、強めに煮る", en:"boil", reading:"ボイル"},
+      {jp:"集める", en:"collect", reading:"コレクト"},
+      {jp:"磨く", en:"brush", reading:"ブラッシュ"},
+      {jp:"稼ぐ", en:"earn", reading:"アーン"},
+      {jp:"会う(初めて)", en:"meet", reading:"ミート"},
+      {jp:"会う", en:"see", reading:"シー"},
+      {jp:"だます(軽く)", en:"fool", reading:"フール"},
+      {jp:"抵抗する", en:"resist", reading:"リジスト"},
+      {jp:"耐える（苦痛、困難）", en:"endure", reading:"エンデュア"},
+      {jp:"我慢する（重い、苦しい）", en:"bear", reading:"ベア"},
+      {jp:"我慢する（小さな不満）", en:"put up with", reading:"プット アップ ウィズ"},
+      {jp:"堪える（感情、衝動）", en:"hold back", reading:"ホールド バック"},
+      {jp:"主張する", en:"claim", reading:"クレイム"},
+      {jp:"案内する", en:"guide", reading:"ガイド"},
+      {jp:"記入する", en:"fill out", reading:"フィル アウト"},
+      {jp:"配る、譲る(無料で)", en:"give away", reading:"ギヴ アウェイ"},
+      { jp: "分配する(物を)", en: "hand out", reading: "ハンド アウト" },
+      {jp:"進歩する", en:"make progress", reading:"メイク プログレス"},
+      {jp:"落ち着く", en:"chill out", reading:"チル アウト"},
+      {jp:"テンションを上げる、盛り上げる", en:"hype up", reading:"ハイプ アップ"},
+      {jp:"テンションが上がる", en:"get excited / get hyped", reading:"ゲット エキサイテッド / ゲット ハイプデュ"},
+      { jp: "テンションを下げる", en: "calm down", reading: "カーム ダウン" },
+      { jp: "テンションが下がる、落ち込む", en: "feel down", reading: "フィール ダウン" },
+      {jp:"(罪を)犯す", en:"commit", reading:"コミット"},
+      {jp:"時間がかかる", en:"take time", reading:"テイク タイム"},
+      {jp:"自慢する", en:"boast", reading:"ボウスト"},
+      {jp:"雑談する", en:"have a chat", reading:"ハヴ ア チャット"},
+      {jp:"割く、惜しむ", en:"spare", reading:"スペア"},
+      {jp:"解く(problemを)", en:"solve", reading:"ソルヴ"},
+      {jp:"解く(questionを)", en:"answer", reading:"アンサー"},
+      {jp:"解決する", en:"work out", reading:"ワーク アウト"},
+      {jp:"悩む", en:"worry", reading:"ウォーリー"},
+      {jp:"迷っている(強い葛藤)", en:"be torn", reading:"ビー トーン"},
+      {jp:"共有する", en:"share", reading:"シェア"},
+      {jp:"投げる", en:"throw", reading:"スロー"},
+      {jp:"打つ、叩く", en:"hit", reading:"ヒット"},
+      {jp:"撫でる(動物を)", en:"pet", reading:"ペット"},
+      {jp:"バレる(悪いこと)", en:"get caught", reading:"ゲット コート"},
+      {jp:"バレる(秘密や嘘)", en:"get found out", reading:"ゲット ファウンド アウト"},
+      {jp:"浮く", en:"float", reading:"フロート"},
+      {jp:"目立つ", en:"stand out", reading:"スタンド アウト"},
+      {jp:"操作する", en:"manipulate", reading:"マニピュレイト"},
+      {jp:"調査する、捜査する(詳しく)", en:"investigate", reading:"インヴェスティゲイト"},
+      {jp:"創造する", en:"create", reading:"クリエイト"},
+      {jp:"探す", en:"search", reading:"サーチ"},
+      {jp:"油断する", en:"let your guard down", reading:"レット ユア ガード ダウン"},
+      {jp:"遊ぶ(だらだら)、干す", en:"hang out", reading:"ハング アウト"},
+      {jp:"遊ぶ", en:"have fun", reading:"ハヴ ファン"},
+      {jp:"優先する", en:"prioritize", reading:"プライオラタイズ"},
+      {jp:"生産する", en:"produce", reading:"プロデュース"},
+      {jp:"交代する", en:"take turns", reading:"テイク ターンズ"},
+      {jp:"離す", en:"release", reading:"リリース"},
+      {jp:"転送する", en:"forward", reading:"フォワード"},
+      {jp:"回収する、取り戻す", en:"retrieve", reading:"リトリーブ"},
+      {jp:"返却する", en:"return", reading:"リターン"},
+      {jp:"戻る(元いた場所に戻る)", en:"go back", reading:"ゴー バック"},
+      {jp:"戻る（話し手のいる場所に戻る）", en:"come back", reading:"カム バック"},
+      {jp:"やめる(習慣)", en:"quit", reading:"クウィット"},
+      {jp:"聞く", en:"listen", reading:"リスン"},
+      {jp:"聞こえる", en:"hear", reading:"ヒア"},
+      {jp:"録音する、録画する", en:"record", reading:"リコー ド"},
+      {jp:"記憶する", en:"memorize", reading:"メモライズ"},
+      {jp:"挑発する(煽る)", en:"provoke", reading:"プロヴォーク"},
+      {jp:"刺激する(物理的)", en:"stimulate", reading:"スティミュレイト"},
+      {jp:"準備する", en:"prepare", reading:"プレペア"},
+      {jp:"誘惑する", en:"tempt", reading:"テンプト"},
+      {jp:"結ぶ(紐)", en:"tie", reading:"タイ"},
+      {jp:"梱包する", en:"pack", reading:"パック"},
+      {jp:"包む(ギフト)", en:"wrap", reading:"ラップ"},
+      {jp:"剃る、削る", en:"shave", reading:"シェイブ"},
+      {jp:"評価する、査定する(分析して)", en:"evaluate", reading:"イヴァリュエイト"},
+      {jp:"散歩する(目的なく)", en:"take a walk", reading:"テイク ア ウォーク"},
+      {jp:"散歩する(場所の中を歩く)", en:"walk around", reading:"ウォーク アラウンド"},
+      {jp:"中に入る", en:"go inside", reading:"ゴー インサイド"},
+      {jp:"外に出る", en:"go outside", reading:"ゴー アウトサイド"},
+      {jp:"泊まる", en:"stay", reading:"ステイ"},
+      {jp:"泊める", en:"let someone stay / put someone stay", reading:"レット サムワン ステイ / プット サムワン ステイ"},
+      {jp:"修理する(カジュアル)、固定する(位置)、", en:"fix", reading:"フィックス"},
+      {jp:"修理する(フォーマル)", en:"repair", reading:"リペア"},
+     {jp:"盗む", en:"steal", reading:"スティール"},
+     {jp:"引っ越す", en:"move", reading:"ムーヴ"},
+     {jp: "余裕がある", en: "afford", reading: "アフォード"},
+     {jp: "割り当てる、任命する", en: "assign", reading: "アサイン"},
+     {jp: "惹き付ける、興味・注意を引く(外見・利益で)", en: "attract", reading: "アトラクト"},
+     {jp: "禁止する", en: "ban", reading: "バン"},
+     {jp: "祝う", en: "celebrate", reading: "セレブレイト"},
+     {jp: "確認する(曖昧なことを確実へ)", en: "confirm", reading: "コンファーム"},
+     {jp: "結婚する(自動詞)", en: "get married", reading: "ゲット マリィド"},
+     {jp: "〜と結婚する(他動詞)", en: "marry", reading: "マリー"},
+     { "jp": "満足させる", "en": "satisfy", "reading": "サティスファイ" },
+     { "jp": "満足する", "en": "get satisfied (with)", "reading": "サッティスファイド" },
+{ "jp": "応える、満たす(要求を)", "en": "meet", "reading": "ミート" },
+{ "jp": "植える", "en": "plant", "reading": "プラント" },
+{ "jp": "叫ぶ(怒り、遠くに呼びかける)", "en": "shout", "reading": "シャウト" },
+{ "jp": "叫ぶ(口語的)", "en": "yell", "reading": "イェル" },
+{ "jp": "叫ぶ(恐怖や痛みで)", "en": "scream", "reading": "スクリーム" },
+{ "jp": "手を挙げる", "en": "put your hand up", "reading": "プット ユア ハンド アップ" },
+{ "jp": "手を下げる", "en": "put your hand down", "reading": "プット ユア ハンド ダウン" },
+{ "jp": "困っている", "en": "be in trouble", "reading": "ビー イン トラブル" },
+{ "jp": "困る", "en": "get in trouble", "reading": "ゲット イン トラブル" }, 
+{ "jp": "掻く（かゆい所を）", "en": "scratch", "reading": "スクラッチ" },
+{ "jp": "揺れる、震える、振る（物や体を振る）", "en": "shake", "reading": "シェイク" },
+{ "jp": "振る（手や旗を振る）", "en": "wave", "reading": "ウェイヴ" },
+{ "jp": "描く（線や絵を描く）", "en": "draw", "reading": "ドロー" },
+{ "jp": "描く（絵の具で描く）", "en": "paint", "reading": "ペイント" },
+{ "jp": "止める", "en": "stop", "reading": "ストップ" },
+{ "jp": "覗く", "en": "peek", "reading": "ピーク" },
+{ "jp": "死ぬ", "en": "die", "reading": "ダイ" },
+{ "jp": "流れる", "en": "flow", "reading": "フロー" },
+{ "jp": "起きる(何かが)", "en": "happen", "reading": "ハプン" },
+{ "jp": "追う", "en": "follow", "reading": "フォロー" },
+{ "jp": "追いかける", "en": "chase", "reading": "チェイス" },
+{ "jp": "出る(何かが外に出る)", "en": "come out", "reading": "カム アウト" },
+{ "jp": "呼吸する", "en": "breathe", "reading": "ブリーズ" },
+{ jp: "息を止める", en: "hold (someone) breath", reading: "ホールド ブレス" },   
+{ jp: "絶望する", en: "despair", reading: "デスペア" },
+{ jp: "反抗する", en: "rebel", reading: "リベル" },
+{ jp: "自由になる", en: "break free", reading: "ブレイク フリー" },
+{ jp: "揺らぐ、迷う", en: "waver", reading: "ウェイヴァー" },
+{ jp: "音量を上げる", en: "turn up", reading: "ターン アップ" },
+{ jp: "音量を下げる", en: "turn down", reading: "ターン ダウン" },
+{ jp: "浸す、つける(液体に)", en: "dip", reading: "ディップ" },
+{ jp: "傷つく(物理的)", en: "get hurt", reading: "ゲット ハート" },
+{ jp: "傷ついている(精神的)", en: "be emotionally hurt", reading: "ビー エモウショナリー ハート" },
+{ jp: "転ぶ", en: "fall down", reading: "フォール ダウン" },
+{ jp: "混ぜる(材料かき混ぜる)", en: "mix", reading: "ミックス" },
+{ jp: "混ぜ合わせる", en: "blend", reading: "ブレンド" },
+{ jp: "加える", en: "add", reading: "アッド" },
+{ jp: "拒絶する、断る", en: "reject", reading: "リジェクト" },
+{ jp: "躊躇う、一瞬迷う", en: "hesitate", reading: "ヘズィテイト" },
+{ jp: "〜のように見える", en: "seem", reading: "シーム" },
+{ jp: "集中する", en: "focus", reading: "フォーカス" },
+{ jp: "後悔する", en: "regret", reading: "リグレット" },
+{ jp: "近づく、取り組む", en: "approach", reading: "アプローチ" }, 
+{ jp: "退く", en: "back off", reading: "バックオフ" }, 
+{ jp: "酔う(お酒)", en: "get drunk", reading: "ゲット ドランク" },
+{ jp: "酔う(車)", en: "get carsick", reading: "ゲット カーシック" },   
+{ jp: "積む(荷物を)", en: "load", reading: "ロード" },  
+{ jp: "怒る(怒り出す、状態の変化)", en: "get angry", reading: "ゲット アングリー" },
+{ jp: "怒っている(最中)", en: "be angry", reading: "ビー アングリー" },
+{ jp: "突然怒る(怒り出す、状態の変化)", en: "blow up", reading: "ブロー アップ" },
+{ jp: "まばたきする", en: "blink", reading: "ブリンク" },
+{ jp: "輝く(明るく強く)", en: "shine", reading: "シャイン" },
+{ jp: "守る、保護する", en: "protect", reading: "プロテクト" },
+{ jp: "〜を犠牲にする", en: "sacrifice", reading: "サクラァファイス" },
+{ jp: "咲く(花が)", en: "bloom", reading: "ブルーム" },
+{ jp: "〜する勇気がある", en: "dare", reading: "デアー" },   
+{"jp":"つまずく、よろける","en":"stumble","reading":"スタンブル"},
+{ "jp": "問題になる、重要である、意味がある", "en": "matter", "reading": "マター" },
+  { "jp": "疑う", "en": "doubt", "reading": "ダウト" },
+  { "jp": "〜に注意する、〜を警戒する", "en": "beware", "reading": "ビウェア" },
+  { "jp": "印象を与える", "en": "strike", "reading": "ストライク" },
+  { "jp": "興奮させる(ワクワク)", "en": "excite", "reading": "イクサイト" },
+  { "jp": "興奮させる(ハラハラ、ゾクゾク)", "en": "thrill", "reading": "スリル" },
+  { "jp": "〜が欠けている", "en": "lack", "reading": "ラック" },
+  { "jp": "広げる、明らかにする", "en": "unfold", "reading": "アンフォールド" },
+  { jp: "爆発する、大音量で鳴らす", en: "blast", reading: "ブラスト" },
+  { jp: "貼りつく、くっつく、突き刺さる", en: "stick", reading: "スティック" },
+  { jp: "ハマる(物理的)", en: "get stuck", reading: "ゲット スタック" },
+  { jp: "慰める", en: "comfort", reading: "カムフォート" },
+  { jp: "選ぶ", en: "choose", reading: "チューズ" },
+  { jp: "消す(物理的に)", en: "erase", reading: "イレイス" },
+  { jp: "燃える、燃やす", en: "burn", reading: "バーン" },
+  { "jp": "間違える(物や人などの認識)", "en": "mistake", "reading": "ミステイク" },
+  { "jp": "勘違いする、誤解する(情報、人の意図)", "en": "misunderstand", "reading": "ミスアンダスタンド" },
+  { "jp": "動揺する、ドキドキする、ひらひら動く", "en": "flutter", "reading": "フラッター" },
+  { "jp": "消える、薄れる(記憶)", "en": "fade", "reading": "フェイド" },
+  { "jp": "叶う、実現する", "en": "come true", "reading": "カム トゥルー" },
+  { "jp": "笑う、微笑む", "en": "smile", "reading": "スマイル" },
+  { "jp": "撒き散らす、ばら撒く", "en": "scatter", "reading": "スキャッター" },
+  { "jp": "積み重ねる", "en": "pile up", "reading": "パイル アップ" },
+  { "jp": "芽を出す、急に出てくる", "en": "sprout", "reading": "スプラウト" },
+  { "jp": "ちらりと見る", "en": "glance", "reading": "グランス" },
+  { "jp": "混乱する", "en": "get confused" },
+  { "jp": "混乱させる", "en": "confuse", "reading": "コンフューズ" },
+  { "jp": "咲く、発展する(人間関係が)", "en": "blossom", "reading": "ブロッサム" },
+  { "jp": "いじめる、困らせる", "en": "haze", "reading": "ヘイズ" },
+  { "jp": "溢れる", "en": "flood", "reading": "フラッド" },
+  { "jp": "口笛を吹く", "en": "whistle", "reading": "ホイッスル" },
+  { "jp": "元の状態に戻す、回復させる", "en": "restore", "reading": "リストア" },
+{ "jp": "捨てる、放棄する(フォーマル)", "en": "discard", "reading": "ディスカード" },
+{ "jp": "〜が好き", "en": "fancy", "reading": "ファンシー" },
+{ "jp": "驚いている", "en": "be surprised", "reading": "ゲット サプライズド" },
+{ "jp": "驚く", "en": "get surprised", "reading": "ビー サプライズド" },
+{ "jp": "願う(抽象的、願望)", "en": "wish", "reading": "ウィッシュ" },
+{ "jp": "願う(現実的、未来に対する期待)", "en": "hope", "reading": "ホープ" },
+{ "jp": "祈る(宗教的)", "en": "pray", "reading": "プレイ" },
+{ "jp": "寄付する", "en": "donate", "reading": "ドーネイト" },
+{ "jp": "魅了する(心を)", "en": "charm", "reading": "チャーム" },
+{ "jp": "指示する", "en": "instruct", "reading": "インストラクト" },
+{ "jp": "見に行く", "en": "go see", "reading": "ゴー シー" },
+{ "jp": "下見する", "en": "go check out", "reading": "ゴー チェック アウト" },
+{ "jp": "喜ぶ", "en": "get happy", "reading": "ビー ハッピー" },
+{ "jp": "悲しむ", "en": "get sad", "reading": "ビー サッド" },
+{ "jp": "注文する、命令する", "en": "order", "reading": "オーダー" },
+{ "jp": "上手くやる、仲良くやる", "en": "get along (with)" },
+{ "jp": "進む(物理的、歩く時)", "en": "go forward", "reading": "ゴー フォワード" },
+{ "jp": "進む(会議、説明で次の段階へ)", "en": "proceed", "reading": "プロシード" },
+{ "jp": "飽きる", "en": "get bored", "reading": "ゲット ボード" },
+{ "jp": "〜のお世話をする、〜に対処する", "en": "take care of", "reading": "テイク ケア オブ" },
+{ "jp": "〜に向いている、適している", "en": "be cut out for", "reading": "ビー カット アウト フォー" },
+{ "jp": "予約する(カジュアル)", "en": "book", "reading": "ブック" },
+{ "jp": "予約する(フォーマル)", "en": "reserve", "reading": "リザーブ" },
+{ "jp": "恥をかかせる", "en": "shame", "reading": "シェイム" },
+{ "jp": "見直す、評価する(意見を交えて)", "en": "review", "reading": "レビュー" },
+  { "jp": "推す、おすすめする", "en": "recommend", "reading": "リコメンド" },
+  { "jp": "殺す", "en": "kill", "reading": "キル" },
+  { "jp": "誘う(友達、カジュアル)", "en": "get together", "reading": "ゲット トゥギャザー" },
+  { "jp": "誘う(恋愛)", "en": "ask (someone) out", "reading": "アスク サムワン アウト" },
+  { "jp": "送る(誰かに物を)", "en": "send", "reading": "センド" },
+  { "jp": "発送する(商品・荷物を)", "en": "ship", "reading": "シップ" },
+  { "jp": "惚れる", "en": "fall in love", "reading": "フォール イン ラブ" },
+  { "jp": "疲れさせる", "en": "tire", "reading": "タイア" },
+  { "jp": "〜させる、作る", "en": "make", "reading": "メイク" },
+  { "jp": "告発する、〜を非難する", "en": "accuse", "reading": "アキューズ" },
+  { "jp": "抜く(物理的)", "en": "pull out", "reading": "プル アウト" },
+  { "jp": "狙う(物理的、銃、弓矢で)", "en": "aim (at)", "reading": "エイム（アット）" },
+  { "jp": "狙う(一般的)", "en": "target", "reading": "ターゲット" },
+  { "jp": "関係している、関連がある", "en": "be related to", "reading": "ビー リレイティッド トゥー" },
+  { "jp": "憧れる(丁寧)", "en": "admire", "reading": "アドマイア" },
+  { "jp": "尊敬する(一般的)", "en": "respect", "reading": "リスペクト" },
+  { "jp": "憧れる、尊敬する(カジュアル)", "en": "look up to", "reading": "ルック アップ トゥ" },
+  { "jp": "〜を信じる(精神的、感情的)", "en": "believe in", "reading": "ビリーヴ イン" },
+  { "jp": "信用する、信頼する(現実的)", "en": "trust", "reading": "トラスト" },
+  { "jp": "留まる", "en": "stay", "reading": "ステイ" },
+  { "jp": "残る(そのまま残る)", "en": "remain", "reading": "リメイン" },
+  { "jp": "残っている", "en": "be left", "reading": "ビー レフト" },
+  { "jp": "〜を残す、任せる、離れる、預ける", "en": "leave", "reading": "リーヴ" },
+  { "jp": "保持する、残る(自分の意思で)", "en": "retain", "reading": "リテイン" },
+  { "jp": "溶ける、溶かす", "en": "melt", "reading": "メルト" },
+  { "jp": "疑う、怪しいと思う(フォーマル寄り)", "en": "suspect", "reading": "サスペクト" },
+  { jp: "抱く", en: "hug", reading: "ハグ" },
+  { jp: "ぎゅっとする(優しく長く)", en: "cuddle", reading: "カドル" },
+  { jp: "寄り添うように抱く", en: "snuggle", reading: "スナゴォ" },
+  { jp: "密着する(体を)", en: "snuggle up to", reading: "スナゴォ アップ トゥ" },
+  { jp: "密着する(仕事とか)", en: "closely related to", reading: "クロースリー リレイティッド トゥ" },
+  { jp: "おんぶする", en: "piggyback", reading: "ピギーバック" },
+  { jp: "チクる", en: "tell on (someone)", reading: "テル オン" },
+  { "jp": "拭く", "en": "wipe", "reading": "ワイプ" },
+  { "jp": "剥く(果物、野菜の皮)", "en": "peel", "reading": "ピール" },
+  { "jp": "剥く(エビ、ゆで卵の殻)", "en": "shell", "reading": "シェル" },
+  { "jp": "汗をかく", "en": "sweat", "reading": "スウェット" },
+  { "jp": "焦る", "en": "get flustered", "reading": "ゲット フラスタード" },
+  { "jp": "焦らせる", "en": "fluster", "reading": "フラスタァ" },
+  { "jp": "急ぐ", "en": "hurry", "reading": "ハリー" },
+  { "jp": "急いでいる", "en": "be in hurry", "reading": "ビー イン ハリー" },
+  { "jp": "慌てて急ぐ", "en": "rush", "reading": "ラッシュ" },
+  { "jp": "慌てる", "en": "panic", "reading": "パニック" },
+  { "jp": "刺す(暴力的)", "en": "stab", "reading": "スタァブ" },
+  { "jp": "刺す(軽く)", "en": "prick", "reading": "プリック" },
+  { "jp": "貫通する、貫く", "en": "pierce", "reading": "ピアス" },
+  { "jp": "撃つ、発射する", "en": "shoot", "reading": "シュート" },
+  { "jp": "〜を指す", "en": "point (at)", "reading": "ポイント" },
+  { "jp": "手を繋ぐ", "en": "hold hands", "reading": "ホールド ハンズ" },
+  { "jp": "握手する", "en": "shake hands", "reading": "シェイク ハンズ" },
+  { "jp": "睨む", "en": "glare", "reading": "グレア" },
+  { "jp": "めくる", "en": "turn over", "reading": "ターン オーバー" },
+  { "jp": "まくる", "en": "roll up", "reading": "ロール アップ" },
+  { "jp": "応答する、返事する", "en": "respond", "reading": "リスポンド" },
+  { "jp": "踊る", "en": "dance", "reading": "ダンス" },
+  { "jp": "脅す", "en": "threaten", "reading": "フレデン" },
+  { "jp": "添付する", "en": "attach", "reading": "アタッチ" },
+  { "jp": "煮る(材料を長時間)", "en": "stew", "reading": "スチュー" },
+{ "jp": "遅れている", "en": "be late", "reading": "ビー レイト" },
+{ "jp": "通勤する", "en": "commute", "reading": "コミュート" },
+{ "jp": "出席する", "en": "attend", "reading": "アテンド" },
+{ "jp": "眺める", "en": "look at", "reading": "ルック アット" },
+{ "jp": "持ち上げる", "en": "lift", "reading": "リフト" },
+{ "jp": "捧げる(時間や労力)", "en": "devote", "reading": "ディヴォウト" },
+{ "jp": "並んでいる", "en": "stand in line", "reading": "スタンド イン ライン" },
+{ "jp": "並ぶ", "en": "line up", "reading": "ライン アップ" },  
+{ "jp": "片付ける、仕舞う", "en": "put away", "reading": "プット アウェイ" },
+{ "jp": "給油する", "en": "refuel", "reading": "リフューオゥ" },
+{ "jp": "絞る(タオルや布)", "en": "wring", "reading": "リング" },
+{ "jp": "絞る(果物)", "en": "juice", "reading": "ジュース" },
+{ "jp": "干す", "en": "dry", "reading": "ドライ" },
+{ "jp": "縫う", "en": "sew", "reading": "ソウ" },
+{ "jp": "編む", "en": "knit", "reading": "ニット" },
+{ "jp": "撫でる(人)", "en": "stroke", "reading": "ストローク" },
+{ "jp": "採点する", "en": "grade", "reading": "グレイド" },
+{ "jp": "嫌がる", "en": "dislike", "reading": "ディスライク" },
+{ "jp": "連絡する(フォーマル)", "en": "contact", "reading": "コンタクト" },
+{ "jp": "連絡する(カジュアル)", "en": "get in touch", "reading": "ゲット イン タッチ" },
+{ "jp": "認証する", "en": "authenticate", "reading": "オーセンティケイト" },
+{ "jp": "承認する", "en": "approve", "reading": "アプルーヴ" },
+{ "jp": "証明する", "en": "prove", "reading": "プルーヴ" },
+{ "jp": "震える(恐怖、寒さ)", "en": "tremble", "reading": "チョレンボゥ" },
+{ "jp": "白状する、告白する", "en": "confess", "reading": "コンフェス" },
+{ "jp": "固める(物理的)", "en": "cement", "reading": "セメント" },
+  { "jp": "固める(凍らせて)", "en": "freeze", "reading": "フリーズ" },
+  { "jp": "強化する、固める(関係、決意)", "en": "strengthen", "reading": "ストレングスン" },
+  { "jp": "硬化する", "en": "harden", "reading": "ハーデン" },
+  { "jp": "良くする(機械、性能)", "en": "upgrade", "reading": "アップグレード" },
+  { "jp": "測る(長さ、距離、大きさ)", "en": "measure", "reading": "メジャー" },
+  { "jp": "測る(時間)", "en": "time", "reading": "タイム" },
+  { "jp": "測る(重さ)", "en": "weigh", "reading": "ウェイ" },
+  { "jp": "努力する", "en": "make an effort", "reading": "メイク アン エフォート" },
+  { "jp": "染める", "en": "dye", "reading": "ダイ" },
+  { "jp": "貰う、〜になる、着く、理解する、〜させる", "en": "get", "reading": "ゲット" },
+  { "jp": "進化する", "en": "evolve", "reading": "イヴォルブ" },
+  { "jp": "退化する", "en": "devolve", "reading": "ディヴォルブ" },
+  { "jp": "達成する", "en": "achieve", "reading": "アチーヴ" }
+      ],
+
+
+    
+    
+    nouns: [
+      { jp: "両親", en: "parent", reading: "ペアレント" },
+    { jp: "姉", en: "elder sister / older sister", reading: "エルダー シスター / オールダー シスター" },
+    { jp: "妹", en: "younger sister", reading: "ヤンガー シスター" },
+    { jp: "兄", en: "elder brother / older brother", reading: "エルダー ブラザー / オールダーブラザー" },
+    { jp: "弟", en: "younger brother", reading: "ヤンガー ブラザー" },
+    { jp: "夫", en: "husband", reading: "ハズバンド" },
+    { jp: "妻", en: "wife", reading: "" },
+    { jp: "娘", en: "daughter", reading: "ドーター" },
+    { jp: "息子", en: "son", reading: "サン" },
+    { jp: "一人っ子", en: "only child", reading: "" },
+    { jp: "祖母", en: "grandmother", reading: "グランドマザー" },
+    { jp: "祖父", en: "grandfather", reading: "グランドファーザー" },
+    { jp: "曾祖母", en: "great-grandmother", reading: "グレイト グランドマザー" },
+    { jp: "曾祖父", en: "great-grandfather", reading: "グレイト グランドファーザー" },
+    { jp: "孫", en: "grandchild", reading: "グランドチャイルド" },
+    { jp: "いとこ", en: "cousin", reading: "カズン" },
+    { jp: "おじさん", en: "uncle", reading: "" },
+    { jp: "おばさん", en: "aunt", reading: "" },
+    { jp: "親戚", en: "relative", reading: "レラティブ" },
+    { jp: "旅行", en: "travel", reading: "トラベル" },
+    { jp: "外国人", en: "foreigner", reading: "フォリナー" },
+    { jp: "現地の人", en: "locals", reading: "" },
+    { jp: "一般人", en: "ordinary person", reading: "オーディナリー パーソン" },
+    { jp: "小学生", en: "elementary school student", reading: "" },
+    { jp: "中学生", en: "junior high school student", reading: "" },
+    { jp: "高校生", en: "high school student", reading: "" },
+    { jp: "大学生", en: "college student / university student", reading: "カレッジ / ユニヴァーシティ" },
+    { jp: "社会人", en: "working adult", reading: "" },
+    { jp: "おめでとう", en: "congrats", reading: "コングラッツ" },
+    { jp: "結婚", en: "marriage", reading: "マリッジ" },
+    { jp: "原因", en: "cause", reading: "コーズ" },
+    { jp: "効果、結果", en: "effect", reading: "イフェクト" },
+    { jp: "包含", en: "inclusion", reading: "インクルージョン" },
+    { jp: "除外", en: "exclusion", reading: "イクスクルージョン" },
+    { jp: "成功", en: "success", reading: "" },
+    { jp: "失敗", en: "failure", reading: "フェイリャー" },
+    { jp: "同一", en: "sameness", reading: "セイムネス" },
+    { jp: "違い", en: "difference", reading: "" },
+    { jp: "生命", en: "life", reading: "" },
+    { jp: "死", en: "death", reading: "" },
+    { jp: "魅力", en: "charm", reading: "チャーム" },
+    { jp: "嫌悪", en: "disgust", reading: "ディスガスト" },
+    { jp: "多数派", en: "majority", reading: "マジョリティ" },
+    { jp: "少数派", en: "minority", reading: "マイノリティ" },
+    { jp: "愛", en: "love", reading: "" },
+    { jp: "憎しみ", en: "hate", reading: "ヘイト" },
+    { jp: "目的地", en: "destination", reading: "ディスティネーション" },
+    { jp: "方法", en: "method", reading: "メソッド" },
+    { jp: "意見", en: "opinion", reading: "オピニオン" },
+    { jp: "態度", en: "attitude", reading: "" },
+    { jp: "関係", en: "relationship", reading: "" },
+    { jp: "機会", en: "opportunity", reading: "" },
+    { jp: "情報", en: "information", reading: "" },
+    { jp: "受付", en: "reception", reading: "リセプション" },
+    { jp: "保険", en: "insurance", reading: "インシュアランス" },
+    { jp: "自信", en: "confidence", reading: "コンフィデンス" },
+    { jp: "製品", en: "product", reading: "" },
+    { jp: "経済", en: "economy", reading: "" },
+    { jp: "理論", en: "theory", reading: "" },
+    { jp: "人口", en: "population", reading: "ポピュレーション" },
+    { jp: "達成", en: "achievement", reading: "アチーブメント" },
+    { jp: "責任", en: "responsibility", reading: "レスポンシビリティ" },
+    { jp: "解決策", en: "solution", reading: "ソルーション" },
+    { jp: "知識", en: "knowledge", reading: "ノウレッジ" },
+    { jp: "教育", en: "education", reading: "エデュケーション" },
+    { jp: "決定", en: "decision", reading: "デシジョン" },
+    { jp: "事故", en: "accident", reading: "アクシデント" },
+    { jp: "能力", en: "ability", reading: "アビリティ" },
+    { jp: "職業", en: "occupation", reading: "オキュペイション" },
+    { jp: "約束(感情、行動)", en: "promise", reading: "プロミス" },
+    { jp: "約束(予定)", en: "appointment", reading: "アポイントメント" },
+    { jp: "環境", en: "environment", reading: "インヴァイロンメント" },
+    { jp: "経験", en: "experience", reading: "エクスピアリエンス" },
+    { jp: "戦略", en: "strategy", reading: "ストラテジー" },
+    { jp: "提案", en: "suggestion", reading: "サジェスチョン" },
+    { jp: "予報", en: "forecast", reading: "フォーキャスト" },
+    { jp: "惑星", en: "planet", reading: "" },
+    { jp: "自然", en: "nature", reading: "ネイチャー" },
+    { jp: "銀河", en: "galaxy", reading: "" },
+    { jp: "雷鳴", en: "thunder", reading: "" },
+    { jp: "稲妻", en: "lightning", reading: "" },
+    { jp: "貯金", en: "savings", reading: "セイビングス" },
+    { jp: "香水", en: "perfume", reading: "" },
+    { jp: "眼鏡", en: "glasses", reading: "グラッシズ" },
+    { jp: "草", en: "grass", reading: "" },
+    { jp: "歯ブラシ", en: "toothbrush", reading: "トゥースブラッシュ" },
+    { jp: "歯磨き粉", en: "toothpaste", reading: "トゥースペイスト" },
+    { jp: "習慣", en: "habit", reading: "" },
+    { jp: "材料、資料", en: "material", reading: "" },
+    { jp: "伝統", en: "tradition", reading: "" },
+    { jp: "希望、好み、選択", en: "preference", reading: "プレファレンス" },
+    { jp: "おしっこ", en: "pee", reading: "ピー" },
+    { jp: "うんこ", en: "poop", reading: "プープ" },
+    { jp: "胸の谷間、割れ目", en: "cleavage", reading: "クリーヴィッジ" },
+    { jp: "ぼったくり", en: "rip-off", reading: "" },
+    { jp: "詐欺", en: "scam", reading: "スキャム" },
+    { jp: "地平線、水平線", en: "horizon", reading: "" },
+    { jp: "通知、掲示", en: "notice", reading: "" },
+    { jp: "自己紹介", en: "self-introduction", reading: "" },
+    { jp: "交通", en: "traffic", reading: "トラフィック" },
+    { jp: "交通渋滞", en: "traffic jam", reading: "トラフィック ジャム" },
+    { jp: "交通事故", en: "traffic accident", reading: "トラフィック アクシデント" },
+    { jp: "高速道路", en: "highway", reading: "" },
+    { jp: "車用信号機", en: "traffic light / traffic signal", reading: "トラフィック ライト / トラフィック シグナル" },
+    { jp: "歩行者信号", en: "pedestrian light", reading: "ペデストリアン ライト" },
+    { jp: "横断歩道", en: "crosswalk", reading: "" },
+    { jp: "交通標識", en: "traffic sign", reading: "トラフィック サイン" },
+    { jp: "努力", en: "effort", reading: "エフォート" },
+    { jp: "行動", en: "behavior", reading: "ビヘイビア" },
+    { jp: "感情", en: "emotion", reading: "エモーション" },
+    { jp: "状況", en: "situation", reading: "シチュエーション" },
+    { jp: "技術", en: "technology", reading: "テクノロジー" },
+    { jp: "詳細", en: "detail", reading: "ディーテイル" },
+    { jp: "物、こと", en: "thing", reading: "スィング" },
+    { jp: "家具", en: "furniture", reading: "ファーニチャー" },
+    { jp: "給料", en: "salary", reading: "サラリー" },
+    { jp: "話題", en: "topic", reading: "トピック" },
+    { jp: "従業員", en: "employee", reading: "エンプロイー" },
+    { jp: "経歴、背景", en: "background", reading: "" },
+    { jp: "進捗、進歩", en: "progress", reading: "" },
+    { jp: "平等", en: "equality", reading: "イクォリティ" },
+    { jp: "権利", en: "right", reading: "" },
+    { jp: "規則", en: "rule", reading: "ルール" },
+    { jp: "法律", en: "law", reading: "" },
+    { jp: "政府", en: "government", reading: "ガヴァメント" },
+    { jp: "政治", en: "politics", reading: "" },
+    { jp: "祝祭", en: "celebration", reading: "セレブレーション" },
+    { jp: "流行", en: "trend", reading: "" },
+    { jp: "利益", en: "benefit", reading: "ベネフィット" },
+    { jp: "許可", en: "permission", reading: "パーミッション" },
+    { jp: "雰囲気", en: "atmosphere", reading: "アトモスフィア" },
+    { jp: "取引、契約", en: "deal", reading: "" },
+    { jp: "制限(行動の制限)", en: "restriction", reading: "リストリクション" },
+    { jp: "制限(量の制限)", en: "limit", reading: "" },
+    { jp: "検査", en: "examination", reading: "イグザミネーション" },
+    { "jp": "冷蔵庫(口語)", "en": "fridge", "reading": "フリッジ" },
+    { jp: "冷蔵庫(正式名称)", en: "refrigerator", reading: "リフリジェレーター" },
+    { jp: "冷凍庫", en: "freezer", reading: "フリーザー" },
+    { jp: "扇風機", en: "fan", reading: "" },
+    { jp: "電子レンジ", en: "microwave", reading: "マイクロウェーブ" },
+    { jp: "エアコン", en: "air conditioner", reading: "エアーコンディショナー" },
+    { jp: "棚", en: "shelf", reading: "シェルフ" },
+    { jp: "暖房機", en: "heater", reading: "" },
+    { jp: "階段", en: "stairs", reading: "ステアーズ" },
+    { jp: "枕", en: "pillow", reading: "ピロー" },
+    { jp: "地下", en: "basement", reading: "ベースメント" },
+    { jp: "洗面台", en: "washbasin", reading: "ウォッシュベイシン" },
+    { jp: "まな板", en: "cutting board", reading: "カッティング ボード" },
+    { jp: "鍋", en: "pot", reading: "" },
+    { jp: "変態", en: "pervert", reading: "パーヴァート" },
+    { jp: "自慰行為", en: "wank", reading: "" },
+    { jp: "信頼、信用", en: "trust", reading: "トラスト" },
+    { jp: "ばかな人、騙されやすい人", en: "fool", reading: "フール" },
+    { jp: "重圧、圧力", en: "pressure", reading: "" },
+    { jp: "費用", en: "expense", reading: "" },
+    { jp: "借金", en: "debt", reading: "デット" },
+    { jp: "体調", en: "condition", reading: "" },
+    { jp: "緊張感", en: "tension", reading: "" },
+    { jp: "角度", en: "angle", reading: "アングル" },
+    { jp: "悪者", en: "bad guy", reading: "" },
+    { jp: "犯罪", en: "crime", reading: "クライム" },
+    { jp: "犯罪者", en: "criminal", reading: "クリミナル" },
+    { jp: "無駄", en: "waste", reading: "ウェイスト" },
+    { jp: "時間の無駄", en: "a waste of time", reading: "" },
+    { jp: "雑談", en: "chat", reading: "" },
+    { jp: "予備品", en: "spare", reading: "スペア" },
+    { jp: "手の匂い", en: "the smell of hands", reading: "" },
+    { jp: "常識", en: "common sense", reading: "" },
+    { jp: "優先", en: "priority", reading: "プライオリティ" },
+    { jp: "温度", en: "temperature", reading: "テンパラチャー" },
+    { jp: "湿度", en: "humidity", reading: "ヒューミディティ" },
+    { jp: "質問（テスト問題）", en: "question", reading: "" },
+    { jp: "問題、課題(解決すべき)", en: "problem", reading: "" },
+    { jp: "中古品", en: "used item", reading: "" },
+    { jp: "差別", en: "discrimination", reading: "ディスクリミネーション" },
+    { jp: "人種差別主義者", en: "racist", reading: "レイシスト" },
+    { jp: "案内所", en: "information desk", reading: "" },
+    { jp: "訪問者、観光者", en: "visitor", reading: "" },
+    { jp: "書類", en: "document", reading: "" },
+    {jp:"日常", en:"everyday life"},
+  {jp:"現象", en:"phenomenon", reading:"フェナーメナン"},
+  {jp:"処置（実施された）", en:"action taken", reading:""},
+  {jp:"対応", en:"response", reading:"レスポンス"},
+  {jp:"殺人", en:"murder", reading:"マーダー"},
+  {jp:"殺人犯", en:"murderer", reading:"マーダラー"},
+  {jp:"殺人事件", en:"murder case", reading:"マーダー ケース"},
+  {jp:"議論", en:"discussion", reading:"ディスカッション"},
+  {jp:"合法", en:"legal", reading:"リーガル"},
+  {jp:"違法", en:"illegal", reading:"イリーガル"},
+  {jp:"収入", en:"income", reading:"インカム"},
+  {jp:"月収", en:"monthly income", reading:"マンスリー インカム"},
+  {jp:"年収", en:"annual income", reading:"アニュアル インカム"},
+  {jp:"手取り月収", en:"net monthly income", reading:"ネット マンスリー インカム"},
+  {jp:"過去", en:"past", reading:"パスト"},
+  {jp:"未来", en:"future", reading:"フューチャー"},
+  {jp:"新型", en:"new model", reading:"ニュー モデル"},
+  {jp:"営業", en:"sales", reading:"セールス"},
+  {jp:"電柱", en:"utility pole", reading:"ユーティリティ ポール"},
+  {jp:"電線(電柱の)", en:"overhead wire", reading:"オーバーヘッド ワイア"},
+  {jp:"コンセント", en:"outlet", reading:"アウトレット"},
+  {jp:"咳", en:"cough", reading:"コフ"},
+  {jp:"くしゃみ", en:"sneeze", reading:"スニーズ"},
+  {jp:"しゃっくり", en:"hiccup", reading:"ヒカップ"},
+  {jp:"あくび", en:"yawn", reading:"ヨーン"},
+  {jp:"いびき", en:"snore", reading:"スノア"},
+  {jp:"オナラ", en:"fart", reading:"ファート"},
+  {jp:"ゲップ", en:"burp", reading:"バープ"},
+  {jp:"唾を吐く", en:"spit", reading:"スピット"},
+  {jp:"口笛", en:"whistle", reading:"ウィッスル"},
+    { "jp": "頭", "en": "head", "reading": "ヘッド" },
+    { "jp": "額", "en": "forehead", "reading": "フォアヘッド" },
+    { "jp": "こめかみ", "en": "temple", "reading": "テンポゥ" },
+    { "jp": "目", "en": "eye", "reading": "アイ" },
+    { "jp": "まぶた", "en": "eyelids", "reading": "アイリッド" },
+    { "jp": "まつ毛", "en": "eyelashes", "reading": "アイラッシュ" },
+    { "jp": "まゆげ", "en": "eyebrow", "reading": "アイブラァウズ" },
+    { "jp": "鼻", "en": "nose", "reading": "ノーズ" },
+    { "jp": "鼻の穴", "en": "nostrils", "reading": "ノーストゥルズ" },
+    { "jp": "鼻毛", "en": "nose hair", "reading": "ノーズヘア" },
+    { "jp": "ほくろ", "en": "mole", "reading": "モール" },
+    { "jp": "頬", "en": "cheeks", "reading": "チーク" },
+    { "jp": "えくぼ", "en": "dimples", "reading": "ディンポゥズ" },
+    { "jp": "しわ", "en": "wrinkles", "reading": "リンコォズ" },
+    { "jp": "口", "en": "mouth", "reading": "マウス" },
+    { "jp": "唇", "en": "lip", "reading": "リップ" },
+    { "jp": "舌", "en": "tongue", "reading": "タング" },
+    { "jp": "歯", "en": "tooth / teeth", "reading": "トゥース / ティース" },
+    { "jp": "耳", "en": "ear", "reading": "イヤー" },
+    { "jp": "顎(先端部)", "en": "chin", "reading": "チン" },
+    { "jp": "顎(全体)", "en": "jaw", "reading": "ジョー" },
+    { "jp": "首", "en": "neck", "reading": "ネック" },
+    { "jp": "肩", "en": "shoulder", "reading": "ショルダー" },
+    { "jp": "胸", "en": "chest", "reading": "チェスト" },
+    { "jp": "胸（女性のバスト）", "en": "breast", "reading": "ブレスト" },
+    { "jp": "背中", "en": "back", "reading": "バック" },
+    { "jp": "腰(背面)", "en": "lower back", "reading": "ロウワーバック" },
+    { "jp": "腰(側面)", "en": "waist", "reading": "ウエスト" },
+    { "jp": "腕", "en": "arm", "reading": "アーム" },
+    { "jp": "肘", "en": "elbow", "reading": "エルボー" },
+    { "jp": "脇", "en": "armpit", "reading": "アームピット" },
+    { "jp": "手", "en": "hand", "reading": "ハンド" },
+    { "jp": "指", "en": "finger", "reading": "フィンガー" },
+    { "jp": "親指", "en": "thumb", "reading": "サム" },
+    { "jp": "人差し指", "en": "index finger", "reading": "インデックスフィンガー" },
+    { "jp": "中指", "en": "middle finger", "reading": "ミドルフィンガー" },
+    { "jp": "薬指", "en": "ring finger", "reading": "リングフィンガー" },
+    { "jp": "小指", "en": "pinky / little finger", "reading": "ピンキー / リトルフィンガー" },
+    { "jp": "爪", "en": "nail", "reading": "ネイル" },
+    { "jp": "手首", "en": "wrist", "reading": "リスト" },
+     { "jp": "お腹", "en": "stomach", "reading": "ストマック" },
+    { "jp": "おへそ", "en": "belly button", "reading": "ベリーボタン" },
+    { "jp": "お尻", "en": "butt", "reading": "バット" },
+    { "jp": "太もも", "en": "thigh", "reading": "サイ" },
+    { "jp": "膝", "en": "knee", "reading": "ニー" },
+    { "jp": "すね", "en": "shin", "reading": "シン" },
+    { "jp": "ふくらはぎ", "en": "calf / calves", "reading": "カーフ / カーヴズ" },
+    { "jp": "足", "en": "foot / feet", "reading": "フット / フィート" },
+    { "jp": "足の指", "en": "toe", "reading": "トウ" },
+    { "jp": "かかと", "en": "heel", "reading": "ヒール" },
+    { "jp": "足の裏", "en": "sole of the foot", "reading": "ソール オブ ザ フット" },
+    { "jp": "心臓", "en": "heart", "reading": "ハート" },
+    { "jp": "肺", "en": "lung", "reading": "ラング" },
+    { "jp": "胃", "en": "stomach", "reading": "ストマック" },
+    { "jp": "肝臓", "en": "liver", "reading": "リバー" },
+    { "jp": "腎臓", "en": "kidney", "reading": "キドニー" },
+    { "jp": "腸", "en": "intestine / gut", "reading": "インテスティン / ガット" },
+    { "jp": "骨", "en": "bone", "reading": "ボーン" },
+    { "jp": "鎖骨", "en": "collarbone", "reading": "コーレボーン" },
+    { "jp": "肩甲骨", "en": "shoulder blade", "reading": "ショルダーブレード" },
+    { "jp": "骨格", "en": "skeleton", "reading": "スケルトン" },
+    { "jp": "骨盤", "en": "pelvis", "reading": "ペルヴィス" },
+    { "jp": "背骨", "en": "backbone", "reading": "バックボーン" },
+    { "jp": "肋骨", "en": "rib", "reading": "リブ" },
+    { "jp": "筋肉", "en": "muscle", "reading": "マッスル" },
+    { "jp": "海外", "en": "abroad", "reading": "アブロード" },
+{ "jp": "海外旅行", "en": "trip abroad", "reading": "トリップ アブロード" },
+{ "jp": "体型、スタイル", "en": "figure", "reading": "フィギャー" },
+{ "jp": "顧客", "en": "client", "reading": "クライアント" },
+{ jp: "事実", en: "fact", reading: "ファクト" },
+{ jp: "虚構、作り話", en: "fiction", reading: "フィクション" },
+{ jp: "真実", en: "truth", reading: "トュルース" },
+{ jp: "虚偽", en: "falsehood", reading: "フォールスヘッド" },
+{ jp: "日の出", en: "sunrise", reading: "" },
+{ jp: "日の入", en: "sunset", reading: "" },
+{ jp: "希望", en: "hope", reading: "" },
+{ jp: "絶望", en: "despair", reading: "デスペア" },
+{ jp: "必死", en: "desperation", reading: "デスプレイション" }, 
+{ jp: "内容", en: "content", reading: "コンテント" },
+{ jp: "精子", en: "sperm", reading: "スパーム" },
+{ jp: "保証金", en: "deposit", reading: "デポジット" },
+{ jp: "反逆者", en: "rebel", reading: "レベル" },
+{ jp: "勇気", en: "courage", reading: "カレッジ" },     
+{ jp: "耳かき", en: "ear pick", reading: "イア ピック" },
+{ jp: "爪切り", en: "nail clipper", reading: "ネイル クリッパー" },
+{ jp: "血", en: "blood", reading: "ブラッド" },
+{ jp: "レジ袋", en: "plastic bag", reading: "プラスティック バッグ" },
+{ jp: "好奇心", en: "curiosity", reading: "キュリオシティ" },
+{ jp: "犠牲", en: "sacrifice", reading: "サクラァファイス" },  
+{ "jp": "例", "en": "example", "reading": "エグザンプル" },
+  { "jp": "思考、意志", "en": "mind", "reading": "マインド" },
+  { "jp": "奇数", "en": "odd", "reading": "オッド" },
+  { "jp": "偶数", "en": "even", "reading": "イーブン" },
+  { "jp": "物質、事柄", "en": "matter", "reading": "マター" },
+  { "jp": "炎", "en": "flame", "reading": "フレイム" },
+  { "jp": "強み、長所", "en": "strength", "reading": "ストレンフ" },
+  { "jp": "誤解", "en": "misunderstanding", "reading": "ミスアンダースタンディング" },
+  { "jp": "孤独、寂しさ", "en": "loneliness", "reading": "ロンリネス" },
+  { "jp": "永遠", "en": "eternity", "reading": "エタニティ" },
+  { jp: "棒", en: "stick", reading: "スティック" },
+{ jp: "脚本", en: "scenario", reading: "シナリオ" },
+{ jp: "選択", en: "choice", reading: "チョイス" },
+{ jp: "選択肢", en: "option", reading: "オプション" },
+{ "jp": "表", "en": "obverse", "reading": "オブヴァース" },
+{ "jp": "裏", "en": "reverse", "reading": "リヴァース" },
+{ "jp": "ジャンル、種類", "en": "genre", "reading": "ジャーンラ" },
+  { "jp": "空想、幻想", "en": "fantasy", "reading": "ファンタジー" },
+  { "jp": "不可解な問題、なぞなぞ", "en": "riddle", "reading": "リドル" },
+  { "jp": "反響", "en": "echo", "reading": "エコー" },
+  { "jp": "迷路、複雑な状況", "en": "maze", "reading": "メイズ" },
+  { "jp": "花びら", "en": "petals", "reading": "ペタルズ" },
+  { "jp": "つま先立ち", "en": "tiptoes", "reading": "ティップトウズ" },
+  { "jp": "つぼみ", "en": "bud", "reading": "バッド" },
+  { "jp": "腕いっぱいの量、大量", "en": "armful", "reading": "アームフル" },
+  { "jp": "激変、大混乱", "en": "upheaval", "reading": "アプヒーヴォ" },
+  { "jp": "もや、霧のような状態", "en": "haze", "reading": "ヘイズ" },
+  { "jp": "形、姿", "en": "shape", "reading": "シェイプ" }, 
+  { "jp": "好み、幻想", "en": "fancy", "reading": "ファンシー" },
+  { "jp": "火事", "en": "fire", "reading": "ファイア" },
+  { "jp": "指示、命令", "en": "instructions", "reading": "インストラクションズ" },
+  { "jp": "取扱説明書", "en": "instruction manual", "reading": "インストラクション マニュアル" },
+  { "jp": "家賃", "en": "rent", "reading": "レント" },
+  { "jp": "全体、全部", "en": "whole", "reading": "ホウル" },
+  { "jp": "少しの時間", "en": "while", "reading": "ワイル" },
+  { "jp": "クジラ", "en": "whale", "reading": "ウェイロォ" },
+  { "jp": "出来事、事件(ちょっとした)", "en": "incident", "reading": "インシデント" },
+  { "jp": "恥、残念なこと", "en": "shame", "reading": "シェイム" },
+  { "jp": "評価、査定(フォーマル)", "en": "evaluation", "reading": "エヴァリュエイション" },
+  { "jp": "評価、復習(カジュアル)", "en": "review", "reading": "レビュー" },
+  { "jp": "苦痛、苦しみ", "en": "suffering", "reading": "サファリング" },
+  { "jp": "ひげ", "en": "beard", "reading": "ビアード" },
+  { "jp": "カーテン", "en": "curtain", "reading": "カーテン" },
+  { "jp": "商品", "en": "item", "reading": "アイテム" } 
+        
+],
+
+
+
+    
+    adverbs: [
+{ jp: "いつも", en: "always", reading: "オールウェイズ" },
+{ jp: "普段", en: "usually", reading: "ユージュアリー" },
+{ jp: "よく", en: "often", reading: "オーフン" },
+{ jp: "時々", en: "sometimes", reading: "サムタイムズ" },
+{ jp: "たまに(フォーマル)", en: "occasionally", reading: "オケイジョナリー" },
+{ jp: "決してない", en: "never", reading: "ネヴァー" },
+{ jp: "既に", en: "already", reading: "オールレディ" },
+{ jp: "ちょうど、さっき", en: "just", reading: "ジャスト" },
+{ jp: "突然", en: "suddenly", reading: "サドゥンリー" },
+{ jp: "そろそろ", en: "soon", reading: "スーン" },
+{ jp: "まだ(肯定)", en: "still", reading: "スティル" },
+{ jp: "まだ(否定文、疑問文)", en: "yet", reading: "イェット" },
+{ jp: "多分(50%)", en: "maybe", reading: "メイビー" },
+{ jp: "多分(90%)", en: "probably", reading: "プロバブリー" },
+{ jp: "実は", en: "actually", reading: "アクチュアリー" },
+{ jp: "その代わりに", en: "instead", reading: "インステッド" },
+{ jp: "それから、次に", en: "then", reading: "ゼン" },
+{ jp: "別々に、個別に", en: "separately", reading: "セパレイトリー" },
+{ jp: "積極的に", en: "actively", reading: "アクティヴリー" },
+{ jp: "消極的に", en: "passively", reading: "パッシヴリー" },
+{ jp: "絶対に、確実に、間違いなく(迷ったらこれ)", en: "definitely", reading: "デフィニットリー" },
+{ jp: "絶対に(同意、感情、強調)", en: "absolutely", reading: "アブソリュートリー" },
+{ jp: "完全に、本当に(ガジュアル、若者)", en: "totally", reading: "トータリー" },
+{ jp: "完全に(状態の変化、事実の証明)", en: "completely", reading: "コンプリートリー" },
+{ jp: "十分に", en: "enough", reading: "イナフ" },
+{ jp: "ゆっくりと", en: "slowly", reading: "スローリー" },
+{ jp: "速く", en: "quickly", reading: "クイックリー" },
+{ jp: "注意深く", en: "carefully", reading: "ケアフリー" },
+{ jp: "簡単に", en: "easily", reading: "イージリー" },
+{ jp: "上手に", en: "well", reading: "ウェル" },
+{ jp: "下手に", en: "badly", reading: "バッドリー" },
+{ jp: "基本的に", en: "basically", reading: "ベイシカリー" },
+{ jp: "一般的に", en: "generally", reading: "ジェネラリー" },
+{ jp: "論理的に", en: "logically", reading: "ロジカリー" },
+{ jp: "普通に", en: "normally", reading: "ノーマリー" },
+{ jp: "結果的に", en: "as a result", reading: "アズ ア リザルト" },
+{ jp: "必ず、忘れず", en: "without fail", reading: "ウィザウト フェイル" },
+{ jp: "わざと", en: "on purpose", reading: "オン パーパス" },
+{ jp: "その場合は", en: "in that case", reading: "イン ザット ケース" },
+{ jp: "この理由で", en: "for this reason", reading: "フォー ディス リーズン" },
+{ jp: "たまに(カジュアル)", en: "once in a while", reading: "ワンス イン ア ワイル" },
+  { jp: "以上(年齢)", en: "or older / or over / and above", reading: "" },
+{ jp: "以下(年齢)", en: "or younger / or under", reading: "" },
+{ jp: "以上(人数、金額、個数)", en: "or more", reading: "" },
+{ jp: "以下(人数、金額、個数)", en: "or less", reading: "" },
+{ jp: "超え", en: "over 〇〇", reading: "" },
+{ jp: "未満", en: "under 〇〇", reading: "" },
+{ jp: "たまたま", en: "by chance", reading: "" },                  
+{ jp: "必死に", en: "desperately", reading: "デスプレイトリー" },
+{ jp: "絶望的に", en: "hopelessly", reading: "ホープレスリー" },
+{ jp: "自動で、自動的に", en: "automatically", reading: "オードマディクリー" },
+{ jp: "手動で、手動的に", en: "manually", reading: "メニュウォリー" },
+{ jp: "単独で", en: "alone", reading: "アローン" },
+{ jp: "結局、やっぱり", en: "after all", reading: "アフター オール" },
+{ jp: "もう〜ない(否定文、疑問文)", en: "anymore", reading: "エニモア" },
+{ jp: "〜も、さらに", en: "also", reading: "オールソー" },
+{ jp: "非常に", en: "dearly", reading: "ディアリー" },  
+{"jp": "〜さえも、〜でさえ", "en": "even", "reading": "イーブン" },
+{ "jp": "〜を超えて、〜の向こうに", "en": "beyond", "reading": "ビヨンド" },
+{ "jp": "最終的に、結局", "en": "eventually", "reading": "インヴェンチュリー" },
+{ "jp": "まさに、正確に(内容、状況)", "en": "exactly", "reading": "イグザクトリー" },
+{ "jp": "むしろ、どちらかと言えば", "en": "rather", "reading": "ラザー" },
+{ jp: "早く", en: "early", reading: "アーリー" },
+{ jp: "遅く", en: "late", reading: "レイト" },
+{ jp: "熱心に、心待ちにして", en: "eagerly", reading: "イーガリー" },
+{ jp: "明確に、はっきりと", en: "clearly", reading: "クリアリー" },   
+{ "jp": "多分(フォーマル)", "en": "perhaps", "reading": "パーハープス" },
+{ "jp": "甘く、優しく", "en": "sweetly", "reading": "スウィートリー" },
+{ "jp": "明るく(光が)", "en": "brightly", "reading": "ブライトリー" },
+{ "jp": "薄暗く(光が)", "en": "dimly", "reading": "ディムリー" },
+{ "jp": "特に", "en": "especially", "reading": "エスペシャリー" },
+{ "jp": "もう少しで〜、ほとんど", "en": "almost", "reading": "オールモウスト" },
+{ jp: "密接に、細かく", en: "closely", reading: "クロースリー" },
+{ "jp": "時間通りに", "en": "on time", "reading": "オン タイム" },
+{ "jp": "予定通りに", "en": "on schedule", "reading": "オン スケジュール" }
+    ],
+
+
+
+    
+    adjectives: [
+  { jp: "厚い", en: "thick", reading: "シック" },
+  { jp: "薄い、細い", en: "thin", reading: "シン" },
+  { jp: "奇妙な", en: "strange", reading: "ストレインジ" },
+  { jp: "必要な", en: "necessary", reading: "ネセサリー" },
+  { jp: "騒がしい", en: "noisy", reading: "ノイジー" },
+  { jp: "静か", en: "quiet", reading: "クワイエット" },
+  { jp: "同じ", en: "same", reading: "セイム" },
+  { jp: "違う、異なる", en: "different", reading: "ディファレント" },
+  { jp: "正直な", en: "honest", reading: "オネスト" },
+  { jp: "嘘つき", en: "lying", reading: "ライイング" },
+  { jp: "伝統的な", en: "traditional", reading: "トラディショナル" },
+  { jp: "似てる（性質が）", en: "similar", reading: "シミラー" },
+  { jp: "魅力的な(視覚、性的)", en: "attractive", reading: "アトラクティブ" },
+  { jp: "魅力的な(愛嬌)", en: "charming", reading: "チャーミング" },
+  { jp: "耐えられない", en: "unbearable", reading: "アンベアラブル" },
+  { jp: "つらい", en: "painful", reading: "ペインフル" },
+  { jp: "幸せ", en: "happy", reading: "ハッピー" },
+  { jp: "悲しい", en: "sad", reading: "サッド" },
+  { jp: "疲れた", en: "tired", reading: "タイアード" },
+  { jp: "元気な", en: "energetic", reading: "エナジェティック" },
+  { jp: "怒っている", en: "angry", reading: "アングリー" },
+  { jp: "落ち着いてる", en: "calm", reading: "カーム" },
+  { jp: "緊張している", en: "nervous", reading: "ナーヴァス" },
+  { jp: "リラックスしている", en: "relaxed", reading: "リラクスト" },
+  { jp: "優しい", en: "kind", reading: "カインド" },
+  { jp: "意地悪な", en: "mean", reading: "ミーン" },
+  { jp: "友好的な", en: "friendly", reading: "フレンドリー" },
+  { jp: "よそよそしい", en: "unfriendly", reading: "アンフレンドリー" },
+  { jp: "不正直な", en: "dishonest", reading: "ディスオネスト" },
+  { jp: "高価な", en: "expensive", reading: "イクスペンシヴ" },
+  { jp: "安い", en: "cheap", reading: "チープ" },
+  { jp: "綺麗な", en: "clean", reading: "クリーン" },
+  { jp: "汚い", en: "dirty", reading: "ダーティ" },
+  { jp: "美しい", en: "beautiful", reading: "ビューティフル" },
+  { jp: "醜い", en: "ugly", reading: "アグリー" },
+  { jp: "おもしろい", en: "funny", reading: "ファニー" },
+  { jp: "つまらない", en: "boring", reading: "ボーリング" },
+  { jp: "強い/濃い(飲み物の味)", en: "strong", reading: "ストロング" },
+  { jp: "弱い/薄い(飲み物の味)", en: "weak", reading: "ウィーク" },
+  { jp: "濃い(食べ物の味)", en: "rich", reading: "リッチ" },
+  { jp: "薄い(食べ物の味)", en: "bland", reading: "ブランド" },
+  { jp: "広い(幅)", en: "wide", reading: "ワイド" },
+  { jp: "狭い(幅)", en: "narrow", reading: "ナロー" },
+  { jp: "広い(部屋)", en: "spacious", reading: "スペーシャス" },
+  { jp: "狭い(部屋)", en: "cramped", reading: "クラプト" },
+  { jp: "健康な", en: "healthy", reading: "ヘルシー" },
+  { jp: "病気の", en: "sick", reading: "シック" },
+  { jp: "濡れている", en: "wet", reading: "ウェット" },
+  { jp: "乾いてる", en: "dry", reading: "ドライ" },
+  { jp: "礼儀正しい", en: "polite", reading: "ポライト" },
+  { jp: "失礼な", en: "rude", reading: "ルード" },
+  { jp: "安全な", en: "safe", reading: "セイフ" },
+  { jp: "危険な", en: "dangerous", reading: "デンジャラス" },
+  { jp: "賢い", en: "smart", reading: "スマート" },
+  { jp: "バカな", en: "dumb", reading: "ダム" },
+  { jp: "勇敢な", en: "brave", reading: "ブレイブ" },
+  { jp: "怖がっている", en: "scared", reading: "スケアード" },
+  { jp: "印象的", en: "impressive", reading: "インプレッシヴ" },
+  { jp: "残っている", en: "left", reading: "レフト" },
+  { jp: "濃い", en: "dark", reading: "ダーク" },
+  { jp: "可能な", en: "possible", reading: "ポッシブル" },
+  { jp: "不可能な", en: "impossible", reading: "イムポッシブル" },
+  { jp: "事前に", en: "advance", reading: "アドバンス" },
+  { jp: "利用可能な", en: "available", reading: "アヴェイラブル" },
+  { jp: "隣接した", en: "adjacent", reading: "アジェイセント" },
+  { jp: "積極的な", en: "active", reading: "アクティブ" },
+  { jp: "消極的な", en: "passive", reading: "パッシヴ" },
+  { jp: "役に立つ", en: "helpful", reading: "ヘルプフル" },
+  { jp: "馬鹿な(ガチ)", en: "stupid", reading: "スチューピッド" },
+  { jp: "知りたがっている、好奇心旺盛な", en: "curious", reading: "キュリアス" },
+  { jp: "渇いた", en: "thirsty", reading: "サースティ" },
+  { jp: "食べられる", en: "edible", reading: "エディブル" },
+  { jp: "公共の", en: "public", reading: "パブリック" },
+  { jp: "厳しい(規則)", en: "strict", reading: "ストリクト" },
+  { jp: "厳しい(感情的に)", en: "harsh", reading: "ハーシュ" },
+  { jp: "別々の", en: "separate", reading: "セパレイト" },
+  { jp: "予想外の、意外な", en: "unexpected", reading: "アンエクスペクテッド" },
+  { jp: "反対の", en: "opposite", reading: "オポジット" },
+  { jp: "予備の", en: "spare", reading: "スペア" },
+  { jp: "基本の", en: "basic", reading: "ベーシック" },
+  { jp: "一般の", en: "general", reading: "ジェネラル" },
+  { jp: "共通の", en: "common", reading: "コモン" },
+  { jp: "優先の", en: "prior", reading: "プライアー" },
+  { jp: "普通の", en: "normal", reading: "ノーマル" },
+  { jp: "壊れやすい", en: "fragile", reading: "フラジャイル" },
+  { jp: "上記の", en: "the above", reading: "ジ アバブ" },
+  { jp: "下記の", en: "the following / below", reading: "ザ フォローイング / ビロー" },  
+  { jp: "正しい", en: "correct", reading: "コレクト" },
+  { jp: "間違い", en: "incorrect", reading: "インコレクト" },
+  { jp: "正しい(道徳的)", en: "right", reading: "ライト" },
+  { jp: "間違っている(道徳的)", en: "wrong", reading: "ロング" },
+  { jp: "中古の", en: "used / secondhand", reading: "ユーズド / セカンドハンド" },
+  { jp: "怪しい", en: "suspicious", reading: "サスピシャス" },
+  { jp: "怪しい(カジュアル)", en: "shady", reading: "シェイディ" },
+  { jp: "欲張りな", en: "greedy", reading: "グリーディ" },
+  { jp: "傷つきやすい", en: "vulnerable", reading: "ヴァルネラブル" },
+  {jp:"食べ放題", en:"all-you-can-eat", reading:"オール ユー キャン イート"},
+  {jp:"飲み放題", en:"all-you-can-drink", reading:"オール ユー キャン ドリンク"},
+{ jp: "真実の", en: "true", reading: "トュルー" },
+{ jp: "偽の", en: "false", reading: "フォールス" },
+{ jp: "必死な、必死の", en: "desperate", reading: "デスプレイト" },
+{ jp: "絶望的な、絶望的の", en: "hopeless", reading: "ホープレス" }, 
+{ jp: "自動の", en: "automatic", reading: "オードマディック" },
+{ jp: "手動の", en: "manual", reading: "メニュロォ" },
+{ jp: "1人の", en: "alone", reading: "アローン" },
+{ jp: "公平な", en: "fair", reading: "フェア" },
+{ jp: "不公平な", en: "unfair", reading: "アンフェア" },
+{ jp: "深い(物理的、知識)", en: "deep", reading: "ディープ" },
+{ jp: "浅い(物理的)", en: "shallow", reading: "シャロー" },
+{ jp: "深い(意味、感情)", en: "profound", reading: "プロファウンド" },
+{ jp: "深い(関係や絆)", en: "strong", reading: "ストロング" },
+{ jp: "浅い(知識、関係、絆)", en: "superficial", reading: "スーパーフィシャル" },
+{ jp: "少ない(数えられる)", en: "few", reading: "フュー" },
+{ jp: "少ない(数えれない)", en: "little", reading: "リトル" },
+{ jp: "寂しい", en: "lonely", reading: "ロンリー" }, 
+{ jp: "自己中心的な", en: "selfish", reading: "セルフィッシュ" },   
+{ jp: "変な、奇妙な不思議な(口語的)", en: "weird", reading: "ウィアード" },
+{ jp: "顔に", en: "facial", reading: "フェイシャル" },   
+{ jp: "情けない", en: "pathetic", reading: "パ・セデック" },
+{ jp: "怖い", en: "scary", reading: "スケアリー" }, 
+{ jp: "自己愛が強い、自分に夢中", en: "narcissistic", reading: "ナルスシステッｸ" },
+{ jp: "神秘的な", en: "mysterious", reading: "ミステリアス" },
+{ jp: "即時の、瞬間的な", en: "instant", reading: "インスタント" },
+{ jp: "完璧な、完全な", en: "perfect", reading: "パーフェクト" }, 
+{ "jp": "平らな、均等な、安定した", "en": "even", "reading": "イーブン" },
+{ "jp": "恐れている、不安に思っている", "en": "afraid", "reading": "アフレイド" },
+{ "jp": "終わりのない", "en": "endless", "reading": "エンドレス" },
+{ "jp": "いくつかの", "en": "any", "reading": "エニー" },
+{ "jp": "正確な", "en": "exact", "reading": "イグザクト" },
+{ jp: "異世界的な、この世のものとは思えない", en: "otherworldly", reading: "アーザーワールドリー" },
+{ jp: "早い", en: "early", reading: "アーリー" },
+{ jp: "遅い", en: "late", reading: "" },
+{ jp: "欠点のない", en: "flawless", reading: "フローレス" },
+{ jp: "身動きできない", en: "struk", reading: "スタック" },
+{ jp: "恥知らずの、図々しい、遠慮しない", en: "shameless", reading: "シェイムレス" },
+{ jp: "大胆な、思い切った", en: "daring", reading: "デアリング" },
+{ jp: "満足感のある", en: "satisfying", reading: "サティスファイニング" },
+{ jp: "迷っている、確信がない", en: "unsure", reading: "" },
+{ jp: "どんな…でも", en: "whatever", reading: "" },
+{ jp: "非常識な、馬鹿げた", en: "absurd", reading: "アブサード" },
+{ "jp": "混んでいる", "en": "crowded", "reading": "クラウデッド" },
+{ "jp": "逆の", "en": "reverse", "reading": "リヴァース" },
+{ "jp": "圧倒的な", "en": "overwhelming", "reading": "オーヴァー ウェルミンｸﾞ" },
+{ "jp": "明るい", "en": "bright", "reading": "ブライト" },
+{ "jp": "薄暗い", "en": "dim", "reading": "ディム" },
+{ "jp": "些細な", "en": "trivial", "reading": "トリヴィアル" },
+{ "jp": "消えかけている", "en": "fading", "reading": "フェイディング" },
+{ "jp": "陽気な、明るい性格の", "en": "cheerful", "reading": "チアフル" },
+{ "jp": "同じ、同様の", "en": "ditto", "reading": "ディドー" },
+{ "jp": "ふらふらする、めまいがする、混乱する", "en": "dizzy", "reading": "ディジー" },
+{ "jp": "豪華な、華やかな", "en": "gorgeous", "reading": "ゴージャス" },
+{ "jp": "酷い(客観的、状態や出来事)", "en": "terrible", "reading": "テレヴォ" },
+{ "jp": "酷い(主観的、状態や出来事)", "en": "awful", "reading": "アーフォゥ" },
+{ "jp": "酷い、嫌な、不快な(人や行為)", "en": "nasty", "reading": "ナスティ" },
+{ "jp": "しゃれた、高級な", "en": "fancy", "reading": "ファンシー" },
+{ "jp": "興奮させる", "en": "exciting", "reading": "エキサイティング" },
+{ "jp": "全体の、全部の", "en": "whole", "reading": "ホウル" },
+{ "jp": "遠い", "en": "far", "reading": "ファー" },
+{ "jp": "近い", "en": "near", "reading": "ニア" },
+{ "jp": "含まれている", "en": "included", "reading": "インクルーデッド" },
+{ "jp": "除外されている", "en": "excluded", "reading": "エクスクルーデッド" },
+{ "jp": "一定の、持続的な", "en": "constant", "reading": "コンスタント" },
+{ "jp": "素晴らしい、すごく良い(感情強め)", "en": "fabulous", "reading": "ファビュラス" },
+{ "jp": "苦しんでいる", "en": "suffering", "reading": "サファリング" },
+{ "jp": "恥ずかしい(性格)", "en": "shy", "reading": "シャイ" },
+{ "jp": "恥ずかしい(一時的)", "en": "embarrassed", "reading": "エンバラスト" }
+    ],
+
+
+
+    
+    tenses: [  
+  { jp: "先週", en: "last week", reading: "ラスト ウィーク" },
+  { jp: "先月", en: "last month", reading: "ラスト マンス" },
+  { jp: "去年", en: "last year", reading: "ラスト イヤー" },
+  { jp: "毎日", en: "every day", reading: "エヴリ デイ" },
+  { jp: "毎週", en: "every week", reading: "エヴリ ウィーク" },
+  { jp: "毎月", en: "every month", reading: "エヴリ マンス" },
+  { jp: "毎年", en: "every year", reading: "エヴリ イヤー" },
+  { jp: "来週", en: "next week", reading: "ネクスト ウィーク" },
+  { jp: "来月", en: "next month", reading: "ネクスト マンス" },
+  { jp: "来年", en: "next year", reading: "ネクスト イヤー" },
+  { jp: "前回", en: "last time", reading: "ラスト タイム" },
+  { jp: "今回", en: "this time", reading: "ディス タイム" },
+  { jp: "次回", en: "next time", reading: "ネクスト タイム" },
+  { jp: "毎回", en: "every time", reading: "エヴリ タイム" },
+  { jp: "1年間", en: "one year", reading: "ワン イヤー" },
+  { jp: "2年間", en: "two years", reading: "トゥー イヤーズ" },
+  { jp: "1日中", en: "all day", reading: "オール デイ" },
+  { jp: "1年中", en: "all year round", reading: "オール イヤー ラウンド" },
+  { jp: "1日に1回", en: "once a day", reading: "ワンス ア デイ" },
+  { jp: "2日に1回", en: "once every other day", reading: "ワンス エヴリ アザー デイ" },
+  { jp: "3日に1回", en: "once every three days", reading: "ワンス エヴリ スリー デイズ" },
+  { jp: "2ヶ月に1回", en: "once every two months", reading: "ワンス エヴリ トゥー マンス" },
+  { jp: "さっき", en: "a while ago", reading: "ア ワイ ラァゴ" },
+  { jp: "先程", en: "a short time ago", reading: "ア ショート タイム アゴー" },
+  { jp: "後で", en: "later", reading: "レイター" },
+  { jp: "ずっと", en: "all the time", reading: "オール ザ タイム" },
+  { jp: "永遠", en: "forever", reading: "フォーエヴァー" },
+  { jp: "最近", en: "lately", reading: "レイトリー" },
+  { jp: "ずっと前に", en: "a long time ago", reading: "ア ロング タイム アゴー" },
+  { jp: "過去に", en: "in the past", reading: "イン ザ パスト" },
+  { jp: "未来に", en: "in the future", reading: "イン ザ フューチャー" },
+  { jp: "朝、午前", en: "morning", reading: "モーニング" },
+  { jp: "正午", en: "noon", reading: "ヌーン" },
+  { jp: "午後", en: "afternoon", reading: "アフタヌーン" },
+  { jp: "夕方", en: "evening", reading: "イヴニング" },
+  { jp: "夜", en: "night", reading: "ナイト" },
+  { jp: "深夜", en: "midnight", reading: "ミッドナイト" },
+  { jp: "3日前(今から)", en: "three days ago", reading: "スリー デイズ アゴー" },
+  { jp: "一昨日", en: "the day before yesterday", reading: "ザ デイ ビフォー イエスタデイ" },
+  { jp: "昨日", en: "yesterday", reading: "イエスタデイ" },
+  { jp: "今日", en: "today", reading: "トゥデイ" },
+  { jp: "明日", en: "tomorrow", reading: "トゥモロウ" },
+  { jp: "明後日", en: "the day after tomorrow", reading: "ザ デイ アフター トゥモロウ" },
+  { jp: "3日後(今から)", en: "in three days", reading: "イン スリー デイズ" },
+  { jp: "3秒前(今から)", en: "three seconds ago", reading: "スリー セカンズ アゴー" },
+  { jp: "3秒前(過去の出来事から)", en: "three seconds before", reading: "スリー セカンズ ビフォー" },
+  { jp: "3秒後(今から)", en: "in three seconds", reading: "イン スリー セカンズ" },
+  { jp: "3秒後(過去の出来事から)", en: "three seconds later", reading: "スリー セカンズ レイター" }
+    ],
+
+
+
+
+    
+  pronouns: [
+    { jp: "みんな", en: "everyone", reading: "エヴリワン" },
+    { jp: "誰か（肯定文）", en: "someone/somebody", reading: "サムワン／サムバディ" },
+    { jp: "誰か、誰でも（疑問文・否定文）", en: "anyone/anybody", reading: "エニワン／エニバディ" },
+    { jp: "誰も～ない（否定文）", en: "no one/nobody", reading: "ノー ワン／ノーバディ" },
+    { jp: "すべてのもの、なんでも", en: "everything", reading: "エヴリシング" },
+    { jp: "何か（肯定文）", en: "something", reading: "サムシング" },
+    { jp: "何か、何でも、何も～ない（疑問文・否定文）", en: "anything", reading: "エニシング" },
+    { jp: "何もない（否定文）", en: "nothing", reading: "ナッシング" },
+    { jp: "どこでも", en: "everywhere", reading: "エヴリウェア" },
+    { jp: "どこか（肯定文）", en: "somewhere", reading: "サムウェア" },
+    { jp: "どこか、どこでも、どこにも～ない（疑問文・否定文）", en: "anywhere", reading: "エニウェア" },
+    { jp: "どこにも～ない（否定文）", en: "nowhere", reading: "ノーウェア" },
+    { jp: "私は", en: "I", reading: "アイ" },
+    { jp: "私の", en: "my", reading: "マイ" },
+    { jp: "私を、私に", en: "me", reading: "ミー" },
+    { jp: "私のもの", en: "mine", reading: "マイン" },
+    { jp: "あなた(たち)は", en: "you", reading: "ユー" },
+    { jp: "あなた(たち)の", en: "your", reading: "ユア" },
+    { jp: "あなた(たち)を、あなた(たち)に", en: "you", reading: "ユー" },
+    { jp: "あなた(たち)のもの", en: "yours", reading: "ユアーズ" },
+    { jp: "彼は", en: "he", reading: "ヒー" },
+    { jp: "彼の", en: "his", reading: "ヒズ" },
+    { jp: "彼を、彼に", en: "him", reading: "ヒム" },
+    { jp: "彼のもの", en: "his", reading: "ヒズ" },
+    { jp: "彼女は", en: "she", reading: "シー" },
+    { jp: "彼女の", en: "her", reading: "ハー" },
+    { jp: "彼女を、彼女に", en: "her", reading: "ハー" },
+    { jp: "彼女のもの", en: "hers", reading: "ハーズ" },
+    { jp: "それは", en: "it", reading: "イット" },
+    { jp: "それの", en: "its", reading: "イッツ" },
+    { jp: "それを、それに", en: "it", reading: "イット" },
+    { jp: "私たちは", en: "we", reading: "ウィー" },
+    { jp: "私たちの", en: "our", reading: "アワー" },
+    { jp: "私たちを、私たちに", en: "us", reading: "アス" },
+    { jp: "私たちのもの", en: "ours", reading: "アワーズ" },
+    { jp: "彼らは、それらは", en: "they", reading: "ゼイ" },
+    { jp: "彼らの、それらの", en: "their", reading: "ゼア" },
+    { jp: "彼らを、彼らに、それらを、それらに", en: "them", reading: "ゼム" },
+    { jp: "彼らのもの", en: "theirs", reading: "ゼアーズ" },
+    { jp: "私自身", en: "myself", reading: "マイセルフ" },
+    { jp: "あなた自身", en: "yourself", reading: "ユアセルフ" },
+    { jp: "彼自身", en: "himself", reading: "ヒムセルフ" },
+    { jp: "彼女自身", en: "herself", reading: "ハーセルフ" },
+    { jp: "それ自身", en: "itself", reading: "イットセルフ" },
+    { jp: "私たち自身", en: "ourselves", reading: "アワセルヴズ" },
+    { jp: "あなたたち自身", en: "yourselves", reading: "ユアセルヴズ" },
+    { jp: "彼ら、それら自身", en: "themselves", reading: "ゼムセルヴズ" },
+    { jp: "お互い", en: "each other", reading: "イーチ アザー" },
+    { jp: "なんでも、どんなものでも", en: "whatever", reading: "ワットエヴァー" }
+  ],
+  
+  
+  
+  
+   conjunctions: [
+    { jp: "そして", en: "and", reading: "アンド" },
+    { jp: "しかし", en: "but", reading: "バット" },
+    { jp: "または", en: "or", reading: "オア" },
+    { jp: "なぜなら", en: "because", reading: "ビコーズ" },
+    { jp: "〜通りに、〜のように", en: "as", reading: "アズ" },
+    { jp: "〜まで", en: "till", reading: "ティル" },
+    { jp: "〜する間に、〜だけれども", en: "while", reading: "ワイル" }
+  ]
+};
+
+      const currentList = {
+    others: [...originalData.others],
+    various: [...(originalData.various||[])],
+    verbs: [...(originalData.verbs||[])],
+    nouns: [...(originalData.nouns||[])],
+    adverbs: [...(originalData.adverbs||[])],
+    adjectives: [...(originalData.adjectives||[])],
+    tenses: [...(originalData.tenses||[])],
+    pronouns: [...(originalData.pronouns||[])],
+  };
+
+  const contentDiv = document.getElementById("content");
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const shuffleBtn = document.getElementById("shuffleBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const startQuizBtn = document.getElementById("startQuizBtn");
+  const quizOverlay = document.getElementById("quizOverlay");
+  const quizProgress = document.getElementById("quizProgress");
+  const jpText = document.getElementById("jpText");
+  const enText = document.getElementById("enText");
+  const kanaText = document.getElementById("kanaText");
+  const showAnswerBtn = document.getElementById("showAnswerBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const quitQuizBtn = document.getElementById("quitQuizBtn");
+  const searchInput = document.getElementById("searchInput");
+  const exampleText = document.getElementById("exampleText");
+  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+
+  let currentType = "verbs";
+  let quizList = [];
+  let currentQuizIndex = 0;
+
+  function playSound(word) {
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
+    const audio = new Audio(url);
+    audio.play().catch(() => {});
+  }
+
+  function shuffleArray(arr) {
+    const a = arr.slice();
+    for(let i = a.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function renderList(type) {
+    contentDiv.innerHTML = "";
+    currentList[type].forEach(item => {
+      const entry = document.createElement("div");
+      entry.className = "entry";
+
+      const jpDiv = document.createElement("div");
+      jpDiv.className = "jp";
+      jpDiv.textContent = item.jp;
+
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "details";
+
+      const enSpan = document.createElement("span");
+      enSpan.className = "en";
+      enSpan.textContent = item.en;
+
+      const kanaSpan = document.createElement("span");
+      kanaSpan.className = "kana";
+      if(item.reading) kanaSpan.textContent = item.reading;
+
+      const playBtn = document.createElement("button");
+      playBtn.className = "play-btn";
+      playBtn.textContent = "▶️";
+      playBtn.title = `発音再生: ${item.en}`;
+      playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
+
+      let exampleBtn = document.createElement("button");
+      exampleBtn.className = "control-btn";
+      exampleBtn.textContent = "例文";
+      exampleBtn.style.marginLeft = "8px";
+      exampleBtn.onclick = (e) => {
+        e.stopPropagation();
+        if(type === "others" && item.example) {
+          showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+        } else {
+          const query = encodeURIComponent(item.en);
+          const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
+          showWeblioExampleModal(exampleUrl);
+        }
+      };
+
+      detailsDiv.appendChild(enSpan);
+      if(item.reading) detailsDiv.appendChild(kanaSpan);
+      detailsDiv.appendChild(playBtn);
+      detailsDiv.appendChild(exampleBtn);
+
+      entry.appendChild(jpDiv);
+      entry.appendChild(detailsDiv);
+
+      detailsDiv.style.display = "none";
+      jpDiv.addEventListener("click", () => {
+        detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
+      });
+
+      contentDiv.appendChild(entry);
+    });
+  }
+
+  function showQuizQuestion() {
+  const item = quizList[currentQuizIndex];
+  jpText.textContent = item.jp;
+  enText.textContent = item.en;
+  kanaText.textContent = item.reading || "";
+
+  enText.style.display = "none";
+  kanaText.style.display = "none";
+
+  quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+  showAnswerBtn.style.display = "inline-block";
+  nextBtn.style.display = "none";
+
+  // --- その他タブだけ例文ボタンを追加 ---
+  let existingBtn = document.getElementById("quizExampleBtn");
+  if(existingBtn) existingBtn.remove();
+
+  if(currentType === "others") { // ← ここでタブをチェック
+    const exampleBtn = document.createElement("button");
+    exampleBtn.id = "quizExampleBtn";
+    exampleBtn.className = "control-btn";
+    exampleBtn.textContent = "例文";
+    exampleBtn.style.marginLeft = "8px";
+
+    exampleBtn.onclick = () => {
+      if(item.example && item.exampleJp){
+        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+      } else {
+        showCustomExampleModal([], [], item.jp, item.en);
+      }
+    };
+
+    // 好きな場所に追加（例: quizContainerの最後）
+    quizContainer.appendChild(exampleBtn);
+  }
+}
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentType = btn.getAttribute("data-type");
+      searchInput.value = "";
+      currentList[currentType] = [...(originalData[currentType]||[])];
+      renderList(currentType);
+    });
+  });
+
+  shuffleBtn.addEventListener("click", () => {
+    currentList[currentType] = shuffleArray(currentList[currentType]);
+    renderList(currentType);
+  });
+
+  resetBtn.addEventListener("click", () => {
+    currentList[currentType] = [...(originalData[currentType]||[])];
+    searchInput.value = "";
+    renderList(currentType);
+  });
+
+  scrollBottomBtn.addEventListener("click", () => {
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+});
+
+  startQuizBtn.addEventListener("click", () => {
+    quizList = shuffleArray([...currentList[currentType]]);
+    currentQuizIndex = 0;
+    if (quizList.length === 0) { alert("問題がありません"); return; }
+    showQuizQuestion();
+    quizOverlay.style.display = "flex";
+  });
+
+  showAnswerBtn.addEventListener("click", () => {
+    enText.style.display = "block";
+    kanaText.style.display = "block";
+    showAnswerBtn.style.display = "none";
+    nextBtn.style.display = "inline-block";
+    enText.onclick = () => { playSound(enText.textContent); };
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentQuizIndex++;
+    if (currentQuizIndex >= quizList.length) {
+      alert("全問終了！");
+      quizOverlay.style.display = "none";
+    } else {
+      showQuizQuestion();
+    }
+  });
+
+  quitQuizBtn.addEventListener("click", () => {
+    if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
+  });
+
+  searchInput.addEventListener("input", () => {
+    const keyword = searchInput.value.trim().toLowerCase();
+    if (!keyword) currentList[currentType] = [...(originalData[currentType]||[])];
+    else currentList[currentType] = (originalData[currentType]||[]).filter(item => {
+      return item.jp.toLowerCase().includes(keyword) ||
+             item.en.toLowerCase().includes(keyword) ||
+             (item.reading && item.reading.toLowerCase().includes(keyword));
+    });
+    renderList(currentType);
+  });
+
+  renderList(currentType);
+
+  function showWeblioExampleModal(url) {
+    const iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+    iframe.style.border = "none";
+    exampleText.innerHTML = "";
+    exampleText.appendChild(iframe);
+    document.getElementById("exampleModal").style.display = "flex";
+  }
+
+  function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
+    let html = "";
+    if(originalJp && originalEn){
+      html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
+      html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
+      html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
+    }
+    for (let i = 0; i < textsJp.length; i++) {
+      html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
+      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
+    }
+    exampleText.innerHTML = html;
+    document.getElementById("exampleModal").style.display = "flex";
+  }
+
+  function closeExampleModal() {
+    document.getElementById("exampleText").innerHTML = "";
+    document.getElementById("exampleModal").style.display = "none";
+  }
+
+  const exampleModalDiv = document.getElementById("exampleModal");
+  let pressTimer = null;
+
+// 共通で長押し判定
+function startPressTimer() {
+  pressTimer = setTimeout(() => {
+    closeExampleModal();
+  }, 150); // 0.15秒長押しで閉じる
+}
+
+function clearPressTimer() {
+  if (pressTimer) {
+    clearTimeout(pressTimer);
+    pressTimer = null;
+  }
+}
+
+// PC: マウス押下
+exampleModalDiv.addEventListener("mousedown", (e) => {
+  if(e.target === exampleModalDiv) startPressTimer();
+});
+exampleModalDiv.addEventListener("mouseup", clearPressTimer);
+exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
+
+// スマホ: タッチ開始
+exampleModalDiv.addEventListener("touchstart", (e) => {
+  if(e.target === exampleModalDiv) startPressTimer();
+});
+exampleModalDiv.addEventListener("touchend", clearPressTimer);
+exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
+
+  // --- 新規：左端長押しで初期化 ---
+  let leftPressTimer;
+  leftResetZone.addEventListener("touchstart", (e) => {
+    leftPressTimer = setTimeout(() => {
+      // 初期状態に戻す
+      for (let type in currentList) {
+        currentList[type] = [...(originalData[type] || [])];
+      }
+      currentType = "verbs";
+      renderList(currentType);
+      searchInput.value = "";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 300); // 0.3秒長押し
+  });
+
+  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
+  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
+
+  // --- PC用：マウス短押しで初期化 ---
+leftResetZone.addEventListener("mousedown", (e) => {
+  leftPressTimer = setTimeout(() => {
+    // 初期化処理
+    for (let type in currentList) {
+      currentList[type] = [...(originalData[type] || [])];
+    }
+    currentType = "verbs";
+    renderList(currentType);
+    searchInput.value = "";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 150);
+});
+leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
+leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
+
+});
+</script>
+</body>
+</html>
