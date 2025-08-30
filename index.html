@@ -1957,22 +1957,17 @@ closeBtn.addEventListener("click", () => {
 
   // --- ここが追加部分 ---
 if (quizDirection === "E→J") {
-    enText.style.display = "block";        // 表示
-    enText.style.visibility = "visible";   // 見えるように
-    enText.style.pointerEvents = "auto";   // タップ可能に
-    enText.style.cursor = "pointer";       // 視覚的に押せる
+    // 英語を常に再生可能に
     enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-
-    // 日本語はタップ無効化
+    // 日本語はクリック無効化
     jpText.onclick = null;
     jpText.style.cursor = "default";
-} else {
-    // J→E
-    enText.style.display = "none";         // 最初は非表示
+} else { // J→E
     enText.onclick = null;
     jpText.onclick = null;
     jpText.style.cursor = "pointer";
 }
+
   // 例文ボタンの処理は元と同じ
   let existingBtn = document.getElementById("quizExampleBtn");
   if(existingBtn) existingBtn.remove();
@@ -2182,10 +2177,6 @@ leftResetZone.addEventListener("mousedown", (e) => {
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
 
-});
-enText.addEventListener("click", () => {
-    enText.style.border = "2px solid red";  // 英語部分に赤枠を付ける
-    console.log("英語テキスト要素:", enText); // 本当に取得できてるか確認
 });
 </script>
 </body>
