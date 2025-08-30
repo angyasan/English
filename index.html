@@ -190,6 +190,7 @@
   <button class="control-btn" id="shuffleBtn">シャッフル</button>
   <button class="control-btn" id="resetBtn">元に戻す</button>
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
+  <button id="startQuizEnToJBtn" class="control-btn">E→Jクイズ</button>
 </div>
 
 <div id="content"></div>
@@ -1844,6 +1845,7 @@ closeBtn.addEventListener("click", () => {
   const shuffleBtn = document.getElementById("shuffleBtn");
   const resetBtn = document.getElementById("resetBtn");
   const startQuizBtn = document.getElementById("startQuizBtn");
+  const startQuizEnToJBtn = document.getElementById("startQuizEnToJBtn");
   const quizOverlay = document.getElementById("quizOverlay");
   const quizProgress = document.getElementById("quizProgress");
   const jpText = document.getElementById("jpText");
@@ -1859,7 +1861,9 @@ closeBtn.addEventListener("click", () => {
   let currentType = "verbs";
   let quizList = [];
   let currentQuizIndex = 0;
+  let quizDirection = "J→E";
 
+  
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
     const audio = new Audio(url);
@@ -1936,8 +1940,13 @@ closeBtn.addEventListener("click", () => {
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
+  if(quizDirection === "J→E") {
   jpText.textContent = item.jp;
   enText.textContent = item.en;
+} else {
+  jpText.textContent = item.en;
+  enText.textContent = item.jp;
+}
   kanaText.textContent = item.reading || "";
 
   enText.style.display = "none";
@@ -1997,13 +2006,26 @@ closeBtn.addEventListener("click", () => {
   window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 });
 
-  startQuizBtn.addEventListener("click", () => {
-    quizList = shuffleArray([...currentList[currentType]]);
-    currentQuizIndex = 0;
-    if (quizList.length === 0) { alert("問題がありません"); return; }
-    showQuizQuestion();
-    quizOverlay.style.display = "flex";
-  });
+  // J→Eクイズ開始（修正：方向をセット）
+startQuizBtn.addEventListener("click", () => {
+  quizDirection = "J→E"; // 修正
+  startQuiz(currentType);
+});
+
+// E→Jクイズ開始（追加）
+startQuizEnToJBtn.addEventListener("click", () => {
+  quizDirection = "E→J"; // 追加
+  startQuiz(currentType);
+});
+
+// 共通関数にしてコード重複回避（追加）
+function startQuiz(type){
+  quizList = shuffleArray([...currentList[type]]);
+  currentQuizIndex = 0;
+  if (quizList.length === 0) { alert("問題がありません"); return; }
+  showQuizQuestion();
+  quizOverlay.style.display = "flex";
+}
 
   showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
