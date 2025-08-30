@@ -1956,17 +1956,16 @@ closeBtn.addEventListener("click", () => {
   nextBtn.style.display = "none";
 
   // --- ここが追加部分 ---
-  if (quizDirection === "E→J") {
-    // 英語クリックで常に音声再生
-    enText.onclick = () => playSound(enText.textContent);
-    // 日本語はタップしても反応なし
+if (quizDirection === "E→J") {
+    // 英語を再生するよう修正
+    enText.onclick = () => playSound(item.en);  // item.en = 英語
     jpText.onclick = null;
     jpText.style.cursor = "default";
-  } else { // J→E
-    enText.onclick = null;  // 答え表示前は無効
-    jpText.onclick = null;  // 単語帳用のクリックは renderList() に依存
+} else { // J→E
+    enText.onclick = null;
+    jpText.onclick = null;
     jpText.style.cursor = "pointer";
-  }
+}
 
   // 例文ボタンの処理は元と同じ
   let existingBtn = document.getElementById("quizExampleBtn");
@@ -2038,20 +2037,18 @@ function startQuiz(type){
   quizOverlay.style.display = "flex";
 }
 
-  showAnswerBtn.addEventListener("click", () => {
+ showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
 
     if (quizDirection === "J→E") {
-        // J→Eの場合：答え表示後のみ英語クリックで音声
+        // J→E: 答え表示後のみ英語クリックで音声
         enText.onclick = () => playSound(enText.textContent);
-        // 日本語は通常処理（詳細開閉など）に任せる
     } else if (quizDirection === "E→J") {
-        // E→Jの場合：答え表示後も英語クリックで音声再生
-        enText.onclick = () => playSound(enText.textContent);
-        // 日本語クリックは完全無効
+        // E→J: 英語を再生する
+        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
         jpText.onclick = null;
     }
 });
