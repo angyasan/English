@@ -1939,13 +1939,13 @@ closeBtn.addEventListener("click", () => {
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
-  if(quizDirection === "J→E") {
-  jpText.textContent = item.jp;
-  enText.textContent = item.en;
-} else {
-  jpText.textContent = item.en;
-  enText.textContent = item.jp;
-}
+  if (quizDirection === "J→E") {
+    jpText.textContent = item.jp;
+    enText.textContent = item.en;
+  } else { // E→J
+    jpText.textContent = item.en;
+    enText.textContent = item.jp;
+  }
   kanaText.textContent = item.reading || "";
 
   enText.style.display = "none";
@@ -1955,11 +1955,24 @@ closeBtn.addEventListener("click", () => {
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
 
-  // --- その他タブだけ例文ボタンを追加 ---
+  // --- ここが追加部分 ---
+if (quizDirection === "E→J") {
+    // 英語を常に再生可能に
+    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+    // 日本語はクリック無効化
+    jpText.onclick = null;
+    jpText.style.cursor = "default";
+} else { // J→E
+    enText.onclick = null;
+    jpText.onclick = null;
+    jpText.style.cursor = "pointer";
+}
+
+  // 例文ボタンの処理は元と同じ
   let existingBtn = document.getElementById("quizExampleBtn");
   if(existingBtn) existingBtn.remove();
 
-  if(currentType === "others") { // ← ここでタブをチェック
+  if(currentType === "others") {
     const exampleBtn = document.createElement("button");
     exampleBtn.id = "quizExampleBtn";
     exampleBtn.className = "control-btn";
@@ -1974,7 +1987,6 @@ closeBtn.addEventListener("click", () => {
       }
     };
 
-    // 好きな場所に追加（例: quizContainerの最後）
     quizContainer.appendChild(exampleBtn);
   }
 }
@@ -2026,23 +2038,31 @@ function startQuiz(type){
   quizOverlay.style.display = "flex";
 }
 
-  showAnswerBtn.addEventListener("click", () => {
+ showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
-    enText.onclick = () => { playSound(enText.textContent); };
-  });
 
-  nextBtn.addEventListener("click", () => {
+    if (quizDirection === "J→E") {
+        // J→E: 答え表示後のみ英語クリックで音声
+        enText.onclick = () => playSound(enText.textContent);
+    } else if (quizDirection === "E→J") {
+        // E→J: 英語を再生する
+        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+        jpText.onclick = null;
+    }
+});
+
+nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
     if (currentQuizIndex >= quizList.length) {
-      alert("全問終了！");
-      quizOverlay.style.display = "none";
+        alert("全問終了！");
+        quizOverlay.style.display = "none";
     } else {
-      showQuizQuestion();
+        showQuizQuestion();
     }
-  });
+});
 
   quitQuizBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
