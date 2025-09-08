@@ -164,12 +164,18 @@
   }
   
 .hidden-en {
-  color: #333;          /* グレーで「隠れてる感」を出す */
-  background-color: #f0f0f0;
-  padding: 2px 4px;
+  color: transparent;         /* 文字を透明に */
+  background-color: #333;     /* 背景を黒っぽく */
   border-radius: 3px;
+  padding: 2px 4px;
   cursor: pointer;
   user-select: none;
+  transition: color 0.3s ease;
+}
+
+.hidden-en.revealed {
+  color: #000;                /* 表示時は黒文字に */
+  background-color: transparent; /* 背景は戻す */
 }
 </style>
 </head>
@@ -2268,6 +2274,13 @@ leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); 
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
 
 });
+
+document.querySelectorAll(".hidden-en").forEach(el => {
+  el.addEventListener("click", () => {
+    el.classList.add("revealed");
+  });
+});
+
 </script>
 </body>
 </html>
