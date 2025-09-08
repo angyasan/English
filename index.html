@@ -162,7 +162,15 @@
     color: #000000;  /* 黒文字 */
     font-weight: bold; 
   }
-
+  
+.hidden-en {
+  color: #888;          /* グレーで「隠れてる感」を出す */
+  background-color: #f0f0f0;
+  padding: 2px 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+}
 </style>
 </head>
 <body>
@@ -2175,19 +2183,19 @@ nextBtn.addEventListener("click", () => {
   }
 
   function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
-    let html = "";
-    if(originalJp && originalEn){
-      html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-      html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
-      html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
-    }
-    for (let i = 0; i < textsJp.length; i++) {
-      html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-      html += `<p style="margin-bottom:12px;">${textsEn[i]}</p>`;
-    }
-    exampleText.innerHTML = html;
-    document.getElementById("exampleModal").style.display = "flex";
+  let html = "";
+  if (originalJp && originalEn) {
+    html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
+    html += `<p style="margin-bottom:12px;"><strong class="hidden-en" onclick="this.classList.remove('hidden-en');">${originalEn}</strong></p>`;
+    html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
   }
+  for (let i = 0; i < textsJp.length; i++) {
+    html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
+    html += `<p style="margin-bottom:12px;"><span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span></p>`;
+  }
+  exampleText.innerHTML = html;
+  document.getElementById("exampleModal").style.display = "flex";
+}
 
   function closeExampleModal() {
     document.getElementById("exampleText").innerHTML = "";
