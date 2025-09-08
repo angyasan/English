@@ -2192,17 +2192,17 @@ nextBtn.addEventListener("click", () => {
   let html = "";
   if (originalJp && originalEn) {
     html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-    html += `<p style="margin-bottom:12px;"><strong class="hidden-en" onclick="this.classList.remove('hidden-en');">${originalEn}</strong></p>`;
+    html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`; // ← hidden-en は削除
     html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
   }
   for (let i = 0; i < textsJp.length; i++) {
     html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-    html += `<p style="margin-bottom:12px;"><span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span></p>`;
+    html += `<p style="margin-bottom:12px;"><span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span></p>`; // ← 例文のみ隠す
   }
   exampleText.innerHTML = html;
   document.getElementById("exampleModal").style.display = "flex";
 }
-
+  
   function closeExampleModal() {
     document.getElementById("exampleText").innerHTML = "";
     document.getElementById("exampleModal").style.display = "none";
