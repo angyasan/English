@@ -2142,7 +2142,18 @@ closeBtn.addEventListener("click", () => {
   let quizList = [];
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
-
+  
+// --- 一時保存用関数 ---
+function saveQuizState() {
+    if(!quizList || quizList.length === 0) return;
+    const state = {
+        quizDirection,
+        currentType,
+        currentQuizIndex,
+        quizList
+    };
+    localStorage.setItem("savedQuiz", JSON.stringify(state));
+}
   
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
@@ -2220,6 +2231,9 @@ closeBtn.addEventListener("click", () => {
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
+  
+  saveQuizState();
+  
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
@@ -2337,6 +2351,9 @@ function startQuiz(type){
 
 nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
+    
+    saveQuizState();
+    
     if (currentQuizIndex >= quizList.length) {
         alert("全問終了！");
         quizOverlay.style.display = "none";
