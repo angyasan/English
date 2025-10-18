@@ -2349,8 +2349,12 @@ nextBtn.addEventListener("click", () => {
 });
 
   quitQuizBtn.addEventListener("click", () => {
-    if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
-  });
+    if (confirm("本当にクイズをやめますか？")) {
+        quizOverlay.style.display = "none";
+        localStorage.removeItem("savedQuiz"); // ← ここで保存データを削除
+        resumeQuizBtn.style.display = "none";  // 復帰ボタンも隠す
+    }
+});
 
 // --- 一時離脱 & 復帰機能 ---
 const resumeQuizBtn = document.createElement("button");
