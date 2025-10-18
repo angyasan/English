@@ -2342,7 +2342,9 @@ nextBtn.addEventListener("click", () => {
         quizOverlay.style.display = "none";
     } else {
         showQuizQuestion();
-        saveQuizState();
+        
+        autoSaveQuizState();
+    
     }
 });
 
@@ -2371,6 +2373,17 @@ function saveQuizState() {
     alert("クイズを一時離脱しました");
     quizOverlay.style.display = "none";
     resumeQuizBtn.style.display = "inline-block";
+}
+
+function autoSaveQuizState() {
+    if(!quizList || quizList.length === 0) return;
+    const state = {
+        quizDirection,
+        currentType,
+        currentQuizIndex,
+        quizList
+    };
+    localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
 // クイズポップアップ内に一時離脱ボタンを追加
