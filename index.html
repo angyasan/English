@@ -2400,6 +2400,11 @@ resumeQuizBtn.addEventListener("click", () => {
     resumeQuizBtn.style.display = "none";
 });
 
+window.addEventListener("load", () => {
+    const saved = localStorage.getItem("savedQuiz");
+    if (saved) resumeQuizBtn.style.display = "inline-block";
+});
+
   searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
     if (!keyword) currentList[currentType] = [...(originalData[currentType]||[])];
