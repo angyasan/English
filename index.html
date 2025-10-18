@@ -2349,6 +2349,57 @@ nextBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) quizOverlay.style.display = "none";
   });
 
+// --- 一時離脱 & 復帰機能 ---
+const resumeQuizBtn = document.createElement("button");
+resumeQuizBtn.id = "resumeQuizBtn";
+resumeQuizBtn.className = "control-btn";
+resumeQuizBtn.textContent = "続きから再開";
+resumeQuizBtn.style.display = "none"; // 初期非表示
+resumeQuizBtn.style.marginLeft = "8px";
+document.getElementById("controls").appendChild(resumeQuizBtn);
+
+function saveQuizState() {
+    if(!quizList || quizList.length === 0) return;
+    const state = {
+        quizDirection,
+        currentType,
+        currentQuizIndex,
+        quizList
+    };
+    localStorage.setItem("savedQuiz", JSON.stringify(state));
+    alert("クイズを一時離脱しました");
+    quizOverlay.style.display = "none";
+    resumeQuizBtn.style.display = "inline-block";
+}
+
+// クイズポップアップ内に一時離脱ボタンを追加
+let tempQuitBtn = document.getElementById("tempQuitBtn");
+if(!tempQuitBtn){
+    const tempBtn = document.createElement("button");
+    tempBtn.id = "tempQuitBtn";
+    tempBtn.className = "control-btn";
+    tempBtn.textContent = "一時離脱";
+    tempBtn.style.position = "absolute";
+    tempBtn.style.bottom = "10px";
+    tempBtn.style.right = "10px";
+    tempBtn.onclick = saveQuizState;
+    document.getElementById("quizContainer").appendChild(tempBtn);
+}
+
+// 復帰ボタン押下時
+resumeQuizBtn.addEventListener("click", () => {
+    const saved = localStorage.getItem("savedQuiz");
+    if(!saved) return alert("保存されたクイズがありません");
+    const state = JSON.parse(saved);
+    quizDirection = state.quizDirection;
+    currentType = state.currentType;
+    quizList = state.quizList;
+    currentQuizIndex = state.currentQuizIndex;
+    showQuizQuestion();
+    quizOverlay.style.display = "flex";
+    resumeQuizBtn.style.display = "none";
+});
+
   searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
     if (!keyword) currentList[currentType] = [...(originalData[currentType]||[])];
