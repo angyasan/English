@@ -2620,37 +2620,23 @@ exampleModalDiv.addEventListener("touchstart", (e) => {
 exampleModalDiv.addEventListener("touchend", clearPressTimer);
 exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
 
-// --- ここ追加：白い部分（例文本体）長押しで閉じる ---
+// --- 白い部分のダブルタップ／ダブルクリックで閉じる ---
 const exampleWhiteArea = document.getElementById("exampleText");
-let whitePressTimer = null;
+let lastTapTime = 0;
 
-function startWhitePressTimer() {
-  whitePressTimer = setTimeout(() => {
+function handleWhiteAreaTap() {
+  const currentTime = new Date().getTime();
+  if (currentTime - lastTapTime < 300) { // 300ms以内で2回タップなら閉じる
     closeExampleModal();
-  }, 150); // 0.15秒長押しで閉じる
-}
-
-function clearWhitePressTimer() {
-  if (whitePressTimer) {
-    clearTimeout(whitePressTimer);
-    whitePressTimer = null;
   }
+  lastTapTime = currentTime;
 }
 
+// PC: クリック
+exampleWhiteArea.addEventListener("click", handleWhiteAreaTap);
 
-// PC: マウス押下
-exampleWhiteArea.addEventListener("mousedown", (e) => {
-  if(e.target === exampleWhiteArea) startWhitePressTimer();
-});
-exampleWhiteArea.addEventListener("mouseup", clearWhitePressTimer);
-exampleWhiteArea.addEventListener("mouseleave", clearWhitePressTimer);
-
-// スマホ: タッチ開始
-exampleWhiteArea.addEventListener("touchstart", (e) => {
-  if(e.target === exampleWhiteArea) startWhitePressTimer();
-});
-exampleWhiteArea.addEventListener("touchend", clearWhitePressTimer);
-exampleWhiteArea.addEventListener("touchcancel", clearWhitePressTimer);
+// スマホ: タップ
+exampleWhiteArea.addEventListener("touchend", handleWhiteAreaTap);
 
   // --- 新規：左端長押しで初期化 ---
   let leftPressTimer;
