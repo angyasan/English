@@ -2669,6 +2669,7 @@ window.addEventListener("load", () => {
   }
 
   function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
+    lastTapTime = 0; // ← モーダルを開くたびリセット
   let html = "";
   if (originalJp && originalEn) {
     html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
