@@ -2724,9 +2724,12 @@ exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
 const exampleWhiteArea = document.getElementById("exampleText");
 let lastTapTime = 0;
 
-function handleWhiteAreaTap() {
+function handleWhiteAreaTap(e) {
+  // クリック／タップが本文やボタンなら何もしない
+  if (e.target !== exampleWhiteArea) return;
+
   const currentTime = new Date().getTime();
-  if (currentTime - lastTapTime < 300) { // 300ms以内で2回タップなら閉じる
+  if (currentTime - lastTapTime < 300) {
     closeExampleModal();
   }
   lastTapTime = currentTime;
@@ -2734,7 +2737,6 @@ function handleWhiteAreaTap() {
 
 // PC: クリック
 exampleWhiteArea.addEventListener("click", handleWhiteAreaTap);
-
 // スマホ: タップ
 exampleWhiteArea.addEventListener("touchend", handleWhiteAreaTap);
 
