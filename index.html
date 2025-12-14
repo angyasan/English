@@ -2483,6 +2483,16 @@ if (quizDirection === "E→J") {
   }
 }
 
+function setActiveTab(type) {
+  tabButtons.forEach(btn => {
+    if (btn.getAttribute("data-type") === type) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       tabButtons.forEach(b => b.classList.remove("active"));
@@ -2749,6 +2759,7 @@ document.addEventListener("touchend", (e) => {
         currentList[type] = [...(originalData[type] || [])];
       }
       currentType = "verbs";
+      setActiveTab("verbs");
       renderList(currentType);
       searchInput.value = "";
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2766,6 +2777,7 @@ leftResetZone.addEventListener("mousedown", (e) => {
       currentList[type] = [...(originalData[type] || [])];
     }
     currentType = "verbs";
+    setActiveTab("verbs");
     renderList(currentType);
     searchInput.value = "";
     window.scrollTo({ top: 0, behavior: 'smooth' });
