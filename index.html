@@ -2727,6 +2727,19 @@ exampleWhiteArea.addEventListener("click", handleWhiteAreaTap);
 // スマホ: タップ
 exampleWhiteArea.addEventListener("touchend", handleWhiteAreaTap);
 
+// hidden-en をタップしたときはイベントを親に伝えない
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("hidden-en")) {
+    e.stopPropagation();
+  }
+});
+
+document.addEventListener("touchend", (e) => {
+  if (e.target.classList.contains("hidden-en")) {
+    e.stopPropagation();
+  }
+});
+
   // --- 新規：左端長押しで初期化 ---
   let leftPressTimer;
   leftResetZone.addEventListener("touchstart", (e) => {
