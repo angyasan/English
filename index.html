@@ -2583,22 +2583,40 @@ function startQuiz(type){
   quizOverlay.style.display = "flex";
 }
 
- showAnswerBtn.addEventListener("click", () => {
+// --- 前の問題ボタンを作成 ---
+const prevBtn = document.createElement("button");
+prevBtn.id = "prevBtn";
+prevBtn.textContent = "前へ";
+prevBtn.style.display = "none"; // 初期は非表示
+prevBtn.style.marginRight = "8px";
+document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
+
+// --- 前へボタン処理 ---
+prevBtn.addEventListener("click", () => {
+    if (currentQuizIndex > 0) {
+        currentQuizIndex--;
+        showQuizQuestion();
+        autoSaveQuizState();
+    }
+});
+
+// --- 答えボタン表示時に前へボタンも表示 ---
+showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
+    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none"; // 前があれば表示
 
     if (quizDirection === "J→E") {
-        // J→E: 答え表示後のみ英語クリックで音声
         enText.onclick = () => playSound(enText.textContent);
     } else if (quizDirection === "E→J") {
-        // E→J: 英語を再生する
         enText.onclick = () => playSound(quizList[currentQuizIndex].en);
         jpText.onclick = null;
     }
 });
 
+// --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
     if (currentQuizIndex >= quizList.length) {
@@ -2606,9 +2624,8 @@ nextBtn.addEventListener("click", () => {
         quizOverlay.style.display = "none";
     } else {
         showQuizQuestion();
-        
         autoSaveQuizState();
-    
+        prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
     }
 });
 
