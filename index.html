@@ -2706,10 +2706,14 @@ nextBtn.addEventListener("click", () => {
     if (currentQuizIndex >= quizList.length) {
         alert("全問終了！");
         quizOverlay.style.display = "none";
+
+        // ★ ここを追加 ★
+        localStorage.removeItem("savedQuiz");
+        resumeQuizBtn.style.display = "none";
+
     } else {
         showQuizQuestion();
         autoSaveQuizState();
-        prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
     }
 });
 
