@@ -196,6 +196,7 @@
   <div class="tab-btn" data-type="adjectives">形容詞</div>
   <div class="tab-btn" data-type="tenses">時制</div>
   <div class="tab-btn" data-type="pronouns">代名詞</div>
+  <div class="tab-btn" data-type="prepositions">前置詞</div>
   <div class="tab-btn" data-type="conjunctions">接続詞</div>
 </div>
 
@@ -2462,6 +2463,13 @@ closeBtn.addEventListener("click", () => {
   ],
   
   
+    prepositions: [
+    { jp: "〜の上に", en: "on", reading: "オン" },
+    { jp: "〜の中に", en: "in", reading: "イン" },
+    { jp: "〜の下に", en: "under", reading: "アンダー" },
+    { jp: "〜の前に", en: "before", reading: "ビフォー" },
+    { jp: "〜の後で", en: "after", reading: "アフター" }
+  ],
   
   
    conjunctions: [
@@ -2484,6 +2492,7 @@ closeBtn.addEventListener("click", () => {
     adjectives: [...(originalData.adjectives||[])],
     tenses: [...(originalData.tenses||[])],
     pronouns: [...(originalData.pronouns||[])],
+    prepositions: [...(originalData.prepositions || [])],
     conjunctions: [...(originalData.conjunctions || [])] 
   };
 
