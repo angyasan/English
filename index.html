@@ -221,6 +221,7 @@
       <div id="kanaText" class="quiz-kana"></div>
     </div>
     <button id="showAnswerBtn">答えを見る</button>
+    <button id="wrongBtn" style="display:none;">不正解だった</button>
     <button id="nextBtn" style="display:none;">次へ</button>
     <button id="quitQuizBtn">やめる</button>
   </div>
@@ -2668,7 +2669,8 @@ closeBtn.addEventListener("click", () => {
   let quizList = [];
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
-
+let wrongList = [];           // ← 不正解を保存
+let currentQuizItem = null;  // ← 今表示中の問題
   
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
@@ -2744,8 +2746,9 @@ closeBtn.addEventListener("click", () => {
     });
   }
 
-  function showQuizQuestion() {
+function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
+  currentQuizItem = item; // ★ここ追加
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
@@ -2872,13 +2875,26 @@ prevBtn.addEventListener("click", () => {
     }
 });
 
+const wrongBtn = document.getElementById("wrongBtn");
 // --- 答えボタン表示時に前へボタンも表示 ---
 showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
+    wrongBtn.style.display = "inline-block";
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
     prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none"; // 前があれば表示
+
+wrongBtn.addEventListener("click", () => {
+    const currentItem = quizList[currentQuizIndex];
+
+    // 重複防止
+    if (!wrongQuizList.includes(currentItem)) {
+        wrongQuizList.push(currentItem);
+    }
+
+    wrongBtn.style.display = "none";
+});
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
@@ -2892,7 +2908,15 @@ showAnswerBtn.addEventListener("click", () => {
 nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
     if (currentQuizIndex >= quizList.length) {
-        alert("全問終了！");
+if (wrongList.length > 0) {
+  quizList = [...wrongList];
+  wrongList = [];
+  currentQuizIndex = 0;
+  alert("不正解だけもう一度！");
+  showQuizQuestion();
+} else {
+  alert("全問終了！");
+}
         quizOverlay.style.display = "none";
 
         // ★ ここを追加 ★
