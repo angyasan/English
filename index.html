@@ -220,11 +220,11 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-    <button id="showAnswerBtn">答えを見る</button>
-    <button id="wrongBtn" style="display:none;">不正解だった</button>
-    <button id="nextBtn" style="display:none;">次へ</button>
-    <button id="quitQuizBtn">やめる</button>
-  </div>
+  <div id="quizBtnRow" style="display:flex; gap:8px; justify-content:center; margin-top:10px;">
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
+</div>
 </div>
 
 <!-- 例文モーダル -->
@@ -2876,6 +2876,17 @@ prevBtn.addEventListener("click", () => {
 });
 
 const wrongBtn = document.getElementById("wrongBtn");
+
+wrongBtn.addEventListener("click", () => {
+    const currentItem = quizList[currentQuizIndex];
+
+    // 重複防止
+if (!wrongList.includes(currentItem)) {
+    wrongList.push(currentItem);
+}
+
+    wrongBtn.style.display = "none";
+});
 // --- 答えボタン表示時に前へボタンも表示 ---
 showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
@@ -2885,16 +2896,7 @@ showAnswerBtn.addEventListener("click", () => {
     nextBtn.style.display = "inline-block";
     prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none"; // 前があれば表示
 
-wrongBtn.addEventListener("click", () => {
-    const currentItem = quizList[currentQuizIndex];
 
-    // 重複防止
-    if (!wrongQuizList.includes(currentItem)) {
-        wrongQuizList.push(currentItem);
-    }
-
-    wrongBtn.style.display = "none";
-});
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
