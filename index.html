@@ -222,23 +222,23 @@
       <div id="kanaText" class="quiz-kana"></div>
 
       <!-- ★ ここに移動しただけ ★ -->
-      <div id="quizBtnRow" style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
-        
-        <!-- 左側ボタン -->
-        <div style="display:flex; gap:8px;">
-          <button id="prevBtn" style="display:none;">前へ</button>
-          <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-            不正解だった
-          </button>
-        </div>
+     <div id="quizBtnRow" style="position:relative; margin-top:12px; height:40px;">
 
-        <!-- 右側（固定位置） -->
-        <div>
-          <button id="showAnswerBtn">答えを見る</button>
-          <button id="nextBtn" style="display:none;">次へ</button>
-        </div>
+  <!-- 左側：前へ / 不正解（もっと左） -->
+  <div style="position:absolute; left:0; top:50%; transform:translateY(-50%); display:flex; gap:8px;">
+    <button id="prevBtn" style="display:none;">前へ</button>
+    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+      不正解だった
+    </button>
+  </div>
 
-      </div>
+  <!-- 中央：答えを見る / 次へ（完全固定） -->
+  <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);">
+    <button id="showAnswerBtn">答えを見る</button>
+    <button id="nextBtn" style="display:none;">次へ</button>
+  </div>
+
+</div>
     </div>
 
     <button id="quitQuizBtn" style="margin-top:10px;">やめる</button>
