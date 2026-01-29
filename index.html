@@ -2881,25 +2881,27 @@ prevBtn.addEventListener("click", () => {
 showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
+
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
-    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none"; // 前があれば表示
-    wrongBtn.style.display = "inline-block"; /
+    wrongBtn.style.display = "inline-block";
+
+    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
-    } else if (quizDirection === "E→J") {
+    } else {
         enText.onclick = () => playSound(quizList[currentQuizIndex].en);
         jpText.onclick = null;
     }
 });
-
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
+    // 正解扱い → 保存しない
     currentQuizIndex++;
 
-    wrongBtn.style.display = "none"; // ★追加
     nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
 
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
