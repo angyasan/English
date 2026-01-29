@@ -213,52 +213,53 @@
 
 <!-- クイズモーダル -->
 <div id="quizOverlay">
-  <div id="quizContainer">
+  <div id="quizContainer" style="position:relative;">
+
     <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
     <div id="jpText" class="quiz-jp"></div>
 
-  <div
-  id="quizAnswerRow"
-  style="
-    min-height:120px;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-  "
->
-  <div id="enText" class="quiz-en"></div>
-  <div id="kanaText" class="quiz-kana"></div>
+    <div
+      id="quizAnswerRow"
+      style="
+        min-height:120px;
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
+      "
+    >
+      <div id="enText" class="quiz-en"></div>
+      <div id="kanaText" class="quiz-kana"></div>
+    </div>
 
-  <div
-    id="quizBtnRow"
-    style="
-      display:grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items:center;
-      margin-top:12px;
-    "
-  >
-    <!-- 左 -->
-    <div style="display:flex; gap:8px; justify-content:flex-start;">
+    <!-- ★ 左に寄せる（中央レイアウトに影響しない） -->
+    <div
+      id="leftQuizBtns"
+      style="
+        position:absolute;
+        left:-120px;
+        top:50%;
+        transform:translateY(-50%);
+        display:flex;
+        flex-direction:column;
+        gap:8px;
+      "
+    >
       <button id="prevBtn" style="display:none;">前へ</button>
-      <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+      <button
+        id="wrongBtn"
+        style="display:none; background:#dc3545; color:white;"
+      >
         不正解だった
       </button>
     </div>
 
-    <!-- 中央 -->
-    <div style="display:flex; justify-content:center; gap:8px;">
-      <button id="showAnswerBtn">答えを見る</button>
-      <button id="nextBtn" style="display:none;">次へ</button>
-    </div>
+    <!-- ★ 中央：元の形そのまま -->
+    <button id="showAnswerBtn">答えを見る</button>
+    <button id="nextBtn" style="display:none;">次へ</button>
+    <button id="quitQuizBtn" style="margin-top:10px;">やめる</button>
 
-    <!-- 右ダミー -->
-    <div></div>
   </div>
 </div>
-
-<!-- ★ ここにそのまま置く -->
-<button id="quitQuizBtn" style="margin-top:10px;">やめる</button>
 
 <!-- 例文モーダル -->
 <div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
