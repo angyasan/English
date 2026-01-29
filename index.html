@@ -222,21 +222,35 @@
       <div id="kanaText" class="quiz-kana"></div>
 
       <!-- ★ ここに移動しただけ ★ -->
-     <div id="quizBtnRow" style="position:relative; margin-top:12px; height:40px;">
+    <div
+  id="quizBtnRow"
+  style="
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items:center;
+    margin-top:12px;
+  "
+>
 
-  <!-- 左側：前へ / 不正解（もっと左） -->
-  <div style="position:absolute; left:0; top:50%; transform:translateY(-50%); display:flex; gap:8px;">
+  <!-- 左側：前へ / 不正解（ちゃんと左寄せ） -->
+  <div style="display:flex; gap:8px; justify-content:flex-start;">
     <button id="prevBtn" style="display:none;">前へ</button>
-    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+    <button
+      id="wrongBtn"
+      style="display:none; background:#dc3545; color:white;"
+    >
       不正解だった
     </button>
   </div>
 
-  <!-- 中央：答えを見る / 次へ（完全固定） -->
-  <div style="position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);">
+  <!-- 中央：答えを見る / 次へ（絶対ズレない） -->
+  <div style="display:flex; justify-content:center; gap:8px;">
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
   </div>
+
+  <!-- 右側：空（バランス用・触らない） -->
+  <div></div>
 
 </div>
     </div>
