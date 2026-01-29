@@ -220,9 +220,12 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-    <button id="showAnswerBtn">答えを見る</button>
-    <button id="nextBtn" style="display:none;">次へ</button>
-    <button id="quitQuizBtn">やめる</button>
+<button id="showAnswerBtn">答えを見る</button>
+<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+  不正解だった
+</button>
+<button id="nextBtn" style="display:none;">次へ</button>
+<button id="quitQuizBtn">やめる</button>
   </div>
 </div>
 
@@ -2658,6 +2661,7 @@ closeBtn.addEventListener("click", () => {
   const enText = document.getElementById("enText");
   const kanaText = document.getElementById("kanaText");
   const showAnswerBtn = document.getElementById("showAnswerBtn");
+  const wrongBtn = document.getElementById("wrongBtn"); // ★追加
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const searchInput = document.getElementById("searchInput");
@@ -2666,6 +2670,7 @@ closeBtn.addEventListener("click", () => {
 
   let currentType = "verbs";
   let quizList = [];
+  let wrongQuizList = [];   // ★追加：不正解保存用
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
 
@@ -2879,6 +2884,7 @@ showAnswerBtn.addEventListener("click", () => {
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
     prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none"; // 前があれば表示
+    wrongBtn.style.display = "inline-block"; /
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
@@ -2891,17 +2897,52 @@ showAnswerBtn.addEventListener("click", () => {
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
+
+    wrongBtn.style.display = "none"; // ★追加
+    nextBtn.style.display = "none";
+
     if (currentQuizIndex >= quizList.length) {
-        alert("全問終了！");
-        quizOverlay.style.display = "none";
-
-        // ★ ここを追加 ★
-        localStorage.removeItem("savedQuiz");
-        resumeQuizBtn.style.display = "none";
-
+        if (wrongQuizList.length > 0) {
+            quizList = [...wrongQuizList];
+            wrongQuizList = [];
+            currentQuizIndex = 0;
+            alert("不正解だけもう一回！");
+            showQuizQuestion();
+        } else {
+            alert("全問終了！");
+            quizOverlay.style.display = "none";
+        }
     } else {
         showQuizQuestion();
-        autoSaveQuizState();
+    }
+});
+
+wrongBtn.addEventListener("click", () => {
+    const currentItem = quizList[currentQuizIndex];
+
+    // 不正解を保存（重複防止）
+    if (!wrongQuizList.includes(currentItem)) {
+        wrongQuizList.push(currentItem);
+    }
+
+    currentQuizIndex++;
+
+    wrongBtn.style.display = "none";
+    nextBtn.style.display = "none";
+
+    if (currentQuizIndex >= quizList.length) {
+        if (wrongQuizList.length > 0) {
+            quizList = [...wrongQuizList];
+            wrongQuizList = [];
+            currentQuizIndex = 0;
+            alert("不正解だけもう一回！");
+            showQuizQuestion();
+        } else {
+            alert("全問正解！");
+            quizOverlay.style.display = "none";
+        }
+    } else {
+        showQuizQuestion();
     }
 });
 
