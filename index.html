@@ -2697,6 +2697,7 @@ closeBtn.addEventListener("click", () => {
   let wrongQuizMap = {};
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
+  let isMarkedWrong = false;
 
   
   function playSound(word) {
@@ -2778,7 +2779,8 @@ function updateQuizButtons() {
 }
 
   function showQuizQuestion() {
-  autoSaveQuizState(); // ★ ここ追加（問題が切り替わった瞬間に保存）
+  isMarkedWrong = false; // ★追加：仮不正解リセット
+  autoSaveQuizState();
   const item = quizList[currentQuizIndex];
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
@@ -2895,6 +2897,7 @@ function startQuiz(type){
 // --- 前へボタン処理 ---
 prevBtn.addEventListener("click", () => {
     if (currentQuizIndex > 0) {
+        isMarkedWrong = false; // ★仮不正解を解除
         currentQuizIndex--;
         showQuizQuestion();
         autoSaveQuizState();
@@ -2921,10 +2924,21 @@ showAnswerBtn.addEventListener("click", () => {
 });
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
+    const currentItem = quizList[currentQuizIndex];
+
+    // ★ 不正解が確定するのはここ
+    if (isMarkedWrong) {
+        if (!wrongQuizMap[currentType]) {
+            wrongQuizMap[currentType] = [];
+        }
+        if (!wrongQuizMap[currentType].includes(currentItem)) {
+            wrongQuizMap[currentType].push(currentItem);
+        }
+    }
+
+    isMarkedWrong = false; // ★次の問題へ行く前にリセット
     currentQuizIndex++;
-
-    autoSaveQuizState(); // ★追加：問題切り替え時に保存
-
+    autoSaveQuizState();
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
 
@@ -2948,39 +2962,12 @@ if (wrongList.length > 0) {
 });
 
 wrongBtn.addEventListener("click", () => {
-    const currentItem = quizList[currentQuizIndex];
+    // ★ ここでは「不正解だったかも」というフラグを立てるだけ
+    isMarkedWrong = true;
 
-    if (!wrongQuizMap[currentType]) {
-    wrongQuizMap[currentType] = [];
-}
-
-if (!wrongQuizMap[currentType].includes(currentItem)) {
-    wrongQuizMap[currentType].push(currentItem);
-}
-
-    currentQuizIndex++;
-
-    autoSaveQuizState(); // ★追加：問題切り替え時に保存
-
+    // 表示制御だけ行う
     wrongBtn.style.display = "none";
-    nextBtn.style.display = "none";
-
-    if (currentQuizIndex >= quizList.length) {
-        const wrongList = wrongQuizMap[currentType] || [];
-
-if (wrongList.length > 0) {
-    quizList = shuffleArray([...wrongList]);
-    wrongQuizMap[currentType] = [];
-    currentQuizIndex = 0;
-    alert("不正解だけもう一回！");
-    showQuizQuestion();
-} else {
-            alert("全問正解！");
-            quizOverlay.style.display = "none";
-        }
-    } else {
-        showQuizQuestion();
-    }
+    nextBtn.style.display = "inline-block";
 });
 
   quitQuizBtn.addEventListener("click", () => {
