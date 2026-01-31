@@ -2694,7 +2694,7 @@ closeBtn.addEventListener("click", () => {
 
   let currentType = "verbs";
   let quizList = [];
-  let wrongQuizList = [];   // ★追加：不正解保存用
+  let wrongQuizMap = {};
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
 
@@ -2929,14 +2929,15 @@ nextBtn.addEventListener("click", () => {
     wrongBtn.style.display = "none";
 
     if (currentQuizIndex >= quizList.length) {
-        if (wrongQuizList.length > 0) {
-quizList = shuffleArray([...wrongQuizList]);
-            wrongQuizList = [];
-            currentQuizIndex = 0;
-            autoSaveQuizState(); // ★追加
-            alert("不正解だけもう一回！");
-            showQuizQuestion();
-        } else {
+        const wrongList = wrongQuizMap[currentType] || [];
+
+if (wrongList.length > 0) {
+    quizList = shuffleArray([...wrongList]);
+    wrongQuizMap[currentType] = [];
+    currentQuizIndex = 0;
+    alert("不正解だけもう一回！");
+    showQuizQuestion();
+} else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
         }
@@ -2949,9 +2950,13 @@ quizList = shuffleArray([...wrongQuizList]);
 wrongBtn.addEventListener("click", () => {
     const currentItem = quizList[currentQuizIndex];
 
-    if (!wrongQuizList.includes(currentItem)) {
-        wrongQuizList.push(currentItem);
-    }
+    if (!wrongQuizMap[currentType]) {
+    wrongQuizMap[currentType] = [];
+}
+
+if (!wrongQuizMap[currentType].includes(currentItem)) {
+    wrongQuizMap[currentType].push(currentItem);
+}
 
     currentQuizIndex++;
 
@@ -2961,14 +2966,15 @@ wrongBtn.addEventListener("click", () => {
     nextBtn.style.display = "none";
 
     if (currentQuizIndex >= quizList.length) {
-        if (wrongQuizList.length > 0) {
-quizList = shuffleArray([...wrongQuizList]);
-            wrongQuizList = [];
-            currentQuizIndex = 0;
-            autoSaveQuizState(); // ★追加
-            alert("不正解だけもう一回！");
-            showQuizQuestion();
-        } else {
+        const wrongList = wrongQuizMap[currentType] || [];
+
+if (wrongList.length > 0) {
+    quizList = shuffleArray([...wrongList]);
+    wrongQuizMap[currentType] = [];
+    currentQuizIndex = 0;
+    alert("不正解だけもう一回！");
+    showQuizQuestion();
+} else {
             alert("全問正解！");
             quizOverlay.style.display = "none";
         }
@@ -3001,7 +3007,7 @@ function saveQuizState() {
     currentType,
     currentQuizIndex,
     quizList,
-    wrongQuizList
+    wrongQuizMap
 };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
     alert("クイズを一時離脱しました");
@@ -3016,7 +3022,7 @@ function autoSaveQuizState() {
     currentType,
     currentQuizIndex,
     quizList,
-    wrongQuizList
+    wrongQuizMap
 };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
@@ -3045,6 +3051,7 @@ resumeQuizBtn.addEventListener("click", () => {
     quizList = state.quizList;
     wrongQuizList = state.wrongQuizList || [];
     currentQuizIndex = state.currentQuizIndex;
+    wrongQuizMap = state.wrongQuizMap || {};
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
