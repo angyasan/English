@@ -2954,6 +2954,9 @@ if (wrongList.length > 0) {
 } else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
+            
+            localStorage.removeItem("savedQuiz"); // 保存状態を削除
+resumeQuizBtn.style.display = "none"; // 続きから再開ボタンを非表示
         }
     } else {
         showQuizQuestion();
