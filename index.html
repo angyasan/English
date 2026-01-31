@@ -2997,11 +2997,12 @@ document.getElementById("controls").appendChild(resumeQuizBtn);
 function saveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
-        quizDirection,
-        currentType,
-        currentQuizIndex,
-        quizList
-    };
+    quizDirection,
+    currentType,
+    currentQuizIndex,
+    quizList,
+    wrongQuizList
+};
     localStorage.setItem("savedQuiz", JSON.stringify(state));
     alert("クイズを一時離脱しました");
     quizOverlay.style.display = "none";
@@ -3011,11 +3012,12 @@ function saveQuizState() {
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
-        quizDirection,
-        currentType,
-        currentQuizIndex,
-        quizList
-    };
+    quizDirection,
+    currentType,
+    currentQuizIndex,
+    quizList,
+    wrongQuizList
+};
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
@@ -3041,6 +3043,7 @@ resumeQuizBtn.addEventListener("click", () => {
     quizDirection = state.quizDirection;
     currentType = state.currentType;
     quizList = state.quizList;
+    wrongQuizList = state.wrongQuizList || [];
     currentQuizIndex = state.currentQuizIndex;
     showQuizQuestion();
     quizOverlay.style.display = "flex";
