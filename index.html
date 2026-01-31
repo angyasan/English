@@ -301,9 +301,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
   const closeBtn = document.getElementById("closeExampleBtn");
-closeBtn.addEventListener("click", () => {
-  closeExampleModal();
+
+  closeBtn.addEventListener("click", () => {
+    closeExampleModal();
   });
+
+  // ★追加ここから
+  leftResetZone.style.display = "flex";
+  scrollTopBtn.style.display = "block";
+
+  window.addEventListener("scroll", () => {
+    const quizVisible =
+      document.getElementById("quizOverlay").style.display === "flex";
+
+    leftResetZone.style.display = quizVisible ? "none" : "flex";
+    scrollTopBtn.style.display = quizVisible ? "none" : "block";
+  });
+  // ★追加ここまで
 
 
 
