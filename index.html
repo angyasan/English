@@ -2962,14 +2962,12 @@ if (wrongList.length > 0) {
 });
 
 wrongBtn.addEventListener("click", () => {
-    // ★ ここでは「不正解だったかも」というフラグを立てるだけ
+    // 不正解マーク
     isMarkedWrong = true;
 
-    // 表示制御だけ行う
-    wrongBtn.style.display = "none";
-    nextBtn.style.display = "inline-block";
+    // 次の問題へ進む処理を呼ぶ
+    nextBtn.click();  // ← これで nextBtn のロジックが走る
 });
-
   quitQuizBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) {
         quizOverlay.style.display = "none";
