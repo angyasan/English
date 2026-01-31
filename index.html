@@ -2903,6 +2903,10 @@ function startQuiz(type){
   if (quizList.length === 0) { alert("問題がありません"); return; }
   showQuizQuestion();
   quizOverlay.style.display = "flex";
+
+// ★ 追加：クイズ中は非表示にする
+leftResetZone.style.display = "none";
+scrollTopBtn.style.display = "none";
 }
 
 
@@ -2971,6 +2975,8 @@ if (wrongList.length > 0) {
             
             localStorage.removeItem("savedQuiz"); // 保存状態を削除
 resumeQuizBtn.style.display = "none"; // 続きから再開ボタンを非表示
+leftResetZone.style.display = "flex";
+scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
         }
     } else {
         showQuizQuestion();
@@ -2990,7 +2996,8 @@ wrongBtn.addEventListener("click", () => {
         quizOverlay.style.display = "none";
         localStorage.removeItem("savedQuiz"); // ← ここで保存データを削除
         resumeQuizBtn.style.display = "none";  // 復帰ボタンも隠す
-    }
+    }leftResetZone.style.display = "flex";
+scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
 });
 
 // --- 一時離脱 & 復帰機能 ---
@@ -3056,6 +3063,8 @@ resumeQuizBtn.addEventListener("click", () => {
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
+    leftResetZone.style.display = "none";
+scrollTopBtn.style.display = "none";
 });
 
 window.addEventListener("load", () => {
