@@ -2778,6 +2778,7 @@ function updateQuizButtons() {
 }
 
   function showQuizQuestion() {
+  autoSaveQuizState(); // ★ ここ追加（問題が切り替わった瞬間に保存）
   const item = quizList[currentQuizIndex];
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
@@ -3195,7 +3196,9 @@ leftResetZone.addEventListener("mousedown", (e) => {
 });
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
-
+window.addEventListener("beforeunload", () => {
+      autoSaveQuizState();
+  });
 });
 
 document.querySelectorAll(".hidden-en").forEach(el => {
