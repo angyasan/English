@@ -305,11 +305,18 @@ closeBtn.addEventListener("click", () => {
   closeExampleModal();
   });
 
-  // ページスクロールで表示/非表示切替
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 100) scrollTopBtn.style.display = "block";
-    else scrollTopBtn.style.display = "none";
-  });
+  // ページ読み込み時に通常表示
+document.addEventListener("DOMContentLoaded", () => {
+    leftResetZone.style.display = "flex"; // 左初期化ゾーンを表示
+    scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
+
+    // スクロール判定（クイズ中は非表示）
+    window.addEventListener("scroll", () => {
+        scrollTopBtn.style.display = quizOverlay.style.display === "flex"
+            ? "none"
+            : (window.scrollY > 100 ? "block" : "none");
+    });
+});
 
   // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
@@ -2904,9 +2911,9 @@ function startQuiz(type){
   showQuizQuestion();
   quizOverlay.style.display = "flex";
 
-// ★ 追加：クイズ中は非表示にする
-leftResetZone.style.display = "none";
-scrollTopBtn.style.display = "none";
+  // ★ 追加：クイズ中は左初期化ゾーンを非表示
+  leftResetZone.style.display = "none";
+  scrollTopBtn.style.display = "none";
 }
 
 
