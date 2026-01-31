@@ -2920,8 +2920,9 @@ showAnswerBtn.addEventListener("click", () => {
 });
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
-    // 正解扱い → 保存しない
     currentQuizIndex++;
+
+    autoSaveQuizState(); // ★追加：問題切り替え時に保存
 
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
@@ -2931,6 +2932,7 @@ nextBtn.addEventListener("click", () => {
             quizList = [...wrongQuizList];
             wrongQuizList = [];
             currentQuizIndex = 0;
+            autoSaveQuizState(); // ★追加
             alert("不正解だけもう一回！");
             showQuizQuestion();
         } else {
@@ -2946,12 +2948,13 @@ nextBtn.addEventListener("click", () => {
 wrongBtn.addEventListener("click", () => {
     const currentItem = quizList[currentQuizIndex];
 
-    // 不正解を保存（重複防止）
     if (!wrongQuizList.includes(currentItem)) {
         wrongQuizList.push(currentItem);
     }
 
     currentQuizIndex++;
+
+    autoSaveQuizState(); // ★追加：問題切り替え時に保存
 
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
@@ -2961,6 +2964,7 @@ wrongBtn.addEventListener("click", () => {
             quizList = [...wrongQuizList];
             wrongQuizList = [];
             currentQuizIndex = 0;
+            autoSaveQuizState(); // ★追加
             alert("不正解だけもう一回！");
             showQuizQuestion();
         } else {
