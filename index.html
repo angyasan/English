@@ -305,16 +305,21 @@ closeBtn.addEventListener("click", () => {
   closeExampleModal();
   });
 
-  // ページ読み込み時に通常表示
+// ページ読み込み時に通常表示
 document.addEventListener("DOMContentLoaded", () => {
-    leftResetZone.style.display = "flex"; // 左初期化ゾーンを表示
-    scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
+    leftResetZone.style.display = "flex";   // 左初期化ゾーンを常に表示
+    scrollTopBtn.style.display = "block";    // 上に戻るボタンも初期表示で表示
 
     // スクロール判定（クイズ中は非表示）
     window.addEventListener("scroll", () => {
-        scrollTopBtn.style.display = quizOverlay.style.display === "flex"
-            ? "none"
-            : (window.scrollY > 100 ? "block" : "none");
+        const quizVisible = document.getElementById("quizOverlay").style.display === "flex";
+        leftResetZone.style.display = quizVisible ? "none" : "flex";
+        scrollTopBtn.style.display = quizVisible ? "none" : "block"; // 常に表示（スクロール位置に依存しない）
+    });
+
+    // クリックで上にスクロール
+    scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 });
 
