@@ -2930,7 +2930,7 @@ nextBtn.addEventListener("click", () => {
 
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            quizList = [...wrongQuizList];
+quizList = shuffleArray([...wrongQuizList]);
             wrongQuizList = [];
             currentQuizIndex = 0;
             autoSaveQuizState(); // ★追加
@@ -2962,7 +2962,7 @@ wrongBtn.addEventListener("click", () => {
 
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            quizList = [...wrongQuizList];
+quizList = shuffleArray([...wrongQuizList]);
             wrongQuizList = [];
             currentQuizIndex = 0;
             autoSaveQuizState(); // ★追加
