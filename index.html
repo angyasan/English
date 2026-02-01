@@ -220,11 +220,17 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<button id="prevBtn" style="display:none; margin-right: 8px;">前へ</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white; margin-right: 8px;">不正解だった</button>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+  <div style="display: flex; gap: 8px;">
+    <button id="prevBtn" style="display:none;">前へ</button>
+    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button id="showAnswerBtn">答えを見る</button>
+    <button id="nextBtn" style="display:none;">次へ</button>
+    <button id="quitQuizBtn">やめる</button>
+  </div>
+</div>
 
   </div>
 </div>
@@ -2881,7 +2887,8 @@ showAnswerBtn.addEventListener("click", () => {
     nextBtn.style.display = "inline-block";
     wrongBtn.style.display = "inline-block";
 
-    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
+prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
+
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
