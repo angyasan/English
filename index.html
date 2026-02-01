@@ -2901,11 +2901,18 @@ prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
         jpText.onclick = null;
     }
 });
-// --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
-    // 正解扱い → 保存しない
+    // --- 追加：もし「戻って正解」したなら、不正解リストから削除する ---
+    const currentItem = quizList[currentQuizIndex];
+    const indexInWrong = wrongQuizList.indexOf(currentItem);
+    if (indexInWrong > -1) {
+        wrongQuizList.splice(indexInWrong, 1);
+    }
+    // ---------------------------------------------------------
+
     currentQuizIndex++;
-    autoSaveQuizState(); // ★これを追加
+    autoSaveQuizState(); // 状態を保存
+
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
 
@@ -2916,13 +2923,17 @@ nextBtn.addEventListener("click", () => {
             currentQuizIndex = 0;
             alert("不正解だけもう一回！");
             showQuizQuestion();
+            autoSaveQuizState(); // リストが入れ替わった状態を保存
         } else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
+            localStorage.removeItem("savedQuiz"); // 完走したらデータを削除
         }
     } else {
         showQuizQuestion();
     }
+});
+
 });
 
 wrongBtn.addEventListener("click", () => {
