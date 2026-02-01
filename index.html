@@ -1,3 +1,5 @@
+初期化あり
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -220,9 +222,7 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<div id="quizButtonRow" style="display:flex; justify-content:center; gap:8px; margin-top:12px; flex-wrap:wrap;">
-  <button id="prevBtn" style="display:none;">前へ</button>
- <button id="showAnswerBtn">答えを見る</button>
+<button id="showAnswerBtn">答えを見る</button>
 <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
   不正解だった
 </button>
@@ -2868,10 +2868,6 @@ prevBtn.id = "prevBtn";
 prevBtn.textContent = "前へ";
 prevBtn.style.display = "none"; // 初期は非表示
 prevBtn.style.marginRight = "8px";
-prevBtn.style.float = "left";   // ← 左寄せ追加
-
-wrongBtn.style.float = "left";  // ← 不正解ボタンも左寄せ
-wrongBtn.style.marginRight = "8px"; // ボタン間隔
 document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
 
 // --- 前へボタン処理 ---
