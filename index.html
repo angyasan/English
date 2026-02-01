@@ -99,29 +99,15 @@
   
 
   /* 左端初期化ゾーン */
- #leftResetZone {
+  #leftResetZone {
     position: fixed;
     top: 0;
     left: 0;
     width: 100px;
     height: 100%;
-    background: rgba(0,200,0,0.3); /* 緑半透明 */
-    border-right: 2px solid green;
-    z-index: 10000; /* モーダルやボタンより上 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    user-select: none;
-}
-#leftResetZone::after {
-    content: "初期化";
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-weight: bold;
-}
+    background: rgba(200,200,200,0.2); /* 明るいグレーで少し透過 */
+    z-index: 998;
+  }
   #exampleModal {
   user-select: none;           /* 背景は選択禁止 */
   -webkit-user-select: none;
@@ -3172,35 +3158,41 @@ document.addEventListener("touchend", (e) => {
   }
 });
 
-
-// --- 左初期化ゾーン改善版 ---
-let leftPressTimer;
-
-// 共通関数：初期化処理
-function resetAll() {
-    for (let type in currentList) {
+  // --- 新規：左端長押しで初期化 ---
+  let leftPressTimer;
+  leftResetZone.addEventListener("touchstart", (e) => {
+    leftPressTimer = setTimeout(() => {
+      // 初期状態に戻す
+      for (let type in currentList) {
         currentList[type] = [...(originalData[type] || [])];
+      }
+      currentType = "verbs";
+      setActiveTab("verbs");
+      renderList(currentType);
+      searchInput.value = "";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 300); // 0.3秒長押し
+  });
+
+  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
+  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
+
+  // --- PC用：マウス短押しで初期化 ---
+leftResetZone.addEventListener("mousedown", (e) => {
+  leftPressTimer = setTimeout(() => {
+    // 初期化処理
+    for (let type in currentList) {
+      currentList[type] = [...(originalData[type] || [])];
     }
     currentType = "verbs";
     setActiveTab("verbs");
     renderList(currentType);
     searchInput.value = "";
     window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// PC: マウス押下
-leftResetZone.addEventListener("mousedown", (e) => {
-    leftPressTimer = setTimeout(resetAll, 150); // 短押しで即反応
+  }, 150);
 });
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
-
-// スマホ: タッチ開始
-leftResetZone.addEventListener("touchstart", (e) => {
-    leftPressTimer = setTimeout(resetAll, 300); // 長押しで初期化
-});
-leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
-leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
 window.addEventListener("beforeunload", () => {
       autoSaveQuizState();
   });
