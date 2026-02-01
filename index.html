@@ -214,21 +214,18 @@
 <!-- クイズモーダル -->
 <div id="quizOverlay">
   <div id="quizContainer">
-    <div id="quizProgress"></div>
-    <div id="jpText"></div>
+    <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
+    <div id="jpText" class="quiz-jp"></div>
     <div id="quizAnswerRow">
-      <div id="enText"></div>
-      <div id="kanaText"></div>
+      <div id="enText" class="quiz-en"></div>
+      <div id="kanaText" class="quiz-kana"></div>
     </div>
-
-    <!-- ボタン横並びラッパー -->
-    <div class="quiz-btn-row">
-      <button id="prevBtn" style="display:none;">前へ</button>
-      <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
-      <button id="showAnswerBtn">答えを見る</button>
-      <button id="nextBtn" style="display:none;">次へ</button>
-      <button id="quitQuizBtn">やめる</button>
-    </div>
+<button id="showAnswerBtn">答えを見る</button>
+<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+  不正解だった
+</button>
+<button id="nextBtn" style="display:none;">次へ</button>
+<button id="quitQuizBtn">やめる</button>
   </div>
 </div>
 
@@ -2880,7 +2877,7 @@ prevBtn.addEventListener("click", () => {
     }
 });
 
-// showAnswerBtn押した後
+// --- 答えボタン表示時に前へボタンも表示 ---
 showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
@@ -2889,10 +2886,7 @@ showAnswerBtn.addEventListener("click", () => {
     nextBtn.style.display = "inline-block";
     wrongBtn.style.display = "inline-block";
 
-    // ★ 左寄せに調整
     prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
-    prevBtn.style.marginRight = "8px";
-    wrongBtn.style.marginRight = "8px";
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
