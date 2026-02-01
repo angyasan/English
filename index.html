@@ -2905,7 +2905,7 @@ prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
 nextBtn.addEventListener("click", () => {
     // 正解扱い → 保存しない
     currentQuizIndex++;
-
+    autoSaveQuizState(); // ★これを追加
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
 
@@ -2934,7 +2934,7 @@ wrongBtn.addEventListener("click", () => {
     }
 
     currentQuizIndex++;
-
+    autoSaveQuizState(); // ★これを追加
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 
@@ -2971,7 +2971,8 @@ resumeQuizBtn.style.display = "none"; // 初期非表示
 resumeQuizBtn.style.marginLeft = "8px";
 document.getElementById("controls").appendChild(resumeQuizBtn);
 
-function saveQuizState() {
+// 自動保存用（画面には何も出さない）
+function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
         quizDirection,
@@ -2980,10 +2981,16 @@ function saveQuizState() {
         quizList
     };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
+}
+
+// 手動保存用（一時離脱ボタン用）
+function saveQuizState() {
+    autoSaveQuizState();
     alert("クイズを一時離脱しました");
     quizOverlay.style.display = "none";
     resumeQuizBtn.style.display = "inline-block";
 }
+
 
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
