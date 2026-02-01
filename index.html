@@ -23,31 +23,31 @@
     max-width: 400px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    position: relative; /* 絶対配置の基準 */
   }
-  #quizContainer {
-  position: relative; /* 絶対配置の基準にする */
-}
 
-#quizExampleBtn {
-  position: absolute;
-  bottom: 10px;   /* 下からの距離 */
-  left: 10px;     /* 左からの距離 */
-  z-index: 1001;  /* クイズ要素の上に表示 */
-}
+  #quizExampleBtn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1001;
+  }
+
   .hidden { display: none !important; }
   .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
   .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
   .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
-  /* body初期スタイル + ズーム */
+
   body { 
     font-family: -apple-system, sans-serif; 
     padding: 20px; 
     max-width: 480px; 
     margin: auto; 
     zoom: 1.3; 
-  }/* ここ追加 */
-  
-  
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+  }
+
   h2 { margin-bottom: 15px; }
   .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
   .tab-btn {
@@ -56,30 +56,33 @@
     padding: 10px 0;
     cursor: pointer;
     border: 1px solid #ccc;
-    background: #f9f9f9;
+    background: #2a2a2a;
     text-align: center;
     font-weight: bold;
     user-select: none;
     transition: background-color 0.3s;
     white-space: nowrap;
+    color: #e0e0e0;
   }
   .tab-btn.active { background-color: #007bff; color: white; border-color: #007bff; }
+
   .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
   .control-btn {
     cursor: pointer;
-    background-color: #eee;
-    border: 1px solid #ccc;
+    background-color: transparent;
+    border: 1px solid #00bfff;
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 14px;
     transition: background-color 0.2s;
+    color: #00bfff;
   }
   .control-btn:hover { background-color: #ddd; }
+
   .entry { margin-bottom: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; user-select: none; }
-  .jp { font-size: 18px; color: #333; white-space: pre-line; }
-  .details { display: none; margin-top: 6px; color: #555; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; flex-wrap: wrap; }
-  .en { font-weight: bold; font-size: 17px; }
-  .kana { color: #666; font-size: 15px; }
+  .jp, .details, .details .en, .details .kana { color: #e0e0e0; }
+
+  .details { display: none; margin-top: 6px; font-size: 16px; display: flex; gap: 12px; align-items: center; user-select: text; flex-wrap: wrap; }
   .play-btn {
     margin-left: auto;
     cursor: pointer;
@@ -91,12 +94,12 @@
     transition: color 0.2s;
   }
   .play-btn:hover { color: #0056b3; }
+
   #quizAnswerRow { min-height: 56px; margin-bottom: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   #enText, #kanaText { display: none; text-align: center; }
   #enText { font-size: 1.2em; color: #444; cursor: pointer; margin-bottom: 2px; }
   #kanaText { font-size: 1em; color: #666; margin-top: 2px; }
   #showAnswerBtn, #nextBtn { height: 36px; line-height: 36px; min-width: 80px; vertical-align: middle; display: inline-block; margin-right: 8px; cursor: pointer; }
-  
 
   /* 左端初期化ゾーン */
   #leftResetZone {
@@ -105,83 +108,35 @@
     left: 0;
     width: 100px;
     height: 100%;
-    background: rgba(200,200,200,0.2); /* 明るいグレーで少し透過 */
+    background: rgba(200,200,200,0.2);
     z-index: 998;
   }
-  #exampleModal {
-  user-select: none;           /* 背景は選択禁止 */
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  touch-action: manipulation;  /* 長押しでコピー出ないように */
-}
 
-  
-/* 例文モーダル内テキスト用 
-  */#exampleText {
-  padding: 16px;
-  overflow-y: auto;
-  flex: 1;
-  font-size: 16px;
-  user-select: text !important;
-  -webkit-user-select: text !important;
-  -ms-user-select: text !important;
-  -moz-user-select: text !important;
-  color: #000000; /* 黒文字にする */
-}
+  #exampleModal { user-select: none; -webkit-user-select: none; -ms-user-select: none; -moz-user-select: none; touch-action: manipulation; }
+  #exampleText { padding: 16px; overflow-y: auto; flex: 1; font-size: 16px; user-select: text !important; color: #000000; }
 
-  body {
-  background-color: #1e1e1e;  /* 暗めグレー */
-  color: #e0e0e0;             /* 文字を明るめグレー */
-}
+  #jpText { color: #000000; font-weight: bold; }
 
-.entry .jp,
-.entry .details,
-.details .en,
-.details .kana {
-  color: #e0e0e0;
-}
-.control-btn, .play-btn, #scrollTopBtn, #scrollBottomBtn {
-  color: #00bfff;
-  border-color: #00bfff;
-  background-color: transparent;
-}
-
-.tabs .tab-btn {
-  color: #e0e0e0;
-  border-color: #444;
-  background: #2a2a2a;
-}
-
-.tabs .tab-btn.active {
-  background-color: #007bff;
-  color: #fff;
-}
-
- /* ← ここを追加：クイズ画面の日本語は黒文字に */
-  #jpText {
-    color: #000000;  /* 黒文字 */
-    font-weight: bold; 
+  .hidden-en {
+    color: transparent;
+    background-color: #333;
+    border-radius: 3px;
+    padding: 2px 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
   }
-  
-.hidden-en {
-  color: transparent;         /* 文字を透明に */
-  background-color: #333;     /* 背景を黒っぽく */
-  border-radius: 3px;
-  padding: 2px 4px;
-  cursor: pointer;
-  user-select: none;
-  transition: color 0.3s ease;
-}
+  .hidden-en.revealed { color: #000; background-color: transparent; }
 
-.hidden-en.revealed {
-  color: #000;                /* 表示時は黒文字に */
-  background-color: transparent; /* 背景は戻す */
-}
+  /* 新規追加：クイズナビボタン横並び左寄せ */
+  #quizContainer .quiz-nav-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+  }
 </style>
 </head>
 <body>
-
 <h2>
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
@@ -220,12 +175,17 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
+
+    <!-- ボタンをまとめるdiv -->
+    <div class="quiz-nav-buttons">
+      <button id="prevBtn" style="display:none; margin-right:12px;">前へ</button>
+      <button id="wrongBtn" style="display:none; background:#dc3545; color:white; margin-right:12px;">不正解だった</button>
+      <button id="showAnswerBtn">答えを見る</button>
+      <button id="nextBtn" style="display:none;">次へ</button>
+    </div>
+
+    <button id="quitQuizBtn">やめる</button>
+    <button id="quizExampleBtn" class="control-btn" style="display:none;">例文</button>
   </div>
 </div>
 
@@ -239,27 +199,13 @@
     <div id="exampleText"></div>
   </div>
 </div>
-  
 
-  
-<!-- 左端初期化ゾーン -->
 <div id="leftResetZone"></div>
-  
-<!-- ↑ボタン -->
-<button id="scrollTopBtn" style="
-  position: fixed;
-  bottom: 20px;
-  left: calc(50% - 300px + 10px);
-  display: none;
-  font-size: 32px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  color: #007bff;
-  z-index: 9999;
-">↑</button>
-  
+
+<button id="scrollTopBtn" style="position: fixed; bottom: 20px; left: calc(50% - 300px + 10px); display: none; font-size: 32px; cursor: pointer; background: none; border: none; color: #007bff; z-index: 9999;">↑</button>
+
 <script>
+
 document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
