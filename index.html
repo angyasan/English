@@ -178,6 +178,26 @@
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
 }
+/* ここから追加：クイズモーダルボタンの位置調整 */
+  #prevBtn,
+  #wrongBtn {
+    margin-right: 4px;   /* 左ボタン同士の間隔を少し狭める */
+  }
+
+  #showAnswerBtn,
+  #nextBtn,
+  #quitQuizBtn {
+    margin-left: 4px;    /* 右ボタン同士の間隔を揃える */
+  }
+
+  #quizContainer > button,
+  #quizContainer > #prevBtn,
+  #quizContainer > #wrongBtn,
+  #quizContainer > #showAnswerBtn,
+  #quizContainer > #nextBtn,
+  #quizContainer > #quitQuizBtn {
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
