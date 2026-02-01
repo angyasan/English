@@ -178,6 +178,13 @@
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
 }
+#quizButtonRow {
+  display: flex;           /* 横並び */
+  justify-content: center; /* 中央揃え */
+  gap: 8px;                /* ボタン間の隙間 */
+  margin-top: 12px;
+  flex-wrap: wrap;         /* 画面が狭い場合は折り返し */
+}
 </style>
 </head>
 <body>
@@ -214,19 +221,22 @@
 <!-- クイズモーダル -->
 <div id="quizOverlay">
   <div id="quizContainer">
-    <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
-    <div id="jpText" class="quiz-jp"></div>
-    <div id="quizAnswerRow">
-      <div id="enText" class="quiz-en"></div>
-      <div id="kanaText" class="quiz-kana"></div>
-    </div>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
+  <div id="quizProgress"></div>
+  <div id="jpText" class="quiz-jp"></div>
+  <div id="quizAnswerRow">
+    <div id="enText" class="quiz-en"></div>
+    <div id="kanaText" class="quiz-kana"></div>
   </div>
+
+  <!-- ボタンをまとめて中央寄せ -->
+  <div id="quizButtonRow">
+    <button id="prevBtn" style="display:none;">前へ</button>
+    <button id="showAnswerBtn">答えを見る</button>
+    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
+    <button id="nextBtn" style="display:none;">次へ</button>
+    <button id="quitQuizBtn">やめる</button>
+  </div>
+</div>
 </div>
 
 <!-- 例文モーダル -->
