@@ -2866,6 +2866,10 @@ prevBtn.id = "prevBtn";
 prevBtn.textContent = "前へ";
 prevBtn.style.display = "none"; // 初期は非表示
 prevBtn.style.marginRight = "8px";
+prevBtn.style.float = "left";   // ← 左寄せ追加
+
+wrongBtn.style.float = "left";  // ← 不正解ボタンも左寄せ
+wrongBtn.style.marginRight = "8px"; // ボタン間隔
 document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
 
 // --- 前へボタン処理 ---
