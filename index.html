@@ -177,28 +177,6 @@
 .hidden-en.revealed {
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
-}/* クイズ下ボタンを横並び制御 */
-#quizContainer button {
-  margin-right: 6px;
-}
-
-/* 前へ + 不正解を左寄せ */
-#prevBtn,
-#wrongBtn {
-  float: left;
-}
-
-/* 次へ + やめるを右側に寄せる */
-#nextBtn,
-#quitQuizBtn {
-  float: right;
-}
-
-/* ボタン崩れ防止 */
-#quizContainer::after {
-  content: "";
-  display: block;
-  clear: both;
 }
 </style>
 </head>
@@ -2888,10 +2866,35 @@ prevBtn.id = "prevBtn";
 prevBtn.textContent = "前へ";
 prevBtn.style.display = "none"; // 初期は非表示
 prevBtn.style.marginRight = "8px";
-document.getElementById("quizContainer").appendChild(prevBtn); // insertBefore → appendChild に変更
+document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
 
-// --- 不正解ボタンの位置調整 ---
-wrongBtn.style.marginRight = "0";     // ← 元の余白リセット
+// --- 前へボタン処理 ---
+prevBtn.addEventListener("click", () => {
+    if (currentQuizIndex > 0) {
+        currentQuizIndex--;
+        showQuizQuestion();
+        autoSaveQuizState();
+    }
+});
+
+// --- 答えボタン表示時に前へボタンも表示 ---
+showAnswerBtn.addEventListener("click", () => {
+    enText.style.display = "block";
+    kanaText.style.display = "block";
+
+    showAnswerBtn.style.display = "none";
+    nextBtn.style.display = "inline-block";
+    wrongBtn.style.display = "inline-block";
+
+    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
+
+    if (quizDirection === "J→E") {
+        enText.onclick = () => playSound(enText.textContent);
+    } else {
+        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+        jpText.onclick = null;
+    }
+});
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
     // 正解扱い → 保存しない
