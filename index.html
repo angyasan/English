@@ -2866,35 +2866,16 @@ prevBtn.id = "prevBtn";
 prevBtn.textContent = "前へ";
 prevBtn.style.display = "none"; // 初期は非表示
 prevBtn.style.marginRight = "8px";
-document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
+prevBtn.style.position = "absolute";   // ← 追加
+prevBtn.style.bottom = "10px";         // ← 追加
+prevBtn.style.left = "10px";           // ← 追加
+document.getElementById("quizContainer").appendChild(prevBtn); // insertBefore → appendChild に変更
 
-// --- 前へボタン処理 ---
-prevBtn.addEventListener("click", () => {
-    if (currentQuizIndex > 0) {
-        currentQuizIndex--;
-        showQuizQuestion();
-        autoSaveQuizState();
-    }
-});
-
-// --- 答えボタン表示時に前へボタンも表示 ---
-showAnswerBtn.addEventListener("click", () => {
-    enText.style.display = "block";
-    kanaText.style.display = "block";
-
-    showAnswerBtn.style.display = "none";
-    nextBtn.style.display = "inline-block";
-    wrongBtn.style.display = "inline-block";
-
-    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
-
-    if (quizDirection === "J→E") {
-        enText.onclick = () => playSound(enText.textContent);
-    } else {
-        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-        jpText.onclick = null;
-    }
-});
+// --- 不正解ボタンの位置調整 ---
+wrongBtn.style.position = "absolute"; // ← 追加
+wrongBtn.style.bottom = "10px";       // ← 追加
+wrongBtn.style.left = "100px";        // ← 追加（前へボタンの右側に寄せる）
+wrongBtn.style.marginRight = "0";     // ← 元の余白リセット
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
     // 正解扱い → 保存しない
