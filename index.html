@@ -2877,7 +2877,7 @@ prevBtn.addEventListener("click", () => {
     }
 });
 
-// --- 答えボタン表示時に前へボタンも表示 ---
+// showAnswerBtn押した後
 showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
@@ -2886,7 +2886,10 @@ showAnswerBtn.addEventListener("click", () => {
     nextBtn.style.display = "inline-block";
     wrongBtn.style.display = "inline-block";
 
+    // ★ 左寄せに調整
     prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
+    prevBtn.style.marginRight = "8px";
+    wrongBtn.style.marginRight = "8px";
 
     if (quizDirection === "J→E") {
         enText.onclick = () => playSound(enText.textContent);
