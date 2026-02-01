@@ -177,16 +177,6 @@
 .hidden-en.revealed {
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
-  
-}
-#quizContainer {
-  position: relative;
-}
-
-#quitQuizBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
 }
 </style>
 </head>
@@ -230,27 +220,14 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<div id="quizBtnRow"
-     style="position:relative; height:36px; margin-top:12px;">
-  
-  <!-- 左側ボタン -->
-  <div style="display:flex; gap:8px;">
-    <button id="prevBtn" style="display:none;">前へ</button>
-    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-      不正解だった
-    </button>
-  </div>
-
-
-<div style="position:absolute; left:50%; top:0; transform:translateX(-50%);
-            display:flex; gap:8px;">
-  <button id="showAnswerBtn">答えを見る</button>
-  <button id="nextBtn" style="display:none;">次へ</button>
-</div>
-
-</div>
-
+<button id="showAnswerBtn">答えを見る</button>
+<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+  不正解だった
+</button>
+<button id="nextBtn" style="display:none;">次へ</button>
 <button id="quitQuizBtn">やめる</button>
+  </div>
+</div>
 
 <!-- 例文モーダル -->
 <div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
@@ -1150,7 +1127,7 @@ closeBtn.addEventListener("click", () => {
 { jp: "退く", en: "back off", reading: "バックオフ" }, 
 { jp: "酔う(お酒)", en: "get drunk", reading: "ゲット ドランク" },
 { jp: "酔う(車)", en: "get carsick", reading: "ゲット カーシック" },   
-{ jp: "積む(荷物を)、読み込む、装填する", en: "load", reading: "ロード" },  
+{ jp: "積む(荷物を)", en: "load", reading: "ロード" },  
 { jp: "怒る(怒り出す、状態の変化)", en: "get angry", reading: "ゲット アングリー" },
 { jp: "怒っている(最中)", en: "be angry", reading: "ビー アングリー" },
 { jp: "突然怒る(怒り出す、状態の変化)", en: "blow up", reading: "ブロー アップ" },
@@ -2686,7 +2663,6 @@ closeBtn.addEventListener("click", () => {
   const showAnswerBtn = document.getElementById("showAnswerBtn");
   const wrongBtn = document.getElementById("wrongBtn"); // ★追加
   const nextBtn = document.getElementById("nextBtn");
-  const prevBtn = document.getElementById("prevBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const searchInput = document.getElementById("searchInput");
   const exampleText = document.getElementById("exampleText");
@@ -2694,10 +2670,9 @@ closeBtn.addEventListener("click", () => {
 
   let currentType = "verbs";
   let quizList = [];
-  let wrongQuizMap = {};
+  let wrongQuizList = [];   // ★追加：不正解保存用
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
-  let isMarkedWrong = false;
 
   
   function playSound(word) {
@@ -2773,14 +2748,8 @@ closeBtn.addEventListener("click", () => {
       contentDiv.appendChild(entry);
     });
   }
-function updateQuizButtons() {
-  showAnswerBtn.style.display = "block";
-  nextBtn.style.display = "none";
-}
 
   function showQuizQuestion() {
-  isMarkedWrong = false; // ★追加：仮不正解リセット
-  autoSaveQuizState();
   const item = quizList[currentQuizIndex];
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
@@ -2891,13 +2860,17 @@ function startQuiz(type){
   quizOverlay.style.display = "flex";
 }
 
-
-
+// --- 前の問題ボタンを作成 ---
+const prevBtn = document.createElement("button");
+prevBtn.id = "prevBtn";
+prevBtn.textContent = "前へ";
+prevBtn.style.display = "none"; // 初期は非表示
+prevBtn.style.marginRight = "8px";
+document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
 
 // --- 前へボタン処理 ---
 prevBtn.addEventListener("click", () => {
     if (currentQuizIndex > 0) {
-        isMarkedWrong = false; // ★仮不正解を解除
         currentQuizIndex--;
         showQuizQuestion();
         autoSaveQuizState();
@@ -2924,53 +2897,57 @@ showAnswerBtn.addEventListener("click", () => {
 });
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
-    const currentItem = quizList[currentQuizIndex];
-
-    // ★ 不正解が確定するのはここ
-    if (isMarkedWrong) {
-        if (!wrongQuizMap[currentType]) {
-            wrongQuizMap[currentType] = [];
-        }
-        if (!wrongQuizMap[currentType].includes(currentItem)) {
-            wrongQuizMap[currentType].push(currentItem);
-        }
-    }
-
-    isMarkedWrong = false; // ★次の問題へ行く前にリセット
+    // 正解扱い → 保存しない
     currentQuizIndex++;
-    autoSaveQuizState();
+
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
 
     if (currentQuizIndex >= quizList.length) {
-        const wrongList = wrongQuizMap[currentType] || [];
-
-if (wrongList.length > 0) {
-    quizList = shuffleArray([...wrongList]);
-    wrongQuizMap[currentType] = [];
-    currentQuizIndex = 0;
-    alert("不正解だけもう一回！");
-    showQuizQuestion();
-} else {
+        if (wrongQuizList.length > 0) {
+            quizList = [...wrongQuizList];
+            wrongQuizList = [];
+            currentQuizIndex = 0;
+            alert("不正解だけもう一回！");
+            showQuizQuestion();
+        } else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
-            
-            localStorage.removeItem("savedQuiz"); // 保存状態を削除
-resumeQuizBtn.style.display = "none"; // 続きから再開ボタンを非表示
         }
     } else {
         showQuizQuestion();
-        updateQuizButtons();
     }
 });
 
 wrongBtn.addEventListener("click", () => {
-    // 不正解マーク
-    isMarkedWrong = true;
+    const currentItem = quizList[currentQuizIndex];
 
-    // 次の問題へ進む処理を呼ぶ
-    nextBtn.click();  // ← これで nextBtn のロジックが走る
+    // 不正解を保存（重複防止）
+    if (!wrongQuizList.includes(currentItem)) {
+        wrongQuizList.push(currentItem);
+    }
+
+    currentQuizIndex++;
+
+    wrongBtn.style.display = "none";
+    nextBtn.style.display = "none";
+
+    if (currentQuizIndex >= quizList.length) {
+        if (wrongQuizList.length > 0) {
+            quizList = [...wrongQuizList];
+            wrongQuizList = [];
+            currentQuizIndex = 0;
+            alert("不正解だけもう一回！");
+            showQuizQuestion();
+        } else {
+            alert("全問正解！");
+            quizOverlay.style.display = "none";
+        }
+    } else {
+        showQuizQuestion();
+    }
 });
+
   quitQuizBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) {
         quizOverlay.style.display = "none";
@@ -2991,12 +2968,11 @@ document.getElementById("controls").appendChild(resumeQuizBtn);
 function saveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
-    quizDirection,
-    currentType,
-    currentQuizIndex,
-    quizList,
-    wrongQuizMap
-};
+        quizDirection,
+        currentType,
+        currentQuizIndex,
+        quizList
+    };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
     alert("クイズを一時離脱しました");
     quizOverlay.style.display = "none";
@@ -3006,12 +2982,11 @@ function saveQuizState() {
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
-    quizDirection,
-    currentType,
-    currentQuizIndex,
-    quizList,
-    wrongQuizMap
-};
+        quizDirection,
+        currentType,
+        currentQuizIndex,
+        quizList
+    };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
@@ -3038,7 +3013,6 @@ resumeQuizBtn.addEventListener("click", () => {
     currentType = state.currentType;
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
-    wrongQuizMap = state.wrongQuizMap || {};
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
@@ -3193,9 +3167,7 @@ leftResetZone.addEventListener("mousedown", (e) => {
 });
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
-window.addEventListener("beforeunload", () => {
-      autoSaveQuizState();
-  });
+
 });
 
 document.querySelectorAll(".hidden-en").forEach(el => {
