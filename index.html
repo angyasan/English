@@ -2916,22 +2916,38 @@ nextBtn.addEventListener("click", () => {
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
 
+    nextBtn.addEventListener("click", () => {
+    // 追加：もし「戻って正解」したなら、不正解リストから削除する
+    const currentItem = quizList[currentQuizIndex];
+    const indexInWrong = wrongQuizList.indexOf(currentItem);
+    if (indexInWrong > -1) {
+        wrongQuizList.splice(indexInWrong, 1);
+    }
+
+    currentQuizIndex++;
+    autoSaveQuizState(); 
+
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            quizList = [...wrongQuizList];
-            wrongQuizList = [];
+            // ★ここを変更：不正解リストをシャッフルして新しいquizListにする
+            quizList = [...wrongQuizList].sort(() => Math.random() - 0.5);
+            wrongQuizList = []; // 不正解リストを空にする
             currentQuizIndex = 0;
-            alert("不正解だけもう一回！");
+            alert("不正解だけもう一回！（ランダム順）");
             showQuizQuestion();
-            autoSaveQuizState(); // リストが入れ替わった状態を保存
+            autoSaveQuizState(); 
         } else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
-            localStorage.removeItem("savedQuiz"); // 完走したらデータを削除
+            localStorage.removeItem("savedQuiz"); 
         }
     } else {
         showQuizQuestion();
     }
+
 });
 
 
