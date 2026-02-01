@@ -2775,17 +2775,19 @@ window.addEventListener("scroll", updateButtons);
       exampleBtn.className = "control-btn";
       exampleBtn.textContent = "例文";
       exampleBtn.style.marginLeft = "8px";
-      exampleBtn.onclick = (e) => {
-        e.stopPropagation();
-        if(type === "others" && item.example) {
-          showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-        } else {
-          const query = encodeURIComponent(item.en);
-          const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
-          showWeblioExampleModal(exampleUrl);
-        }
-      };
+exampleBtn.onclick = (e) => {
+  e.stopPropagation();
 
+  if (item.example && item.exampleJp) {
+    // 独自例文がある場合
+    showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+  } else {
+    // 独自例文がない場合はWeblio例文を表示
+    const query = encodeURIComponent(item.en);
+    const exampleUrl = `https://ejje.weblio.jp/sentence/content/${query}`;
+    showWeblioExampleModal(exampleUrl);
+  }
+};
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
