@@ -164,6 +164,24 @@
     font-weight: bold; 
   }
   
+  #quizContainer .quiz-btn-row {
+  display: flex;
+  justify-content: space-between; /* 左右に分ける */
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap; /* 小さい画面でも崩れない */
+  gap: 6px;       /* ボタン間の隙間 */
+}
+
+#quizContainer .left-btns {
+  display: flex;
+  gap: 6px;
+}
+
+#quizContainer .right-btns {
+  display: flex;
+  gap: 6px;
+}
 .hidden-en {
   color: transparent;         /* 文字を透明に */
   background-color: #333;     /* 背景を黒っぽく */
@@ -213,20 +231,27 @@
 
 <!-- クイズモーダル -->
 <div id="quizOverlay">
-  <div id="quizContainer">
-    <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
+<div id="quizContainer">
+    <div id="quizProgress"></div>
     <div id="jpText" class="quiz-jp"></div>
     <div id="quizAnswerRow">
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
-  </div>
+
+    <!-- ボタン行を左右に分割 -->
+    <div class="quiz-btn-row">
+      <div class="left-btns">
+        <button id="prevBtn" style="display:none;">前へ</button>
+        <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
+      </div>
+
+      <div class="right-btns">
+        <button id="showAnswerBtn">答えを見る</button>
+        <button id="nextBtn" style="display:none;">次へ</button>
+        <button id="quitQuizBtn">やめる</button>
+      </div>
+    </div>
 </div>
 
 <!-- 例文モーダル -->
