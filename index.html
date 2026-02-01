@@ -2918,10 +2918,11 @@ nextBtn.addEventListener("click", () => {
 
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            quizList = [...wrongQuizList];
+            // 不正解リストをシャッフルして代入
+            quizList = shuffleArray([...wrongQuizList]); 
             wrongQuizList = [];
             currentQuizIndex = 0;
-            alert("不正解だけもう一回！");
+            alert("不正解だけもう一回！（ランダムに出題します）");
             showQuizQuestion();
             autoSaveQuizState(); // リストが入れ替わった状態を保存
         } else {
@@ -2933,6 +2934,7 @@ nextBtn.addEventListener("click", () => {
         showQuizQuestion();
     }
 });
+
 
 
 
@@ -2953,10 +2955,11 @@ wrongBtn.addEventListener("click", () => {
 
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            quizList = [...wrongQuizList];
+            // 不正解リストをシャッフルして代入
+            quizList = shuffleArray([...wrongQuizList]); 
             wrongQuizList = [];
             currentQuizIndex = 0;
-            alert("不正解だけもう一回！");
+            alert("不正解だけもう一回！（ランダムに出題します）");
             showQuizQuestion();
         } else {
             alert("全問正解！");
