@@ -220,12 +220,20 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
+
+    <!-- ボタン配置をフレックス化 -->
+    <div id="quizButtons">
+      <div id="quizButtons-left">
+        <button id="prevBtn" style="display:none;">前へ</button>
+        <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
+      </div>
+      <div id="quizButtons-right">
+        <button id="showAnswerBtn">答えを見る</button>
+        <button id="nextBtn" style="display:none;">次へ</button>
+        <button id="quitQuizBtn">やめる</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
