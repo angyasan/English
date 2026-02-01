@@ -38,14 +38,13 @@
   .quiz-jp { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
   .quiz-en { font-size: 1.2em; color: #444; margin-bottom: 5px; cursor: pointer; }
   .quiz-kana { font-size: 1em; color: #666; margin-top: 2px; }
-  /* body初期スタイル + ズーム */
-  body { 
-    font-family: -apple-system, sans-serif; 
-    padding: 20px; 
-    max-width: 480px; 
-    margin: auto; 
-    zoom: 1.3; 
-  }/* ここ追加 */
+body { 
+  font-family: -apple-system, sans-serif; 
+  padding: 20px; 
+  max-width: 480px; 
+  margin: auto; 
+  zoom: 1.3;
+}
   
   
   h2 { margin-bottom: 15px; }
@@ -99,15 +98,29 @@
   
 
   /* 左端初期化ゾーン */
-  #leftResetZone {
+#leftResetZone {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100px;
+    width: 60px;   /* ← ここ小さくする */
     height: 100%;
-    background: rgba(200,200,200,0.2); /* 明るいグレーで少し透過 */
-    z-index: 998;
-  }
+    background: rgba(0,200,0,0.3); /* 緑半透明 */
+    border-right: 2px solid green;
+    z-index: 10000; /* モーダルやボタンより上 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
+#leftResetZone::after {
+    content: "初期化";
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: bold;
+}
   #exampleModal {
   user-select: none;           /* 背景は選択禁止 */
   -webkit-user-select: none;
@@ -177,7 +190,19 @@
 .hidden-en.revealed {
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
+  
 }
+#quizContainer {
+  position: relative;
+}
+
+#quitQuizBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+
 </style>
 </head>
 <body>
@@ -196,6 +221,7 @@
   <div class="tab-btn" data-type="adjectives">形容詞</div>
   <div class="tab-btn" data-type="tenses">時制</div>
   <div class="tab-btn" data-type="pronouns">代名詞</div>
+  <div class="tab-btn" data-type="prepositions">前置詞</div>
   <div class="tab-btn" data-type="conjunctions">接続詞</div>
 </div>
 
@@ -219,11 +245,27 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-    <button id="showAnswerBtn">答えを見る</button>
-    <button id="nextBtn" style="display:none;">次へ</button>
-    <button id="quitQuizBtn">やめる</button>
+<div id="quizBtnRow"
+     style="position:relative; height:36px; margin-top:12px;">
+  
+  <!-- 左側ボタン -->
+  <div style="display:flex; gap:8px;">
+    <button id="prevBtn" style="display:none;">前へ</button>
+    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+      不正解だった
+    </button>
   </div>
+
+
+<div style="position:absolute; left:50%; top:0; transform:translateX(-50%);
+            display:flex; gap:8px;">
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
 </div>
+
+</div>
+
+<button id="quitQuizBtn">やめる</button>
 
 <!-- 例文モーダル -->
 <div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
@@ -241,12 +283,12 @@
 <!-- 左端初期化ゾーン -->
 <div id="leftResetZone"></div>
   
-<!-- ↑ボタン -->
+<!-- 常に表示されるスクロールトップボタン -->
 <button id="scrollTopBtn" style="
   position: fixed;
   bottom: 20px;
-  left: calc(50% - 300px + 10px);
-  display: none;
+  left: 10px;
+  display: block; /* 常に表示 */
   font-size: 32px;
   cursor: pointer;
   background: none;
@@ -254,21 +296,20 @@
   color: #007bff;
   z-index: 9999;
 ">↑</button>
+
+
   
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
   const closeBtn = document.getElementById("closeExampleBtn");
-closeBtn.addEventListener("click", () => {
-  closeExampleModal();
+
+  closeBtn.addEventListener("click", () => {
+    closeExampleModal();
   });
 
-  // ページスクロールで表示/非表示切替
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 100) scrollTopBtn.style.display = "block";
-    else scrollTopBtn.style.display = "none";
-  });
+
 
   // クリックで上にスクロール
   scrollTopBtn.addEventListener("click", () => {
@@ -381,8 +422,8 @@ closeBtn.addEventListener("click", () => {
 { jp: "〜できて嬉しい", en: "be glad to ~", reading: "ビー グラッド トゥ", example: ["I'm glad to meet you", "I'm glad to see you"], exampleJp: ["会えて嬉しいよ（初）", "会えて嬉しいよ（再会）"] },
 { "jp": "〜させる（許可）", "en": "let + 人 + 動詞の原形", "reading": "レット", "example": ["Let me pass.", "He let her go to the party."], "exampleJp": ["通してください", "彼は彼女をパーティーに行かせてあげた"] },
 { "jp": "〜するくらいなら〜したい", "en": "would rather + 動詞の原形 + than...", "reading": "ウッド ラザー", "example": ["I’d rather stay home than go out in this rain."], "exampleJp": ["この雨の中出かけるぐらいなら、家にいたい"] },
-
-
+{ "jp": "人が〜するのに〇時間かかる", "en": "It takes + 人 + 時間 + to + 動詞の原形", "reading": "イット テイクス", "example": ["It takes me an hour to get to work", "It took her 30 minutes to cook this dish."], "exampleJp": ["私が仕事するのに1時間かかる(仕事始めるまで)", "彼女がこの料理を作るのに30分かかった"] },
+{ "jp": "〜した方がいいかな？（相手に意見を聞く）", "en": "Should I + 動詞の原形", "reading": "シュッド アイ", "example": ["Should I move here?", "Should I apologize to her?"], "exampleJp": ["ここに引っ越した方がいいかな？", "彼女に謝った方がいいかな？"] },
 
   ],
       
@@ -410,7 +451,7 @@ closeBtn.addEventListener("click", () => {
   {jp:"もう1回言ってください", en:"Can you say that again?", reading:"キャン ユ セイ ザゲン？"},
   {jp:"もう少しゆっくり言ってください", en:"Can you say that more slowly, please?", reading:"キャン ユ セイ ザ モア スローリー プリーズ？"},
   {jp:"どうやって食べるの？", en:"How can I eat this?", reading:"ハウ キャナイ イート ディス？"},
-  {jp:"分かりました", en:"I got it", reading:"アイ ガラリッ"},
+  {jp:"わかった(返事)", en:"I got it", reading:"アイ ガラリッ"},
   {jp:"わからない", en:"I'm not sure / no idea", reading:"アイム ノー シュア / ノー アイディア"},
   {jp:"意味わからん", en:"I don't get it", reading:"アイ ドン ゲリッ"},
   {jp:"何を言ってるかわかりません", en:"I don't understand what you're saying", reading:"アイ ドン アンダスタン ワッ チャー セイイン"},
@@ -481,31 +522,13 @@ closeBtn.addEventListener("click", () => {
   {jp:"聞いてください", en:"Please listen.", reading:"プリーズ リッスン"},
   {jp:"同じ", en:"Same.", reading:"セイム"},
   {jp:"違う、異なる", en:"Different.", reading:"ディファレント"},
-  {jp:"合ってる", en:"That's right.", reading:"ザッツ ライト"},
+  {jp:"合ってる！、正解！", en:"That's right.", reading:"ザッツ ライト"},
   {jp:"間違ってる", en:"Wrong.", reading:"ロング"},
   {jp:"これはなんと呼ばれていますか？", en:"What's this called?", reading:"ワッツ ディス コールド？"},
   {jp:"散歩", en:"Stroll.", reading:"ストロール"},
   {jp:"払うわけねぇだろ!", en:"No way I'm paying!", reading:"ノー ウェイ アイム ペイイン！"},
   {jp:"ぼったくり人", en:"Rip-off artist.", reading:"リップオフ アーティスト"},
   {jp:"あなたは詐欺師？", en:"Are you scammer?", reading:"アー ユー スキャマー？"},
-  {jp:"〜の隣に", en:"Next to.", reading:"ネクストゥ"},
-  {jp:"横に", en:"Beside.", reading:"ビサイド"},
-  {jp:"そば", en:"By.", reading:"バイ"},
-  {jp:"〜の間", en:"Between.", reading:"ビトウィーン"},
-  {jp:"正面", en:"In front of.", reading:"イン フロントゥ オブ"},
-  {jp:"背面", en:"Behind.", reading:"ビハインド"},
-  {jp:"下", en:"Under.", reading:"アンダー"},
-  {jp:"空間を通る", en:"Through.", reading:"スルー"},
-  {jp:"横切る", en:"Across.", reading:"アクロス"},
-  {jp:"流れに沿う", en:"Along.", reading:"アロング"},
-  {jp:"〜に夢中である", en:"Be into.", reading:"ビー イントゥ"},
-  { "jp": "〜として", "en": "as", "reading": "アズ" }, 
-  { "jp": "〜なしで", "en": "without", "reading": "ウィザウト" }, 
-  { jp: "だいたい", en: "around", reading: "アラウンド" },
-  { "jp": "〜の中で、〜の間に", "en": "among", "reading": "アモング" },
-  { "jp": "〜からずっと", "en": "since", "reading": "シンス" },
-  { "jp": "〜に反対して", "en": "against", "reading": "アゲンスト" },
-  { "jp": "〜以外", "en": "except", "reading": "エクセプト" },
   {jp:"こんな感じ？", en:"Like this?", reading:"ライク ディス？"},
   {jp:"そんな感じ、そんな風に", en:"Like that.", reading:"ライク ザッ"},
   { jp: "人による", en: "It depends on the person.", reading: "" },
@@ -710,7 +733,7 @@ closeBtn.addEventListener("click", () => {
 { jp: "強いて言うなら", en: "If I had to say", reading: "イフ アイ ハドゥ トゥ セイ" },
 { jp: "相変わらず", en: "as usual", reading: "アズ ユージュアル" },
 { jp: "めんどい", en: "I'm too lazy", reading: "アイム トゥー レイジー" },
-{ jp: "先行ってて", en: "Go ahead", reading: "ゴー アヘッド" },
+{ jp: "どうぞ、先行ってて", en: "Go ahead", reading: "ゴー アヘッド" },
 { jp: "それで？", en: "And then?", reading: "アンゼン？" },
 { jp: "どんな味がしますか？", en: "What does it taste like?", reading: "ホワット ダズ イット テイスト ライク" },
 { jp: "俺には合わないかなぁ(味)", en: "It’s not really my taste.", reading: "イッツ ノット リアリー マイ テイスト" },
@@ -763,26 +786,61 @@ closeBtn.addEventListener("click", () => {
 { jp: "痛いよ", en: "It hurts", reading: "イト ハーツ" },
 { jp: "わかったよ", en: "I gotcha", reading: "アイ ガッチャ" },
 { jp: "了解！", en: "gotcha", reading: "ガッチャ" },
-{ jp: "どっちがいいと思う？", en: "Which one do you think is better?", reading: "ウィチ ワン ドゥ ユウ シンク イズ ベラー" },
 { jp: "会えて嬉しいよ", en: "I'm glad to see you", reading: "アイム グラァドゥ トゥ スィー ユー" },
 { "jp": "悪気はないよ", "en": "I don’t mean any harm.", "reading": "アイ ドン ミーン エニ ハーム" },
 { "jp": "遠慮しないで！", "en": "Don't be shy!", "reading": "ドント ビ シャイ" },
 { "jp": "俺が守る", "en": "I'll protect you", "reading": "アイル プロテクト ユー" },
 { "jp": "俺がついてる", "en": "I've got you", "reading": "アイヴ ガッ ユー" },
 { "jp": "死んじゃうかも", "en": "I might die", "reading": "アイ マイト ダイ" },
-{ "jp": "正解！", "en": "That's right!", "reading": "ザッツ ライト" },
 { "jp": "それは美味しい？", "en": "Is it good?", "reading": "イズ イット グッド" },
+{ "jp": "こちらが搭乗券です", "en": "Here’s your boarding pass.", "reading": "ヒアズ ユア ボーディング パス" },
+{ "jp": "今やってる？（開店してる？）", "en": "Are you open now?", "reading": "アー ユー オウプン ナウ" },
+{ "jp": "あなたたちは何歳？", "en": "How old are you guys?", "reading": "ハウ オウルド アー ユー ガイズ" },
+{ "jp": "例えば〜", "en": "for example", "reading": "フォー イグザンプル" },
+{ "jp": "あんまり", "en": "not really", "reading": "ノット リアリー" },
+{ "jp": "徒歩で30分かかる", "en": "It takes 30 minutes on foot", "reading": "イット テイクス サーティ ミニッツ オン フット" },
+{ "jp": "彼氏はここにいる？", "en": "Is your boyfriend here?", "reading": "イズ ユア ボーイフレンド ヒア" },
+{ "jp": "関係ないよ", "en": "It doesn't matter", "reading": "イット ダズント マター" },
+{ "jp": "弾持ってる？", "en": "Do you have ammo?", "reading": "ドゥー ユー ハヴ アモ" },
+{ "jp": "弾切れた", "en": "I'm out of ammo", "reading": "アイム アウト オブ アモ" },
+{ "jp": "少しだけ弾持ってるよ", "en": "I have a little ammo", "reading": "アイ ハヴァ リトル アモ" },
+{ "jp": "もう閉めるけど、あなたはどうする？", "en": "I'll close the door soon. What will you do?", "reading": "アイル クローズ ザ ドー スーン ワット ウィル ユー デュ" },
+{ "jp": "一緒にくる？", "en": "You coming with me?", "reading": "ユー カミング ウィズ ミー" },
+{ "jp": "わかった、なるほど(話の内容を理解)", "en": "I get it", "reading": "アイ ゲリット" },
+{ "jp": "店内で", "en": "for here / dine in", "reading": "フォァ ヒア / ダイン イン" },
+{ "jp": "持ち帰りで", "en": "to go / take out", "reading": "トゥ ゴウ / テイク アウト" },
+{ "jp": "なんて言ったらいいか、、、", "en": "How can I say ...", "reading": "ハウ キャン アイ セイ" },
+{ "jp": "さっき言ったように、、、", "en": "Like I said", "reading": "ライク アイ セッド" },
+{ "jp": "手短に言うと、、、", "en": "Long story short", "reading": "ロング ストーリ ショート" },
+{ "jp": "楽しみ", "en": "I can't wait", "reading": "アイ キャント ウェイッ" },
+{ "jp": "教えて", "en": "Let me know", "reading": "レッ ミー ノウ" },
+{ "jp": "ちょっと気になるだけ", "en": "I'm just curious", "reading": "アイム ジャス キュリァス" },
+{ "jp": "何の話？", "en": "What is it about?", "reading": "ワッツ イリラバウッ" },
+{ "jp": "私も！（肯定文の共感）", "en": "me too!", "reading": "ミー トゥー" },
+{ "jp": "私も！（否定文の共感）", "en": "me neither!", "reading": "ミー 二ーザー" },
+{ "jp": "この店に到着するのにどれくらいかかる？", "en": "How long does it take to get to this store?", "reading": "ハウ ロング ダズ イッ テイク トゥ ゲラ トゥ ディス ストア?" },
+{ "jp": "吐きそう？", "en": "Are you gonna throw up?", "reading": "アー ユー ガナ スロウ アップ" },
+{ "jp": "それはやらないよ", "en": "I won't do that", "reading": "アイ ウォウント ドゥ ザット" },
+{ "jp": "あなたのことが心配だよー", "en": "I’m worried about you.", "reading": "アイム ウォーリード アバウト ユー" },
+{ "jp": "何歳に見える？", "en": "How old do you think I am?", "reading": "ハウ オールド ドゥ ユー シンク アイ アム" },
+{ "jp": "この子と仲良い子は？", "en": "Who’s close with her?", "reading": "フーズ クローズ ウィズ ハー" },
+{ "jp": "ここに仲良い子いる？", "en": "Is there anyone here you’re close with?", "reading": "イズ ゼア エニワン ヒア ユア クローズ ウィズ" },
+{ "jp": "今忙しいんだけど、君可愛いから話聞くよ", "en": "I'm busy now, but you're cute, so I'll listen.", "reading": "アイム・ビズィー・ナウ、バッ・ユア・キュート、ソー・アイル・リスン" },
+{ jp: "どっちがいいと思う？", en: "Which one do you think is better?", reading: "ウィチ ワン ドゥ ユウ シンク イズ ベラー" },
+{ "jp": "どれがいいと思う？", "en": "Which do you think is better?", "reading": "ウィッチ ドゥ ユー シンク イズ ベター" },
+{ "jp": "加工してないよね？", "en": "No Photoshop, right?", "reading": "ノー フォトショップ、ライト" },
+{ "jp": "美味しかったよ", "en": "It was delicious", "reading": "イット ワズ デリシャス" },
+{ "jp": "どうやって使うの？", "en": "How do I use this?", "reading": "ハウ ドゥ アイ ユーズ ディス" },
+{ "jp": "シャワーのお湯が出ません", "en": "There's no hot water in the shower", "reading": "ゼアズ ノー ホット ウォーター イン ザ シャワー" },
+{ "jp": "高層階にしてもらえます？", "en": "Can I have a room on a higher floor?", "reading": "キャン アイ ハヴァ ルーム オン ア ハイヤー フロア" },
 
 
 
 
 
-
-
-      
   ],
    verbs: [
-      {jp:"〜である//いる", en:"be", reading:"ビー"},
+      {jp:"〜である/いる", en:"be", reading:"ビー"},
       {jp:"〜になる", en:"become", reading:"ビカム"},
       {jp:"回す、曲がる", en:"turn", reading:"ターン"},
       {jp:"持ってくる", en:"bring", reading:"ブリング"},
@@ -801,7 +859,8 @@ closeBtn.addEventListener("click", () => {
       {jp:"借りる", en:"borrow", reading:"バロウ"},
       {jp:"貸す借りる(有料)", en:"rent", reading:"レント"},
       {jp:"受け入れる", en:"accept", reading:"アクセプト"},
-      {jp:"拒否する", en:"refuse", reading:"リフューズ"},
+      {jp:"拒否する、断る（行為）", en:"refuse", reading:"リフューズ"},
+      { jp: "却下する、断る（評価、判断）", en: "reject", reading: "リジェクト" },
       {jp:"建てる、構築する(関係、システム)", en:"build", reading:"ビルド"},
       {jp:"破壊する", en:"destroy", reading:"ディストロイ"},
       {jp:"値する", en:"deserve", reading:"ディザーブ"},
@@ -811,9 +870,9 @@ closeBtn.addEventListener("click", () => {
       {jp:"入る", en:"enter", reading:"エンター"},
       {jp:"出る", en:"exit", reading:"エグジット"},
       {jp:"参加する、加わる", en:"join", reading:"ジョイン"},
-      {jp:"隠す", en:"hide", reading:"ハイド"},
+      {jp:"隠す、隠れる", en:"hide", reading:"ハイド"},
       {jp:"見せる", en:"show", reading:"ショウ"},
-      {jp:"捕まえる", en:"catch", reading:"キャッチ"},
+      {jp:"捕まえる(受け止める)", en:"catch", reading:"キャッチ"},
       {jp:"逃す", en:"miss", reading:"ミス"},
       {jp:"逃げる", en:"run away", reading:"ラン アウェイ"},
       {jp:"保存する、貯める、節約する、省く", en:"save", reading:"セイブ"},
@@ -821,7 +880,7 @@ closeBtn.addEventListener("click", () => {
       {jp:"強く主張する", en:"insist", reading:"インシスト"},
       {jp:"招待する、誘う", en:"invite", reading:"インヴァイト"},
       {jp:"謝る", en:"apologize", reading:"アポロジャイズ"},
-      {jp:"握る、咥える、手に持つ、開催する", en:"hold", reading:"ホールド"},
+      {jp:"握る、咥える、開催する、掴む(継続)", en:"hold", reading:"ホールド"},
       {jp:"持ってた物を離す", en:"let go of", reading:"レット ゴー オブ"},
       {jp:"落とす", en:"drop", reading:"ドロップ"},
       {jp:"落ちる", en:"fall", reading:"フォール"},
@@ -911,7 +970,6 @@ closeBtn.addEventListener("click", () => {
       {jp:"制御する", en:"control", reading:"コントロール"},
       {jp:"責める", en:"blame", reading:"ブレイム"},
       {jp:"許す", en:"forgive", reading:"ファーギヴ"},
-      {jp:"無視する", en:"ignore", reading:"イグノア"},
       {jp:"頼る、依存する", en:"depend", reading:"ディペンド"},
       {jp:"噛む(歯でかじる)", en:"bite", reading:"バイト"},
       {jp:"噛む(咀嚼する)", en:"chew", reading:"チュー"},
@@ -930,7 +988,6 @@ closeBtn.addEventListener("click", () => {
       {jp:"予期する、期待する", en:"expect", reading:"エクスペクト"},
       {jp:"巻き込む", en:"involve", reading:"インヴォルヴ"},
       {jp:"配達する", en:"deliver", reading:"デリヴァー"},
-      {jp:"維持する", en:"maintain", reading:"メインテイン"},
       {jp:"逆転する", en:"reverse", reading:"リヴァース"},
       {jp:"〜を引き起こす、原因となる", en:"cause", reading:"コーズ"},
       {jp:"裏切る", en:"betray", reading:"ビトレイ"},
@@ -944,7 +1001,6 @@ closeBtn.addEventListener("click", () => {
       {jp:"前に出る", en:"come forward", reading:"カム フォワード"},
       {jp:"後ろに下がる(命令もできる)", en:"back up", reading:"バック アップ"},
       {jp:"後ろに下がる(1歩下がる)", en:"step back", reading:"ステップ バック"},
-      {jp:"回転する", en:"spin around", reading:"スピン アラウンド"},
       {jp:"横になる", en:"lie down", reading:"ライ ダウン"},
       {jp:"ハイタッチ", en:"high five", reading:"ハイ ファイブ"},
       {jp:"グータッチ", en:"fist bump", reading:"フィスト バンプ"},
@@ -958,18 +1014,16 @@ closeBtn.addEventListener("click", () => {
       {jp:"別れる、解散する、解体する(組織)", en:"break up", reading:"ブレイク アップ"},
       {jp:"伸ばす", en:"stretch", reading:"ストレッチ"},
       {jp:"曲げる", en:"bend", reading:"ベンド"},
-      {jp:"折る", en:"break", reading:"ブレイク"},
       {jp:"舐める", en:"lick", reading:"リック"},
       {jp:"吸う", en:"suck", reading:"サック"},
       {jp:"吹く", en:"blow", reading:"ブロウ"},
-      {jp:"扱う、対処する", en:"deal", reading:"ディール"},
       {jp:"活用する、利用する", en:"avail", reading:"アヴェイル"},
       {jp:"検査する", en:"examine", reading:"イグザミン"},
       {jp:"表現する、速達", en:"express", reading:"エクスプレス"},
       {jp:"爆発する", en:"explode", reading:"エクスプロウド"},
       {jp:"超える", en:"exceed", reading:"イクシード"},
       {jp:"興奮する", en:"get excited", reading:"ゲット エクサイテッド"},
-      {jp:"注ぐ", en:"pour", reading:"ポア"},
+      {jp:"注ぐ、かける", en:"pour", reading:"ポア"},
       {jp:"焼く", en:"bake", reading:"ベイク"},
       {jp:"ゆでる、強めに煮る", en:"boil", reading:"ボイル"},
       {jp:"集める", en:"collect", reading:"コレクト"},
@@ -992,9 +1046,9 @@ closeBtn.addEventListener("click", () => {
       {jp:"落ち着く", en:"chill out", reading:"チル アウト"},
       {jp:"テンションを上げる、盛り上げる", en:"hype up", reading:"ハイプ アップ"},
       {jp:"テンションが上がる", en:"get excited / get hyped", reading:"ゲット エキサイテッド / ゲット ハイプデュ"},
-      { jp: "テンションを下げる", en: "calm down", reading: "カーム ダウン" },
-      { jp: "テンションが下がる、落ち込む", en: "feel down", reading: "フィール ダウン" },
-      {jp:"(罪を)犯す", en:"commit", reading:"コミット"},
+      { jp: "落ち着く、落ち着かせる、テンションを下げる", en: "calm down", reading: "カーム ダウン" },
+      { jp: "落ち込む、テンションが下がる", en: "feel down", reading: "フィール ダウン" },
+      {jp:"(罪を)犯す、専念する(引き返せない)", en:"commit", reading:"コミット"},
       {jp:"時間がかかる", en:"take time", reading:"テイク タイム"},
       {jp:"自慢する", en:"boast", reading:"ボウスト"},
       {jp:"雑談する", en:"have a chat", reading:"ハヴ ア チャット"},
@@ -1054,7 +1108,7 @@ closeBtn.addEventListener("click", () => {
       {jp:"泊める", en:"let someone stay / put someone stay", reading:"レット サムワン ステイ / プット サムワン ステイ"},
       {jp:"修理する(カジュアル)、固定する(位置)、", en:"fix", reading:"フィックス"},
       {jp:"修理する(フォーマル)", en:"repair", reading:"リペア"},
-     {jp:"盗む", en:"steal", reading:"スティール"},
+     {jp:"盗む(こっそり)", en:"steal", reading:"スティール"},
      {jp:"引っ越す、移動する(一般)", en:"move", reading:"ムーヴ"},
      {jp: "〜する余裕がある", en: "afford (to＋動詞）", reading: "アフォード"},
      {jp: "割り当てる、任命する", en: "assign", reading: "アサイン"},
@@ -1093,8 +1147,8 @@ closeBtn.addEventListener("click", () => {
 { jp: "反抗する", en: "rebel", reading: "リベル" },
 { jp: "自由になる", en: "break free", reading: "ブレイク フリー" },
 { jp: "揺らぐ、迷う", en: "waver", reading: "ウェイヴァー" },
-{ jp: "音量を上げる", en: "turn up", reading: "ターン アップ" },
-{ jp: "音量を下げる", en: "turn down", reading: "ターン ダウン" },
+{ jp: "(音量、強さ、火力)上げる、強める、現れる、見つかる", en: "turn up", reading: "ターン アップ" },
+{ jp: "(音量、強さ、火力)下げる、弱める、拒否する、", en: "turn down", reading: "ターン ダウン" },
 { jp: "浸す、つける(液体に)", en: "dip", reading: "ディップ" },
 { jp: "傷つく(物理的)", en: "get hurt", reading: "ゲット ハート" },
 { jp: "傷ついている(精神的)", en: "be emotionally hurt", reading: "ビー エモウショナリー ハート" },
@@ -1102,7 +1156,6 @@ closeBtn.addEventListener("click", () => {
 { jp: "混ぜる(材料かき混ぜる)", en: "mix", reading: "ミックス" },
 { jp: "混ぜ合わせる", en: "blend", reading: "ブレンド" },
 { jp: "追加する、加える", en: "add", reading: "アッド" },
-{ jp: "拒絶する、断る", en: "reject", reading: "リジェクト" },
 { jp: "躊躇う、一瞬迷う", en: "hesitate", reading: "ヘズィテイト" },
 { jp: "〜のように見える", en: "seem", reading: "シーム" },
 { jp: "集中する", en: "focus", reading: "フォーカス" },
@@ -1111,7 +1164,7 @@ closeBtn.addEventListener("click", () => {
 { jp: "退く", en: "back off", reading: "バックオフ" }, 
 { jp: "酔う(お酒)", en: "get drunk", reading: "ゲット ドランク" },
 { jp: "酔う(車)", en: "get carsick", reading: "ゲット カーシック" },   
-{ jp: "積む(荷物を)", en: "load", reading: "ロード" },  
+{ jp: "積む(荷物を)、読み込む、装填する", en: "load", reading: "ロード" },  
 { jp: "怒る(怒り出す、状態の変化)", en: "get angry", reading: "ゲット アングリー" },
 { jp: "怒っている(最中)", en: "be angry", reading: "ビー アングリー" },
 { jp: "突然怒る(怒り出す、状態の変化)", en: "blow up", reading: "ブロー アップ" },
@@ -1123,16 +1176,15 @@ closeBtn.addEventListener("click", () => {
 { jp: "〜する勇気がある", en: "dare", reading: "デアー" },   
 {"jp":"つまずく、よろける","en":"stumble","reading":"スタンブル"},
 { "jp": "問題になる、重要である、意味がある", "en": "matter", "reading": "マター" },
-  { "jp": "疑う", "en": "doubt", "reading": "ダウト" },
+  { "jp": "疑う(否定寄りの疑い)", "en": "doubt", "reading": "ダウト" },
   { "jp": "〜に注意する、〜を警戒する", "en": "beware", "reading": "ビウェア" },
   { "jp": "印象を与える", "en": "strike", "reading": "ストライク" },
   { "jp": "興奮させる(ワクワク)", "en": "excite", "reading": "イクサイト" },
   { "jp": "興奮させる(ハラハラ、ゾクゾク)", "en": "thrill", "reading": "スリル" },
   { "jp": "〜が欠けている", "en": "lack", "reading": "ラック" },
-  { "jp": "広げる、明らかにする", "en": "unfold", "reading": "アンフォールド" },
   { jp: "爆発する、大音量で鳴らす", en: "blast", reading: "ブラスト" },
   { jp: "貼りつく、くっつく、突き刺さる", en: "stick", reading: "スティック" },
-  { jp: "ハマる(物理的)", en: "get stuck", reading: "ゲット スタック" },
+  { jp: "言葉が詰まる、ハマる(物理的)", en: "get stuck", reading: "ゲット スタック" },
   { jp: "慰める", en: "comfort", reading: "カムフォート" },
   { jp: "選ぶ", en: "choose", reading: "チューズ" },
   { jp: "消す(物理的に)", en: "erase", reading: "イレイス" },
@@ -1153,7 +1205,6 @@ closeBtn.addEventListener("click", () => {
   { "jp": "いじめる、困らせる", "en": "haze", "reading": "ヘイズ" },
   { "jp": "溢れる", "en": "flood", "reading": "フラッド" },
   { "jp": "口笛を吹く", "en": "whistle", "reading": "ホイッスル" },
-  { "jp": "元の状態に戻す、回復させる", "en": "restore", "reading": "リストア" },
 { "jp": "捨てる、放棄する(フォーマル)", "en": "discard", "reading": "ディスカード" },
 { "jp": "〜が好き", "en": "fancy", "reading": "ファンシー" },
 { "jp": "驚いている", "en": "be surprised", "reading": "ゲット サプライズド" },
@@ -1222,7 +1273,7 @@ closeBtn.addEventListener("click", () => {
   { "jp": "急ぐ", "en": "hurry", "reading": "ハリー" },
   { "jp": "急いでいる", "en": "be in hurry", "reading": "ビー イン ハリー" },
   { "jp": "慌てて急ぐ", "en": "rush", "reading": "ラッシュ" },
-  { "jp": "慌てる", "en": "panic", "reading": "パニック" },
+  { "jp": "慌てる、焦る", "en": "panic", "reading": "パニック" },
   { "jp": "刺す(暴力的)", "en": "stab", "reading": "スタァブ" },
   { "jp": "刺す(軽く)", "en": "prick", "reading": "プリック" },
   { "jp": "貫通する、貫く", "en": "pierce", "reading": "ピアス" },
@@ -1232,8 +1283,6 @@ closeBtn.addEventListener("click", () => {
   { "jp": "握手する", "en": "shake hands", "reading": "シェイク ハンズ" },
   { "jp": "睨む", "en": "glare", "reading": "グレア" },
   { "jp": "めくる", "en": "turn over", "reading": "ターン オーバー" },
-  { "jp": "まくる", "en": "roll up", "reading": "ロール アップ" },
-  { "jp": "応答する、返事する", "en": "respond", "reading": "リスポンド" },
   { "jp": "踊る", "en": "dance", "reading": "ダンス" },
   { "jp": "脅す", "en": "threaten", "reading": "フレデン" },
   { "jp": "添付する", "en": "attach", "reading": "アタッチ" },
@@ -1246,7 +1295,7 @@ closeBtn.addEventListener("click", () => {
 { "jp": "持ち上げる", "en": "lift", "reading": "リフト" },
 { "jp": "捧げる(時間や労力)", "en": "devote", "reading": "ディヴォウト" },
 { "jp": "並んでいる", "en": "stand in line", "reading": "スタンド イン ライン" },
-{ "jp": "並ぶ", "en": "line up", "reading": "ライン アップ" },  
+{ "jp": "並ぶ、並べる(一直線に)、一致する", "en": "line up", "reading": "ライン アップ" },  
 { "jp": "片付ける、仕舞う", "en": "put away", "reading": "プット アウェイ" },
 { "jp": "給油する", "en": "refuel", "reading": "リフューオゥ" },
 { "jp": "絞る(タオルや布)", "en": "wring", "reading": "リング" },
@@ -1315,7 +1364,7 @@ closeBtn.addEventListener("click", () => {
   { "jp": "綺麗になる(自然に)", "en": "get clean", "reading": "ゲット クリーン" },
   { jp: "外出する", en: "go out", reading: "ゴーアウト" },
 { jp: "大切にする", en: "cherish", reading: "チェリッシュ" },
-{ jp: "引き継ぐ、支配する", en: "take over", reading: "テイコゥオーヴァー" },
+{ jp: "引き継ぐ、乗っ取る、買収する", en: "take over", reading: "テイコゥオーヴァー" },
 { jp: "占める、始める", en: "take up", reading: "テイカップ" },
 { jp: "侵入する", en: "break into", reading: "ブレイキントゥ" },
 { jp: "設立する、準備する", en: "set up", reading: "セットゥアップ" },
@@ -1374,7 +1423,7 @@ closeBtn.addEventListener("click", () => {
 { "jp": "盛る(顔を)、加工してよく見せる、補正する", "en": "enhance", "reading": "エンハンス" },
 { "jp": "間に合う", "en": "make it", "reading": "メイク イット" },
 { "jp": "検討する", "en": "consider", "reading": "コンシダー" },
-{ "jp": "喧嘩する", "en": "argue", "reading": "アーギュ" },
+{ "jp": "喧嘩する、口論する、争う(口喧嘩)", "en": "argue", "reading": "アーギュ" },
 { "jp": "感謝する、認識する", "en": "appreciate", "reading": "アプリシエイト" },
 { "jp": "知らせる、通知する", "en": "inform", "reading": "インフォーム" },
 { "jp": "やる気がある", "en": "be motivated", "reading": "ビー モティヴェイティド" },
@@ -1382,7 +1431,7 @@ closeBtn.addEventListener("click", () => {
 { "jp": "駐車する", "en": "park", "reading": "パーク" },
 { "jp": "注射する", "en": "give an injection", "reading": "ギヴ アン インジェクション" },
 { "jp": "注射を受ける", "en": "get an injection", "reading": "ゲット アン インジェクション" },
-{ "jp": "轢く", "en": "run over", "reading": "ラン・オーヴァー" },
+{ "jp": "轢く、長引く", "en": "run over", "reading": "ラン・オーヴァー" },
 { "jp": "轢かれる", "en": "be run over", "reading": "ビー ラン・オーヴァー" },
 { "jp": "いっぱいにする", "en": "fill up", "reading": "フィル アップ" },
 { "jp": "覆いかぶさる", "en": "hang over", "reading": "ハング オーヴァー" },
@@ -1403,6 +1452,112 @@ closeBtn.addEventListener("click", () => {
 { "jp": "〜だと思い込む、〜だと仮定する", "en": "assume", "reading": "アシューム" },
 { "jp": "分析する", "en": "analyze", "reading": "アナライズ" },
 { "jp": "がっかりする", "en": "be disappointed", "reading": "ビー・ディスアポイントィド" },
+{ "jp": "支配する、圧倒する、牛耳る", "en": "dominate", "reading": "ドミネイト" },
+{ "jp": "処分する", "en": "dispose", "reading": "ディスポウズ" },
+{ "jp": "校正する", "en": "proof", "reading": "プルーフ" },
+{ "jp": "導く（教え）", "en": "lead", "reading": "リード" },
+{ "jp": "導く（結論に）", "en": "lead to", "reading": "リード トゥ" },
+{ "jp": "故障する、分解する（要素を分ける）", "en": "break down", "reading": "ブレイク ダウン" },
+{ "jp": "分解する（化学）", "en": "decompose", "reading": "デコンポウズ" },
+{ "jp": "分解する（機械）", "en": "disassemble", "reading": "ディアッセンブル" },
+{ "jp": "バラす（機械）", "en": "take apart", "reading": "テイク アパート" },
+{ "jp": "組み立てる（機械）", "en": "assemble", "reading": "アッセンブル" },
+{ "jp": "組み立てる（機械、考え）", "en": "put together", "reading": "プット トゥゲザー" },
+{ "jp": "合体する（物理的）", "en": "combine", "reading": "コンバイン" },
+{ "jp": "削る(硬いもの、金属、コーヒー豆)", "en": "grind", "reading": "グラインド" },
+{ "jp": "鼻をかむ", "en": "blow one’s nose", "reading": "ブロウ ワンズ ノーズ" },
+{ "jp": "詰まる（水）", "en": "clog", "reading": "クログ" },
+{ "jp": "詰まる（機械）", "en": "jam", "reading": "ジャム" },
+{ "jp": "片付ける（汚れ、散らかり）", "en": "clean up", "reading": "クリーン ナップ" },
+{ "jp": "整理する（使いやすく体系的に）", "en": "organize", "reading": "オーガナイズ" },
+{ "jp": "分類する、整理する（順番）", "en": "sort", "reading": "ソートゥ" },
+{ "jp": "並べる（物の見た目、配置）", "en": "arrange", "reading": "アレインジ" },
+{ "jp": "着替える", "en": "get changed", "reading": "ゲッ チェインジド" },
+{ "jp": "戦う（小〜中規模、日常会話）", "en": "fight", "reading": "ファイト" },
+{ "jp": "戦う、争う（大規模）", "en": "battle", "reading": "バトゥル" },
+{ "jp": "争う（法的、裁判）", "en": "dispute", "reading": "ディスピュート" },
+{ "jp": "争う、ぶつかる（意見）", "en": "clash", "reading": "クラッシュ" },
+{ "jp": "ぶつかる（物理的）", "en": "bump into", "reading": "バンプ イントゥ" },
+{ "jp": "接触する（物理的）", "en": "come into contact with", "reading": "カム イントゥ コンタクト ウィズ" },
+{ "jp": "触れ合う（関係）", "en": "have contact with", "reading": "ハヴ コンタクト ウィズ" },
+{ "jp": "訴える、訴訟する（裁判）", "en": "sue", "reading": "スー" },
+{ "jp": "文句を言う、訴える（苦情、主張）", "en": "complain", "reading": "コンプレイン" },
+{ "jp": "訴える（支援、理解を求める）", "en": "appeal", "reading": "アピール" },
+{ "jp": "翻訳する", "en": "translate", "reading": "トランスレイト" },
+{ "jp": "売り出す（宣伝して）", "en": "market", "reading": "マーキット" },
+{ "jp": "宣伝する", "en": "promote", "reading": "プロモウト" },
+{ "jp": "広告する", "en": "advertise", "reading": "アドヴァタイズ" },
+{ "jp": "吠える", "en": "bark", "reading": "バーク" },
+{ "jp": "保守する、整備する、維持する", "en": "maintain", "reading": "メインテイン" },
+{ "jp": "奮闘する、苦労する", "en": "struggle", "reading": "ストラグル" },
+{ "jp": "投げ捨てる", "en": "dump", "reading": "ダンプ" },
+{ "jp": "梱包する、荷物を詰める", "en": "pack up", "reading": "パック アップ" },
+{ "jp": "解決する、把握する", "en": "figure it out", "reading": "フィギャー イット アウト" },
+{ "jp": "口述する、命じる", "en": "dictate", "reading": "ディクテイト" },
+{ "jp": "差し出す、申し出る", "en": "offer", "reading": "オファー" },
+{ "jp": "掴む（とっさに）", "en": "grab", "reading": "グラブ" },
+{ "jp": "盗む、奪う、強奪する（暴力的）", "en": "rob", "reading": "ロブ" },
+{ "jp": "苦労する（口語）", "en": "have a hard time", "reading": "ハヴ ア ハード タイム" },
+{jp:"扱う(商売)", en:"deal in", reading:"ディール イン"},
+{ "jp": "対処する、処理する、対応する（クレーム、依頼）", "en": "deal with", "reading": "ディール ウィズ" },
+{ "jp": "返事する、反応する、対応する（メール、質問）", "en": "respond to", "reading": "レスポンド トゥ" },
+{ "jp": "返事する（メール）", "en": "reply to", "reading": "リプライ トゥ" },
+{ "jp": "配信する", "en": "stream", "reading": "ストゥリーム" },
+{ "jp": "卒業する", "en": "graduate from", "reading": "グラジュエイト フロム" },
+{ "jp": "置く", "en": "put down", "reading": "プッ ダウン" },
+{ "jp": "裏返す", "en": "flip over", "reading": "フリッポウヴァー" },
+{ "jp": "向きを変える", "en": "turn around", "reading": "ターン アラウンド" },
+{ "jp": "くるっと回す、回転する", "en": "spin around", "reading": "スピン アラウンド" },
+{ "jp": "丸める、まくる", "en": "roll up", "reading": "ロウル アップ" },
+{ "jp": "広げる（丸めたものを）", "en": "roll out", "reading": "ロウル アウト" },
+{ "jp": "押し倒す", "en": "push down", "reading": "プッシュ ダウン" },
+{ "jp": "くしゃくしゃにする", "en": "crumble up", "reading": "クランブル アップ" },
+{ "jp": "しわを伸ばす", "en": "smooth out", "reading": "スムーズ アウト" },
+{ "jp": "破く", "en": "tear up", "reading": "テア アップ" },
+{ "jp": "吹き飛ばす", "en": "blow away", "reading": "ブロウ アウェイ" },
+{ "jp": "選び出す", "en": "pick out", "reading": "ピック アウト" },
+{ "jp": "広げて並べる", "en": "spread out", "reading": "スプレッド アウト" },
+{ "jp": "重ねる", "en": "stack up", "reading": "スタック アップ" },
+{ "jp": "ぐちゃぐちゃにする", "en": "mess up", "reading": "メス アップ" },
+{jp:"〜に夢中である", en:"be into", reading:"ビー イントゥ"},
+{ "jp": "突然起こる、勃発する、逃げ出す", "en": "break out", "reading": "ブレイク アウト" },
+{ "jp": "慣らす、会話に割り込む", "en": "break in", "reading": "ブレイク イン" },
+{ "jp": "気絶する、停電する、情報を隠す", "en": "black out", "reading": "ブラック アウト" },
+{ "jp": "伏せる(身を隠す)", "en": "take cover", "reading": "テイク カヴァー" },
+{ "jp": "判明する（調べて結果を見つける）", "en": "find out", "reading": "ファインド アウト" },
+{ "jp": "まとめる（話、内容）", "en": "summarize", "reading": "サマライズ" },
+{ "jp": "潰す（柔らかいもの）", "en": "squash", "reading": "スクワーシュ" },
+{ "jp": "潰す（勢いよく粉々に）", "en": "smash", "reading": "スマッシュ" },
+{ "jp": "〜へ行く、〜に到着する", "en": "get to", "reading": "ゲッ トゥ" },
+{ "jp": "準備する、準備ができる（口語）", "en": "get ready", "reading": "ゲッ レディ" },
+{ "jp": "経営する", "en": "run a business", "reading": "ラン ア ビズネス" },
+{ "jp": "遺伝する", "en": "run in the family", "reading": "ラン イン ザ ファミリー" },
+{ "jp": "用事を済ませる", "en": "run errands", "reading": "ラン エランズ" },
+{ "jp": "確実にする、確認する（行動）", "en": "make sure", "reading": "メイク シュア" },
+{ "jp": "確信している（状態、気持ち）", "en": "be sure", "reading": "ビー シュア" },
+{ "jp": "投稿する（文章）", "en": "post", "reading": "ポウスト" },
+{ "jp": "投稿する（動画）", "en": "upload", "reading": "アップロード" },
+{ "jp": "保存する、受け取る、落とす（ファイル）", "en": "download", "reading": "ダウンロード" },
+{ "jp": "潜る", "en": "dive", "reading": "ダイブ" },
+{ "jp": "無視する（口語）", "en": "ignore", "reading": "イグノア" },
+{ "jp": "無視する、考慮しない、気に留めない（公式）", "en": "disregard", "reading": "ディスリガード" },
+{ "jp": "緩和する、和らげる", "en": "ease", "reading": "イーズ" },
+{ "jp": "元の状態に戻す、回復させる", "en": "restore", "reading": "リストア" },
+{ "jp": "回復する", "en": "be restored", "reading": "ビー・リストアド" },
+{ "jp": "回復する、回復させる（ゲーム）", "en": "heal", "reading": "ヒール" },
+{ "jp": "復活させる、蘇らせる（完全に終わったものを）", "en": "resurrect", "reading": "レザレクト" },
+{ "jp": "立て直す、持ち直す、再生する（弱ってるものを）", "en": "revive", "reading": "リヴァイヴ" },
+{ "jp": "再生する（動画）", "en": "play", "reading": "プレイ" },
+{jp:"折る", en:"break", reading:"ブレイク"},
+{ "jp": "折る（綺麗に）", "en": "fold", "reading": "フォウルド" },
+  { "jp": "広げる、明らかにする", "en": "unfold", "reading": "アンフォールド" },
+{ "jp": "剥がす", "en": "peel off", "reading": "ピール オフ" },
+{ "jp": "調整する", "en": "adjust", "reading": "アジャスト" },
+{ "jp": "微調整する", "en": "fine-tune", "reading": "ファイン チューン" },
+{ "jp": "相談する（公式）", "en": "consult", "reading": "コンサルト" },
+{ "jp": "相談する（日常会話）", "en": "talk to", "reading": "トーク トゥ" },
+
+
 
 
 
@@ -1485,7 +1640,7 @@ closeBtn.addEventListener("click", () => {
     { jp: "約束(感情、行動)", en: "promise", reading: "プロミス" },
     { jp: "約束(予定)", en: "appointment", reading: "アポイントメント" },
     { jp: "環境", en: "environment", reading: "インヴァイロンメント" },
-    { jp: "経験", en: "experience", reading: "エクスピアリエンス" },
+    { jp: "経験、体験", en: "experience", reading: "エクスピアリエンス" },
     { jp: "戦略", en: "strategy", reading: "ストラテジー" },
     { jp: "提案", en: "suggestion", reading: "サジェスチョン" },
     { jp: "予報", en: "forecast", reading: "フォーキャスト" },
@@ -1624,7 +1779,7 @@ closeBtn.addEventListener("click", () => {
   {jp:"口笛", en:"whistle", reading:"ウィッスル"},
     { "jp": "頭", "en": "head", "reading": "ヘッド" },
     { "jp": "額", "en": "forehead", "reading": "フォアヘッド" },
-    { "jp": "こめかみ", "en": "temple", "reading": "テンポゥ" },
+    { "jp": "こめかみ、寺", "en": "temple", "reading": "テンポゥ" },
     { "jp": "目", "en": "eye", "reading": "アイ" },
     { "jp": "まぶた", "en": "eyelids", "reading": "アイリッド" },
     { "jp": "まつ毛", "en": "eyelashes", "reading": "アイラッシュ" },
@@ -1895,9 +2050,76 @@ closeBtn.addEventListener("click", () => {
 { "jp": "賞（授与される賞）", "en": "award", "reading": "アウォード" },
 { "jp": "下の名前（名）", "en": "first name", "reading": "ファースト ネイム" },
 { "jp": "苗字（姓）", "en": "last name", "reading": "ラスト ネイム" },
-
-
-
+{ "jp": "金玉、睾丸", "en": "testicles", "reading": "テスティコォズ" },
+{ "jp": "証拠（データ、状況証拠）", "en": "evidence", "reading": "エヴィデンス" },
+{ "jp": "証拠（決定打、白黒つけるもの）", "en": "proof", "reading": "プルーフ" },
+{ "jp": "予防、防止", "en": "prevention", "reading": "プリヴェンション" },
+{ "jp": "保護", "en": "protection", "reading": "プロテクション" },
+{ "jp": "耐性", "en": "resistance", "reading": "レジスタンス" },
+{ "jp": "防水", "en": "waterproof", "reading": "ウォータープルーフ" },
+{ "jp": "耐水", "en": "water-resistant", "reading": "ウォーター・リジスタント" },
+{ "jp": "防火", "en": "fire prevention", "reading": "ファイア・プリヴェンション" },
+{ "jp": "耐火", "en": "fire-resistant / fireproof", "reading": "ファイア・リジスタント / ファイアプルーフ" },
+{ "jp": "防寒", "en": "cold protection", "reading": "コールド・プロテクション" },
+{ "jp": "耐寒", "en": "cold-resistant", "reading": "コールド・リジスタント" },
+{ "jp": "防熱", "en": "heat protection", "reading": "ヒート・プロテクション" },
+{ "jp": "耐熱", "en": "heat-resistant / heatproof", "reading": "ヒート・リジスタント / ヒートプルーフ" },
+{ "jp": "裁判", "en": "trial", "reading": "トライアル" },
+{ "jp": "訴訟", "en": "lawsuit", "reading": "ロースート" },
+{ "jp": "教会", "en": "church", "reading": "チャーチ" },
+{ "jp": "設備", "en": "equipment", "reading": "イクウィップメント" },
+{ "jp": "施設", "en": "facility", "reading": "ファシリティ" },
+{ "jp": "首都", "en": "capital", "reading": "キャピタル" },
+{ "jp": "ノートパソコン", "en": "laptop", "reading": "ラップトップ" },
+{ "jp": "危機", "en": "crisis", "reading": "クライシス" },
+{ "jp": "問題、論点、争点", "en": "issue", "reading": "イシュー" },
+{ "jp": "学生寮、社員寮", "en": "dorm/dormitory", "reading": "ドーム/ドミトリー" },
+{ "jp": "入居者", "en": "tenant", "reading": "テナント" },
+{ "jp": "家主、大家", "en": "landlord", "reading": "ランドロード" },
+{ "jp": "忍耐、我慢", "en": "patience", "reading": "ペイシェンス" },
+{ "jp": "条件、期間", "en": "term", "reading": "ターン" },
+{ "jp": "機密", "en": "confidential", "reading": "コンフィデンシャル" },
+{ "jp": "サビ", "en": "rust", "reading": "ラスト" },
+{ "jp": "売春", "en": "prostitution", "reading": "プロスティテューション" },
+{ "jp": "売春婦", "en": "prostitute", "reading": "プロスティテュート" },
+{ "jp": "文化", "en": "culture", "reading": "カルチャー" },
+{ "jp": "友情", "en": "friendship", "reading": "フレンドシップ" },
+{ "jp": "場所", "en": "location", "reading": "ロケイション" },
+{ "jp": "会議", "en": "conference", "reading": "カンファレンス" },
+{ "jp": "頭痛", "en": "headache", "reading": "ヘデェイク" },
+{ "jp": "疲労、だるさ", "en": "fatigue", "reading": "ファティーグ" },
+{ "jp": "鼻詰まり", "en": "stuffy nose", "reading": "スタフィ ノウズ" },
+{ "jp": "鼻水", "en": "runny nose", "reading": "ラニー ノウズ" },
+{ "jp": "吐き気", "en": "nausea", "reading": "ナージア" },
+{ "jp": "発熱", "en": "fever", "reading": "フィーヴァー" },
+{ "jp": "寒気、悪寒", "en": "chills", "reading": "チルズ" },
+{ "jp": "しびれ", "en": "numbness", "reading": "ナムネス" },
+{ "jp": "腹痛", "en": "stomachache", "reading": "ストマケイク" },
+{ "jp": "喉の痛み", "en": "sore throat", "reading": "ソー スロウト" },
+{ "jp": "咳", "en": "cough", "reading": "コフ" },
+{ "jp": "便秘", "en": "constipation", "reading": "コンスティペイション" },
+{ "jp": "下痢", "en": "diarrhea", "reading": "ダイアリア" },
+{ "jp": "胸やけ", "en": "heartburn", "reading": "ハートバーン" },
+{ "jp": "胃もたれ", "en": "indigestion", "reading": "インディジェスチョン" },
+{ "jp": "関節痛", "en": "joint pain", "reading": "ジョイント ペイン" },
+{ "jp": "高血圧", "en": "high blood pressure", "reading": "ハイ ブラッド プレッシャー" },
+{ "jp": "低血圧", "en": "low blood pressure", "reading": "ロウ ブラッド プレッシャー" },
+{ "jp": "乗り物酔い", "en": "motion sickness", "reading": "モウション シックネス" },
+{ "jp": "字幕", "en": "subtitles", "reading": "サブタイトルズ" },
+{ "jp": "吹き替え", "en": "dub", "reading": "ダブ" },
+{ "jp": "免許、資格、ライセンス", "en": "license", "reading": "ライセンス" },
+{ "jp": "知能、知性", "en": "intelligence", "reading": "インテリジェンス" },
+{ "jp": "都会", "en": "the city", "reading": "ザ シティ" },
+{ "jp": "田舎", "en": "the countryside", "reading": "ザ カントリーサイド" },
+{ "jp": "初心者", "en": "beginner", "reading": "ビギナー" },
+{ "jp": "中級者", "en": "intermediate learner", "reading": "インターミディエイト ラーナー" },
+{ "jp": "上級者", "en": "advanced learner", "reading": "アドバンスド ラーナー" },
+{ "jp": "飛行機", "en": "plane", "reading": "プレーン" },
+{ "jp": "手荷物受取所", "en": "baggage claim", "reading": "バゲッジ クレイム" },
+{ "jp": "ターンテーブル", "en": "carousel", "reading": "カラセル" },
+{ "jp": "欠航", "en": "cancellation", "reading": "キャンセレーション" },
+{ "jp": "身分証", "en": "ID", "reading": "アイディー" },
+{ "jp": "免税店", "en": "duty-free shop", "reading": "デューティ フリー ショップ" },
 
 
 ],
@@ -1962,7 +2184,7 @@ closeBtn.addEventListener("click", () => {
 { jp: "結局、やっぱり", en: "after all", reading: "アフター オール" },
 { jp: "もう〜ない(否定文、疑問文)", en: "anymore", reading: "エニモア" },
 { jp: "〜も、さらに", en: "also", reading: "オールソー" },
-{ jp: "非常に", en: "dearly", reading: "ディアリー" },  
+{ jp: "非常に(感情、価値、代償)", en: "dearly", reading: "ディアリー" },  
 {"jp": "〜さえも、〜でさえ", "en": "even", "reading": "イーブン" },
 { "jp": "〜を超えて、〜の向こうに", "en": "beyond", "reading": "ビヨンド" },
 { "jp": "最終的に、結局", "en": "eventually", "reading": "インヴェンチュリー" },
@@ -2005,7 +2227,6 @@ closeBtn.addEventListener("click", () => {
 { "jp": "途中で(作業の途中)", "en": "in the middle of", "reading": "イン ザ ミドル オブ" },
 { jp: "どういうわけか、なんとかして", en: "somehow", reading: "サムハウ" },
 { "jp": "残念ながら", "en": "unfortunately", "reading": "アンフォーチュネイトリー" },
-{ "jp": "平和な、穏やかな", "en": "peaceful", "reading": "ピースフル" },
 { "jp": "主に", "en": "mainly", "reading": "メインリー" },
 { "jp": "いつでも", "en": "whenever", "reading": "ホウェネヴァー" },
 { "jp": "あとで、その後に", "en": "afterward", "reading": "アフターワード" },
@@ -2014,6 +2235,19 @@ closeBtn.addEventListener("click", () => {
 { jp: "正直に、正直なところ、本当に", en: "honestly", reading: "オネスリー" },
 { jp: "〜すぎる", en: "too", reading: "トゥー" },
 { "jp": "きっと、間違いなく(強い確信)", "en": "surely", "reading": "シュアリー" },
+{ "jp": "感情的に", "en": "emotionally", "reading": "イモウショナリー" },
+{ "jp": "現在は、今のところ", "en": "currently", "reading": "カレンリー" },
+{ "jp": "非常に、極めて（名詞は❌）", "en": "extremely", "reading": "イクストリームリー" },
+{ "jp": "流暢に", "en": "fluently", "reading": "フルーエントリー" },
+{ "jp": "丁寧に", "en": "politely", "reading": "ポライトリー" },
+{ "jp": "大声で", "en": "loudly", "reading": "ラウドリー" },
+{ "jp": "だいたい、そのへん、あたりに", "en": "around", "reading": "アラウンド" },
+{ "jp": "具体的に", "en": "specifically", "reading": "スぺスィフィクリィ" },
+  { "jp": "その他に", "en": "else", "reading": "エルス" },
+{ "jp": "気まずそうに、ぎこちなく、不自然に", "en": "awkwardly", "reading": "オークワードリー" },
+
+
+
 
 
 
@@ -2060,7 +2294,6 @@ closeBtn.addEventListener("click", () => {
   { jp: "汚い", en: "dirty", reading: "ダーティ" },
   { jp: "美しい", en: "beautiful", reading: "ビューティフル" },
   { jp: "醜い", en: "ugly", reading: "アグリー" },
-  { jp: "おもしろい", en: "funny", reading: "ファニー" },
   { jp: "つまらない", en: "boring", reading: "ボーリング" },
   { jp: "強い/濃い(飲み物の味)", en: "strong", reading: "ストロング" },
   { jp: "弱い/薄い(飲み物の味)", en: "weak", reading: "ウィーク" },
@@ -2194,7 +2427,6 @@ closeBtn.addEventListener("click", () => {
 { "jp": "恥ずかしい(一時的)", "en": "embarrassed", "reading": "エンバラスト" },
 { "jp": "自分の、自身の", "en": "own", "reading": "オウン" },
   { "jp": "初級の", "en": "elementary", "reading": "エレメントゥリー" },
-  { "jp": "その他に", "en": "else", "reading": "エルス" },
   { "jp": "個人的な", "en": "personal", "reading": "パーソナル" },
   { "jp": "いくつかの(3~5つ)", "en": "several", "reading": "セヴォル" },
   { "jp": "声が大きい", "en": "loud", "reading": "ラウド" },
@@ -2227,6 +2459,32 @@ closeBtn.addEventListener("click", () => {
 { "jp": "鋭い、急な", "en": "sharp", "reading": "シャープ" },
 { "jp": "強烈な、激しい、非常に集中した", "en": "intense", "reading": "インテンス" },
 { "jp": "居心地の良い", "en": "cozy", "reading": "コウジー" },
+{ "jp": "感情的な", "en": "emotional", "reading": "イモウショナル" },
+{ "jp": "現在の、今の", "en": "current", "reading": "カァレント" },
+{ "jp": "自動車の、自動車産業の", "en": "automotive", "reading": "オートモーティヴ" },
+{ "jp": "立派な", "en": "admirable", "reading": "アドマイラブル" },
+{ "jp": "便利な、都合がいい", "en": "convenient", "reading": "コンビニエント" },
+{ "jp": "期限の", "en": "due", "reading": "デュー" },
+{ "jp": "平和な、穏やかな", "en": "peaceful", "reading": "ピースフル" },
+{ "jp": "サビついた（久しぶりで鈍ってる）", "en": "rusty", "reading": "ラスティ" },
+{ "jp": "微妙", "en": "iffy", "reading": "イフィー" },
+{ "jp": "制限された、限定された", "en": "restricted", "reading": "リストリクティド" },
+{ "jp": "とても小さい", "en": "tiny", "reading": "タイニィ" },
+{ "jp": "隔週の、2週間ごとの", "en": "fortnightly", "reading": "フォートナイトリィ" },
+{ "jp": "具体的な", "en": "specific", "reading": "スピシフィック" },
+{ "jp": "お手頃価格の", "en": "affordable", "reading": "アフォーダブル" },
+{ "jp": "知的な", "en": "intelligent", "reading": "インテリジェント" },
+{ "jp": "限定の、独占的な", "en": "exclusive", "reading": "エクスクルーシブ" },
+{ "jp": "未読の", "en": "unread", "reading": "アン・レッド" },
+{ jp: "おもしろい（人）", en: "funny", reading: "ファニー" },
+{ "jp": "楽しい（体験、時間、出来事）", "en": "fun", "reading": "ファン" },
+{ "jp": "気まずい", "en": "awkward", "reading": "オークワード" },
+{ "jp": "期間限定の", "en": "limited-time", "reading": "リミテッド タイム" },
+{ "jp": "信頼できる", "en": "reliable", "reading": "リライアブル" },
+{ "jp": "信頼できない", "en": "unreliable", "reading": "アンリライアブル" },
+{ "jp": "内向きの、入ってくる〜", "en": "inbound", "reading": "インバウンド" },
+{ "jp": "外向きの、出ていく〜", "en": "outbound", "reading": "アウトバウンド" },
+
 
     ],
 
@@ -2301,7 +2559,7 @@ closeBtn.addEventListener("click", () => {
     { jp: "誰か（肯定文）", en: "someone/somebody", reading: "サムワン／サムバディ" },
     { jp: "誰か、誰でも（疑問文・否定文）", en: "anyone/anybody", reading: "エニワン／エニバディ" },
     { jp: "誰も～ない（否定文）", en: "no one/nobody", reading: "ノー ワン／ノーバディ" },
-    { jp: "すべてのもの、なんでも", en: "everything", reading: "エヴリシング" },
+    { jp: "すべてのもの、なんでも(範囲全部)", en: "everything", reading: "エヴリシング" },
     { jp: "何か（肯定文）", en: "something", reading: "サムシング" },
     { jp: "何か、何でも、何も～ない（疑問文・否定文）", en: "anything", reading: "エニシング" },
     { jp: "何もない（否定文）", en: "nothing", reading: "ナッシング" },
@@ -2345,10 +2603,63 @@ closeBtn.addEventListener("click", () => {
     { jp: "あなたたち自身", en: "yourselves", reading: "ユアセルヴズ" },
     { jp: "彼ら、それら自身", en: "themselves", reading: "ゼムセルヴズ" },
     { jp: "お互い", en: "each other", reading: "イーチ アザー" },
-    { jp: "なんでも、どんなものでも", en: "whatever", reading: "ワットエヴァー" }
+    { jp: "なんでも、どれでも(範囲なし)", en: "whatever", reading: "ワットエヴァー" }
   ],
   
   
+    prepositions: [
+    { jp: "〜の上に", en: "on", reading: "オン" },
+    { jp: "〜の中に", en: "in", reading: "イン" },
+    { jp: "〜の下に", en: "under", reading: "アンダー" },
+    { jp: "〜の前に(時間)", en: "before", reading: "ビフォー" },
+    { jp: "〜の後で(時間)", en: "after", reading: "アフター" },
+    {jp:"〜の隣に", en:"next to", reading:"ネクストゥ"},
+  {jp:"〜の横に", en:"beside", reading:"ビサイド"},
+  {jp:"〜のそば、〜までに(完了)", en:"by", reading:"バイ"},
+  {jp:"〜の間(2つの間)", en:"between", reading:"ビトウィーン"},
+  { "jp": "〜の中で、〜の間に(3つ以上の間)", "en": "among", "reading": "アモング" },
+  {jp:"〜の正面", en:"in front of", reading:"イン フロントゥ オブ"},
+  {jp:"〜の背面", en:"behind", reading:"ビハインド"},
+  {jp:"〜の空間を通る", en:"through", reading:"スルー"},
+  {jp:"〜を横切って", en:"across", reading:"アクロス"},
+  {jp:"〜の流れに沿って", en:"along", reading:"アロング"},
+  { "jp": "〜として", "en": "as", "reading": "アズ" }, 
+  { "jp": "〜まで(継続)", "en": "till / until", "reading": "ティル / アンティル" },
+  { "jp": "〜なしで", "en": "without", "reading": "ウィザウト" }, 
+  { jp: "〜の周りに", en: "around", reading: "アラウンド" },
+  { "jp": "〜からずっと", "en": "since", "reading": "シンス" },
+  { "jp": "〜に反対して", "en": "against", "reading": "アゲンスト" },
+  { "jp": "〜以外", "en": "except", "reading": "エクセプト" },
+  { "jp": "〜で", "en": "at", "reading": "アット" },
+{ "jp": "〜の間（ずっとその期間中）", "en": "during", "reading": "デュアリング" },
+{ "jp": "〜のために、〜として、〜の間（期間の長さ）", "en": "for", "reading": "フォー" },
+{ "jp": "〜が理由で", "en": "because of", "reading": "ビコーズ オブ" },
+{ "jp": "〜が原因で", "en": "due to", "reading": "デュー トゥー" },
+{ "jp": "〜のおかげで", "en": "thanks to", "reading": "サンクス トゥー" },
+{ "jp": "〜と一緒に、〜を使って", "en": "with", "reading": "ウィズ" },
+{ "jp": "〜について", "en": "about", "reading": "アバウト" },
+{ "jp": "〜の（所属・一部）", "en": "of", "reading": "オブ" },
+{ "jp": "〜の外へ", "en": "out of", "reading": "アウト オブ" },
+{ "jp": "〜の上へ（動き）", "en": "onto", "reading": "オントゥ" },
+{ "jp": "〜から離れて", "en": "off", "reading": "オフ" },
+{ "jp": "〜へ（方向・到達）", "en": "to", "reading": "トゥー" },
+{ "jp": "〜から（起点）", "en": "from", "reading": "フロム" },
+{ "jp": "〜の中へ（動き）", "en": "into", "reading": "イントゥ" },
+{ "jp": "〜以内に、〜の範囲で", "en": "within", "reading": "ウィズイン" },
+{ "jp": "〜を超えて", "en": "beyond", "reading": "ビヨンド" },
+{ "jp": "〜の代わりに", "en": "instead of", "reading": "インステッド オブ" },
+{ "jp": "〜によると", "en": "according to", "reading": "アコーディング トゥー" },
+{ "jp": "〜にもかかわらず", "en": "despite", "reading": "ディスパイト" },
+{ "jp": "〜の近くに", "en": "near", "reading": "ニア" },
+{ "jp": "〜の中で(内側)", "en": "inside", "reading": "インサイド" },
+{ "jp": "〜の外で(外側)", "en": "outside", "reading": "アウトサイド" },
+{ "jp": "〜より上に", "en": "above", "reading": "アバヴ" },
+{ "jp": "〜より下に", "en": "below", "reading": "ビロウ" },
+{ "jp": "〜を過ぎて", "en": "past", "reading": "パースト" },
+{ "jp": "〜のように", "en": "like", "reading": "ライク" },
+{ "jp": "〜に関係なく", "en": "regardless of", "reading": "リガードレス オブ" },
+  
+  ],
   
   
    conjunctions: [
@@ -2371,6 +2682,7 @@ closeBtn.addEventListener("click", () => {
     adjectives: [...(originalData.adjectives||[])],
     tenses: [...(originalData.tenses||[])],
     pronouns: [...(originalData.pronouns||[])],
+    prepositions: [...(originalData.prepositions || [])],
     conjunctions: [...(originalData.conjunctions || [])] 
   };
 
@@ -2386,7 +2698,9 @@ closeBtn.addEventListener("click", () => {
   const enText = document.getElementById("enText");
   const kanaText = document.getElementById("kanaText");
   const showAnswerBtn = document.getElementById("showAnswerBtn");
+  const wrongBtn = document.getElementById("wrongBtn"); // ★追加
   const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const searchInput = document.getElementById("searchInput");
   const exampleText = document.getElementById("exampleText");
@@ -2394,10 +2708,27 @@ closeBtn.addEventListener("click", () => {
 
   let currentType = "verbs";
   let quizList = [];
+  let wrongQuizMap = {};
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
+  let isMarkedWrong = false;
 
-  
+  // ボタン・左リセットの表示制御
+function updateButtons() {
+    const quizVisible = quizOverlay.style.display === "flex";
+
+    if (quizVisible) {
+        leftResetZone.style.display = "none";
+        scrollTopBtn.style.display = "none"; // クイズ中だけ非表示
+    } else {
+        leftResetZone.style.display = "flex";
+        scrollTopBtn.style.display = "block"; // ← 常に表示
+    }
+}
+
+// スクロールでボタン表示更新
+window.addEventListener("scroll", updateButtons);
+
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
     const audio = new Audio(url);
@@ -2471,8 +2802,14 @@ closeBtn.addEventListener("click", () => {
       contentDiv.appendChild(entry);
     });
   }
+function updateQuizButtons() {
+  showAnswerBtn.style.display = "block";
+  nextBtn.style.display = "none";
+}
 
   function showQuizQuestion() {
+  isMarkedWrong = false; // ★追加：仮不正解リセット
+  autoSaveQuizState();
   const item = quizList[currentQuizIndex];
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
@@ -2581,43 +2918,101 @@ function startQuiz(type){
   if (quizList.length === 0) { alert("問題がありません"); return; }
   showQuizQuestion();
   quizOverlay.style.display = "flex";
+
+  // ★ 追加：クイズ中は左初期化ゾーンを非表示
+  leftResetZone.style.display = "none";
+  scrollTopBtn.style.display = "none";
 }
 
- showAnswerBtn.addEventListener("click", () => {
+
+
+
+// --- 前へボタン処理 ---
+prevBtn.addEventListener("click", () => {
+    if (currentQuizIndex > 0) {
+        isMarkedWrong = false; // ★仮不正解を解除
+        currentQuizIndex--;
+        showQuizQuestion();
+        autoSaveQuizState();
+    }
+});
+
+// --- 答えボタン表示時に前へボタンも表示 ---
+showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
+
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
+    wrongBtn.style.display = "inline-block";
+
+    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
 
     if (quizDirection === "J→E") {
-        // J→E: 答え表示後のみ英語クリックで音声
         enText.onclick = () => playSound(enText.textContent);
-    } else if (quizDirection === "E→J") {
-        // E→J: 英語を再生する
+    } else {
         enText.onclick = () => playSound(quizList[currentQuizIndex].en);
         jpText.onclick = null;
     }
 });
-
+// --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
+    const currentItem = quizList[currentQuizIndex];
+
+    // ★ 不正解が確定するのはここ
+    if (isMarkedWrong) {
+        if (!wrongQuizMap[currentType]) {
+            wrongQuizMap[currentType] = [];
+        }
+        if (!wrongQuizMap[currentType].includes(currentItem)) {
+            wrongQuizMap[currentType].push(currentItem);
+        }
+    }
+
+    isMarkedWrong = false; // ★次の問題へ行く前にリセット
     currentQuizIndex++;
+    autoSaveQuizState();
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+
     if (currentQuizIndex >= quizList.length) {
-        alert("全問終了！");
-        quizOverlay.style.display = "none";
+        const wrongList = wrongQuizMap[currentType] || [];
+
+if (wrongList.length > 0) {
+    quizList = shuffleArray([...wrongList]);
+    wrongQuizMap[currentType] = [];
+    currentQuizIndex = 0;
+    alert("不正解だけもう一回！");
+    showQuizQuestion();
+} else {
+            alert("全問終了！");
+            quizOverlay.style.display = "none";
+            
+            localStorage.removeItem("savedQuiz"); // 保存状態を削除
+resumeQuizBtn.style.display = "none"; // 続きから再開ボタンを非表示
+leftResetZone.style.display = "flex";
+scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
+        }
     } else {
         showQuizQuestion();
-        
-        autoSaveQuizState();
-    
+        updateQuizButtons();
     }
 });
 
+wrongBtn.addEventListener("click", () => {
+    // 不正解マーク
+    isMarkedWrong = true;
+
+    // 次の問題へ進む処理を呼ぶ
+    nextBtn.click();  // ← これで nextBtn のロジックが走る
+});
   quitQuizBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) {
         quizOverlay.style.display = "none";
         localStorage.removeItem("savedQuiz"); // ← ここで保存データを削除
         resumeQuizBtn.style.display = "none";  // 復帰ボタンも隠す
-    }
+    }leftResetZone.style.display = "flex";
+scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
 });
 
 // --- 一時離脱 & 復帰機能 ---
@@ -2632,11 +3027,12 @@ document.getElementById("controls").appendChild(resumeQuizBtn);
 function saveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
-        quizDirection,
-        currentType,
-        currentQuizIndex,
-        quizList
-    };
+    quizDirection,
+    currentType,
+    currentQuizIndex,
+    quizList,
+    wrongQuizMap
+};
     localStorage.setItem("savedQuiz", JSON.stringify(state));
     alert("クイズを一時離脱しました");
     quizOverlay.style.display = "none";
@@ -2646,11 +3042,12 @@ function saveQuizState() {
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
-        quizDirection,
-        currentType,
-        currentQuizIndex,
-        quizList
-    };
+    quizDirection,
+    currentType,
+    currentQuizIndex,
+    quizList,
+    wrongQuizMap
+};
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
@@ -2677,9 +3074,12 @@ resumeQuizBtn.addEventListener("click", () => {
     currentType = state.currentType;
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
+    wrongQuizMap = state.wrongQuizMap || {};
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
+    leftResetZone.style.display = "none";
+scrollTopBtn.style.display = "none";
 });
 
 window.addEventListener("load", () => {
@@ -2796,42 +3196,38 @@ document.addEventListener("touchend", (e) => {
   }
 });
 
-  // --- 新規：左端長押しで初期化 ---
-  let leftPressTimer;
-  leftResetZone.addEventListener("touchstart", (e) => {
-    leftPressTimer = setTimeout(() => {
-      // 初期状態に戻す
-      for (let type in currentList) {
-        currentList[type] = [...(originalData[type] || [])];
-      }
-      currentType = "verbs";
-      setActiveTab("verbs");
-      renderList(currentType);
-      searchInput.value = "";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300); // 0.3秒長押し
-  });
 
-  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
-  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
+// --- 左初期化ゾーン改善版 ---
+let leftPressTimer;
 
-  // --- PC用：マウス短押しで初期化 ---
-leftResetZone.addEventListener("mousedown", (e) => {
-  leftPressTimer = setTimeout(() => {
-    // 初期化処理
+// 共通関数：初期化処理
+function resetAll() {
     for (let type in currentList) {
-      currentList[type] = [...(originalData[type] || [])];
+        currentList[type] = [...(originalData[type] || [])];
     }
     currentType = "verbs";
     setActiveTab("verbs");
     renderList(currentType);
     searchInput.value = "";
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 150);
+}
+
+// PC: マウス押下
+leftResetZone.addEventListener("mousedown", (e) => {
+    leftPressTimer = setTimeout(resetAll, 150); // 短押しで即反応
 });
 leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
 leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
 
+// スマホ: タッチ開始
+leftResetZone.addEventListener("touchstart", (e) => {
+    leftPressTimer = setTimeout(resetAll, 300); // 長押しで初期化
+});
+leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
+leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
+window.addEventListener("beforeunload", () => {
+      autoSaveQuizState();
+  });
 });
 
 document.querySelectorAll(".hidden-en").forEach(el => {
