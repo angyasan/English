@@ -173,7 +173,17 @@
   user-select: none;
   transition: color 0.3s ease;
 }
-
+/* ★追加：クイズボタンまとめて左寄せ */
+#quizButtonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;               /* ボタン間の間隔 */
+  justify-content: flex-start; /* 左寄せ */
+  margin-top: 12px;
+}
+#quizButtonRow button {
+  min-width: 80px;
+}
 .hidden-en.revealed {
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
@@ -220,12 +230,13 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
+<div id="quizButtonRow">
+  <button id="prevBtn">前へ</button>
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="wrongBtn" style="background:#dc3545; color:white; display:none;">不正解だった</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
+  <button id="quitQuizBtn">やめる</button>
+</div>
   </div>
 </div>
 
