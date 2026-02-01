@@ -1,5 +1,3 @@
-まぁ
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -2896,76 +2894,56 @@ function startQuiz(type){
 
 
 
-// --- 前へボタン処理 ---
+// --- 前へボタン処理（変更後） ---
 prevBtn.addEventListener("click", () => {
     if (currentQuizIndex > 0) {
-        isMarkedWrong = false; // ★仮不正解を解除
         currentQuizIndex--;
+        const item = quizList[currentQuizIndex];
+        // すでに wrongQuizMap にあるかで isMarkedWrong を復元
+        isMarkedWrong = (wrongQuizMap[currentType] || []).includes(item);
         showQuizQuestion();
-        autoSaveQuizState();
+        updateQuizButtons();
     }
 });
 
-// --- 答えボタン表示時に前へボタンも表示 ---
-showAnswerBtn.addEventListener("click", () => {
-    enText.style.display = "block";
-    kanaText.style.display = "block";
-
-    showAnswerBtn.style.display = "none";
-    nextBtn.style.display = "inline-block";
-    wrongBtn.style.display = "inline-block";
-
-    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
-
-    if (quizDirection === "J→E") {
-        enText.onclick = () => playSound(enText.textContent);
-    } else {
-        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-        jpText.onclick = null;
-    }
-});
-// --- 次へボタン押した後も前へボタンを更新 ---
+// --- 次へボタン押下（変更後） ---
 nextBtn.addEventListener("click", () => {
-    const currentItem = quizList[currentQuizIndex];
+    const item = quizList[currentQuizIndex];
 
-    // ★ 不正解が確定するのはここ
+    // 現在の問題が不正解マークされていて wrongQuizMap にまだ入ってない場合のみ追加
     if (isMarkedWrong) {
-        if (!wrongQuizMap[currentType]) {
-            wrongQuizMap[currentType] = [];
-        }
-        if (!wrongQuizMap[currentType].includes(currentItem)) {
-            wrongQuizMap[currentType].push(currentItem);
+        if (!wrongQuizMap[currentType]) wrongQuizMap[currentType] = [];
+        if (!wrongQuizMap[currentType].includes(item)) {
+            wrongQuizMap[currentType].push(item);
         }
     }
 
-    isMarkedWrong = false; // ★次の問題へ行く前にリセット
+    isMarkedWrong = false; // 次の問題に行く前にリセット
     currentQuizIndex++;
     autoSaveQuizState();
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
+    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
 
     if (currentQuizIndex >= quizList.length) {
         const wrongList = wrongQuizMap[currentType] || [];
-
-if (wrongList.length > 0) {
-    quizList = shuffleArray([...wrongList]);
-    wrongQuizMap[currentType] = [];
-    currentQuizIndex = 0;
-    alert("不正解だけもう一回！");
-    showQuizQuestion();
-} else {
+        if (wrongList.length > 0) {
+            quizList = shuffleArray([...wrongList]);
+            wrongQuizMap[currentType] = [];
+            currentQuizIndex = 0;
+            alert("不正解だけもう一回！");
+            showQuizQuestion();
+        } else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
-            
-            localStorage.removeItem("savedQuiz"); // 保存状態を削除
-resumeQuizBtn.style.display = "none"; // 続きから再開ボタンを非表示
+            localStorage.removeItem("savedQuiz");
+            resumeQuizBtn.style.display = "none";
         }
     } else {
         showQuizQuestion();
         updateQuizButtons();
     }
 });
-
 wrongBtn.addEventListener("click", () => {
     // 不正解マーク
     isMarkedWrong = true;
