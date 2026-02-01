@@ -178,46 +178,6 @@
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
 }
-/* ここから追加：クイズモーダルボタンの位置調整 */
-  #prevBtn,
-  #wrongBtn {
-    margin-right: 4px;   /* 左ボタン同士の間隔を少し狭める */
-  }
-
-  #showAnswerBtn,
-  #nextBtn,
-  #quitQuizBtn {
-    margin-left: 4px;    /* 右ボタン同士の間隔を揃える */
-  }
-
-  #quizContainer > button,
-  #quizContainer > #prevBtn,
-  #quizContainer > #wrongBtn,
-  #quizContainer > #showAnswerBtn,
-  #quizContainer > #nextBtn,
-  #quizContainer > #quitQuizBtn {
-    vertical-align: middle;
-  }
-  /* ここから追加：クイズモーダルボタンの位置調整 */
-  #prevBtn,
-  #wrongBtn {
-    margin-right: 4px;   /* 左ボタン同士の間隔を少し狭める */
-  }
-
-  #showAnswerBtn,
-  #nextBtn,
-  #quitQuizBtn {
-    margin-left: 4px;    /* 右ボタン同士の間隔を揃える */
-  }
-
-  #quizContainer > button,
-  #quizContainer > #prevBtn,
-  #quizContainer > #wrongBtn,
-  #quizContainer > #showAnswerBtn,
-  #quizContainer > #nextBtn,
-  #quizContainer > #quitQuizBtn {
-    vertical-align: middle;
-  }
 </style>
 </head>
 <body>
@@ -253,17 +213,20 @@
 
 <!-- クイズモーダル -->
 <div id="quizOverlay">
-<div id="quizButtons">
-  <div id="quizButtons-left">
-    <button id="prevBtn" style="display:none;">前へ</button>
-    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
+  <div id="quizContainer">
+    <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
+    <div id="jpText" class="quiz-jp"></div>
+    <div id="quizAnswerRow">
+      <div id="enText" class="quiz-en"></div>
+      <div id="kanaText" class="quiz-kana"></div>
+    </div>
+<button id="showAnswerBtn">答えを見る</button>
+<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+  不正解だった
+</button>
+<button id="nextBtn" style="display:none;">次へ</button>
+<button id="quitQuizBtn">やめる</button>
   </div>
-  <div id="quizButtons-right">
-    <button id="showAnswerBtn">答えを見る</button>
-    <button id="nextBtn" style="display:none;">次へ</button>
-    <button id="quitQuizBtn">やめる</button>
-  </div>
-</div>
 </div>
 
 <!-- 例文モーダル -->
