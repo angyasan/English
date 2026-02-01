@@ -178,6 +178,15 @@
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
 }
+
+/* 横並びボタン用 */
+.quiz-btn-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start; /* 左寄せ */
+  margin-top: 12px;
+}
+
 </style>
 </head>
 <body>
@@ -2866,7 +2875,23 @@ prevBtn.id = "prevBtn";
 prevBtn.textContent = "前へ";
 prevBtn.style.display = "none"; // 初期は非表示
 prevBtn.style.marginRight = "8px";
-document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
+// --- クイズボタンまとめ行を作る ---
+const btnRow = document.createElement("div");
+btnRow.className = "quiz-btn-row";
+btnRow.style.display = "flex";
+btnRow.style.gap = "8px";
+btnRow.style.justifyContent = "flex-start"; // 左寄せ
+btnRow.style.marginTop = "12px";
+
+// 既存ボタンをまとめて追加
+btnRow.appendChild(prevBtn);
+btnRow.appendChild(showAnswerBtn);
+btnRow.appendChild(wrongBtn);
+btnRow.appendChild(nextBtn);
+btnRow.appendChild(tempQuitBtn);
+
+// quizContainer に追加
+quizContainer.appendChild(btnRow);
 
 // --- 前へボタン処理 ---
 prevBtn.addEventListener("click", () => {
