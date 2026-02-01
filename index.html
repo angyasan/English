@@ -2719,10 +2719,10 @@ function updateButtons() {
 
     if (quizVisible) {
         leftResetZone.style.display = "none";
-        scrollTopBtn.style.display = "none";
+        scrollTopBtn.style.display = "none"; // クイズ中だけ非表示
     } else {
-        leftResetZone.style.display = "block";
-        scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
+        leftResetZone.style.display = "flex";
+        scrollTopBtn.style.display = "block"; // ← 常に表示
     }
 }
 
