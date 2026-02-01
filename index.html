@@ -308,25 +308,6 @@ document.addEventListener("DOMContentLoaded", () => {
     closeExampleModal();
   });
 
-// ★追加ここから
-leftResetZone.style.display = "flex";
-scrollTopBtn.style.display =
-  window.scrollY > 100 ? "block" : "none";
-
-window.addEventListener("scroll", () => {
-  const quizVisible =
-    document.getElementById("quizOverlay").style.display === "flex";
-
-  if (quizVisible) {
-    leftResetZone.style.display = "none";
-    scrollTopBtn.style.display = "none";
-  } else {
-    leftResetZone.style.display = "flex";
-    scrollTopBtn.style.display =
-      window.scrollY > 100 ? "block" : "none";
-  }
-});
-// ★追加ここまで
 
 
   // クリックで上にスクロール
@@ -2731,7 +2712,22 @@ window.addEventListener("scroll", () => {
   let quizDirection = "J→E";
   let isMarkedWrong = false;
 
-  
+  // ボタン・左リセットの表示制御
+function updateButtons() {
+    const quizVisible = quizOverlay.style.display === "flex";
+
+    if (quizVisible) {
+        leftResetZone.style.display = "none";
+        scrollTopBtn.style.display = "none";
+    } else {
+        leftResetZone.style.display = "block";
+        scrollTopBtn.style.display = window.scrollY > 100 ? "block" : "none";
+    }
+}
+
+// スクロールでボタン表示更新
+window.addEventListener("scroll", updateButtons);
+
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
     const audio = new Audio(url);
