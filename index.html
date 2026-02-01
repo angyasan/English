@@ -2932,9 +2932,11 @@ wrongBtn.addEventListener("click", () => {
     if (!wrongQuizList.includes(currentItem)) {
         wrongQuizList.push(currentItem);
     }
-
+    // リストに入れた直後に保存！
+    autoSaveQuizState();
+    
     currentQuizIndex++;
-    autoSaveQuizState(); // ★これを追加
+    autoSaveQuizState(); // インデックスが進んだことも保存
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 
@@ -2971,17 +2973,7 @@ resumeQuizBtn.style.display = "none"; // 初期非表示
 resumeQuizBtn.style.marginLeft = "8px";
 document.getElementById("controls").appendChild(resumeQuizBtn);
 
-// 自動保存用（画面には何も出さない）
-function autoSaveQuizState() {
-    if(!quizList || quizList.length === 0) return;
-    const state = {
-        quizDirection,
-        currentType,
-        currentQuizIndex,
-        quizList
-    };
-    localStorage.setItem("savedQuiz", JSON.stringify(state));
-}
+
 
 // 手動保存用（一時離脱ボタン用）
 function saveQuizState() {
@@ -2998,10 +2990,12 @@ function autoSaveQuizState() {
         quizDirection,
         currentType,
         currentQuizIndex,
-        quizList
+        quizList,
+        wrongQuizList // ★リロードしても不正解を忘れないために追加
     };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
+
 
 // クイズポップアップ内に一時離脱ボタンを追加
 let tempQuitBtn = document.getElementById("tempQuitBtn");
@@ -3026,6 +3020,8 @@ resumeQuizBtn.addEventListener("click", () => {
     currentType = state.currentType;
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
+    // ★保存された不正解リストがあれば読み込み、なければ空にする
+    wrongQuizList = state.wrongQuizList || []; 
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
