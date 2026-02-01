@@ -177,6 +177,28 @@
 .hidden-en.revealed {
   color: #000;                /* 表示時は黒文字に */
   background-color: transparent; /* 背景は戻す */
+}/* クイズ下ボタンを横並び制御 */
+#quizContainer button {
+  margin-right: 6px;
+}
+
+/* 前へ + 不正解を左寄せ */
+#prevBtn,
+#wrongBtn {
+  float: left;
+}
+
+/* 次へ + やめるを右側に寄せる */
+#nextBtn,
+#quitQuizBtn {
+  float: right;
+}
+
+/* ボタン崩れ防止 */
+#quizContainer::after {
+  content: "";
+  display: block;
+  clear: both;
 }
 </style>
 </head>
@@ -2866,15 +2888,9 @@ prevBtn.id = "prevBtn";
 prevBtn.textContent = "前へ";
 prevBtn.style.display = "none"; // 初期は非表示
 prevBtn.style.marginRight = "8px";
-prevBtn.style.position = "absolute";   // ← 追加
-prevBtn.style.bottom = "10px";         // ← 追加
-prevBtn.style.left = "10px";           // ← 追加
 document.getElementById("quizContainer").appendChild(prevBtn); // insertBefore → appendChild に変更
 
 // --- 不正解ボタンの位置調整 ---
-wrongBtn.style.position = "absolute"; // ← 追加
-wrongBtn.style.bottom = "10px";       // ← 追加
-wrongBtn.style.left = "100px";        // ← 追加（前へボタンの右側に寄せる）
 wrongBtn.style.marginRight = "0";     // ← 元の余白リセット
 // --- 次へボタン押した後も前へボタンを更新 ---
 nextBtn.addEventListener("click", () => {
