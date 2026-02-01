@@ -220,12 +220,12 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
+<button id="prevBtn" style="display:none; margin-right: 8px;">前へ</button>
+<button id="wrongBtn" style="display:none; background:#dc3545; color:white; margin-right: 8px;">不正解だった</button>
 <button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
 <button id="nextBtn" style="display:none;">次へ</button>
 <button id="quitQuizBtn">やめる</button>
+
   </div>
 </div>
 
@@ -2664,6 +2664,7 @@ closeBtn.addEventListener("click", () => {
   const wrongBtn = document.getElementById("wrongBtn"); // ★追加
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
+  const prevBtn = document.getElementById("prevBtn");
   const searchInput = document.getElementById("searchInput");
   const exampleText = document.getElementById("exampleText");
   const scrollBottomBtn = document.getElementById("scrollBottomBtn");
@@ -2860,13 +2861,7 @@ function startQuiz(type){
   quizOverlay.style.display = "flex";
 }
 
-// --- 前の問題ボタンを作成 ---
-const prevBtn = document.createElement("button");
-prevBtn.id = "prevBtn";
-prevBtn.textContent = "前へ";
-prevBtn.style.display = "none"; // 初期は非表示
-prevBtn.style.marginRight = "8px";
-document.getElementById("quizContainer").insertBefore(prevBtn, showAnswerBtn);
+
 
 // --- 前へボタン処理 ---
 prevBtn.addEventListener("click", () => {
