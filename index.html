@@ -220,14 +220,28 @@
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
     </div>
-<button id="showAnswerBtn">答えを見る</button>
-<button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
-  不正解だった
-</button>
-<button id="nextBtn" style="display:none;">次へ</button>
-<button id="quitQuizBtn">やめる</button>
+<div id="quizBtnRow"
+     style="position:relative; height:36px; margin-top:12px;">
+  
+  <!-- 左側ボタン -->
+  <div style="display:flex; gap:8px;">
+    <button id="prevBtn" style="display:none;">前へ</button>
+    <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">
+      不正解だった
+    </button>
   </div>
+
+
+<div style="position:absolute; left:50%; top:0; transform:translateX(-50%);
+            display:flex; gap:8px;">
+  <button id="showAnswerBtn">答えを見る</button>
+  <button id="nextBtn" style="display:none;">次へ</button>
 </div>
+
+</div>
+
+<button id="quitQuizBtn">やめる</button>
+
 
 <!-- 例文モーダル -->
 <div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
