@@ -2646,7 +2646,7 @@ closeBtn.addEventListener("click", () => {
   ]
 };
 
-      const currentList = {
+const currentList = {
     others: [...originalData.others],
     various: [...(originalData.various||[])],
     verbs: [...(originalData.verbs||[])],
@@ -2671,7 +2671,7 @@ closeBtn.addEventListener("click", () => {
   const enText = document.getElementById("enText");
   const kanaText = document.getElementById("kanaText");
   const showAnswerBtn = document.getElementById("showAnswerBtn");
-  const wrongBtn = document.getElementById("wrongBtn"); // ★追加
+  const wrongBtn = document.getElementById("wrongBtn");
   const nextBtn = document.getElementById("nextBtn");
   const quitQuizBtn = document.getElementById("quitQuizBtn");
   const prevBtn = document.getElementById("prevBtn");
@@ -2681,11 +2681,10 @@ closeBtn.addEventListener("click", () => {
 
   let currentType = "verbs";
   let quizList = [];
-  let wrongQuizList = [];   // ★追加：不正解保存用
+  let wrongQuizList = [];
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
 
-  
   function playSound(word) {
     const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${word.toLowerCase()}--_us_1.mp3`;
     const audio = new Audio(url);
@@ -2701,33 +2700,45 @@ closeBtn.addEventListener("click", () => {
     return a;
   }
 
+  function autoSaveQuizState() {
+    if(!quizList || quizList.length === 0) return;
+    const state = {
+        quizDirection,
+        currentType,
+        currentQuizIndex,
+        quizList,
+        wrongQuizList
+    };
+    localStorage.setItem("savedQuiz", JSON.stringify(state));
+  }
+
+  function saveQuizState() {
+    autoSaveQuizState();
+    alert("クイズを一時離脱しました");
+    quizOverlay.style.display = "none";
+    resumeQuizBtn.style.display = "inline-block";
+  }
+
   function renderList(type) {
     contentDiv.innerHTML = "";
     currentList[type].forEach(item => {
       const entry = document.createElement("div");
       entry.className = "entry";
-
       const jpDiv = document.createElement("div");
       jpDiv.className = "jp";
       jpDiv.textContent = item.jp;
-
       const detailsDiv = document.createElement("div");
       detailsDiv.className = "details";
-
       const enSpan = document.createElement("span");
       enSpan.className = "en";
       enSpan.textContent = item.en;
-
       const kanaSpan = document.createElement("span");
       kanaSpan.className = "kana";
       if(item.reading) kanaSpan.textContent = item.reading;
-
       const playBtn = document.createElement("button");
       playBtn.className = "play-btn";
       playBtn.textContent = "▶️";
-      playBtn.title = `発音再生: ${item.en}`;
       playBtn.onclick = (e) => { e.stopPropagation(); playSound(item.en); };
-
       let exampleBtn = document.createElement("button");
       exampleBtn.className = "control-btn";
       exampleBtn.textContent = "例文";
@@ -2742,93 +2753,68 @@ closeBtn.addEventListener("click", () => {
           showWeblioExampleModal(exampleUrl);
         }
       };
-
       detailsDiv.appendChild(enSpan);
       if(item.reading) detailsDiv.appendChild(kanaSpan);
       detailsDiv.appendChild(playBtn);
       detailsDiv.appendChild(exampleBtn);
-
       entry.appendChild(jpDiv);
       entry.appendChild(detailsDiv);
-
       detailsDiv.style.display = "none";
       jpDiv.addEventListener("click", () => {
         detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
       });
-
       contentDiv.appendChild(entry);
     });
   }
 
   function showQuizQuestion() {
-  const item = quizList[currentQuizIndex];
-  if (quizDirection === "J→E") {
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-  } else { // E→J
-    jpText.textContent = item.en;
-    enText.textContent = item.jp;
-  }
-  kanaText.textContent = item.reading || "";
-
-  enText.style.display = "none";
-  kanaText.style.display = "none";
-
-  quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-  showAnswerBtn.style.display = "inline-block";
-  nextBtn.style.display = "none";
-
-  // --- ここが追加部分 ---
-if (quizDirection === "E→J") {
-    // 英語を常に再生可能に
-    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-    // 日本語はクリック無効化
-    jpText.onclick = null;
-    jpText.style.cursor = "default";
-} else { // J→E
-    enText.onclick = null;
-    jpText.onclick = null;
-    jpText.style.cursor = "pointer";
-}
-
-  // 例文ボタンの処理は元と同じ
-  let existingBtn = document.getElementById("quizExampleBtn");
-  if(existingBtn) existingBtn.remove();
-
-  if(currentType === "others") {
-    const exampleBtn = document.createElement("button");
-    exampleBtn.id = "quizExampleBtn";
-    exampleBtn.className = "control-btn";
-    exampleBtn.textContent = "例文";
-    exampleBtn.style.marginLeft = "8px";
-
-    exampleBtn.onclick = () => {
-      if(item.example && item.exampleJp){
-        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-      } else {
-        showCustomExampleModal([], [], item.jp, item.en);
-      }
-    };
-
-    quizContainer.appendChild(exampleBtn);
-  }
-}
-
-function setActiveTab(type) {
-  tabButtons.forEach(btn => {
-    if (btn.getAttribute("data-type") === type) {
-      btn.classList.add("active");
+    const item = quizList[currentQuizIndex];
+    if (quizDirection === "J→E") {
+      jpText.textContent = item.jp;
+      enText.textContent = item.en;
+      jpText.onclick = null;
+      jpText.style.cursor = "default";
     } else {
-      btn.classList.remove("active");
+      jpText.textContent = item.en;
+      enText.textContent = item.jp;
+      jpText.onclick = () => playSound(item.en);
+      jpText.style.cursor = "pointer";
     }
-  });
-}
+    kanaText.textContent = item.reading || "";
+    enText.style.display = "none";
+    kanaText.style.display = "none";
+    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+    prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
+
+    let existingBtn = document.getElementById("quizExampleBtn");
+    if(existingBtn) existingBtn.remove();
+    if(currentType === "others") {
+      const exBtn = document.createElement("button");
+      exBtn.id = "quizExampleBtn";
+      exBtn.className = "control-btn";
+      exBtn.textContent = "例文";
+      exBtn.style.marginLeft = "8px";
+      exBtn.onclick = () => {
+        if(item.example && item.exampleJp) showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+        else showCustomExampleModal([], [], item.jp, item.en);
+      };
+      document.getElementById("quizContainer").appendChild(exBtn);
+    }
+  }
+
+  function setActiveTab(type) {
+    tabButtons.forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-type") === type);
+    });
+  }
 
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
       currentType = btn.getAttribute("data-type");
+      setActiveTab(currentType);
       searchInput.value = "";
       currentList[currentType] = [...(originalData[currentType]||[])];
       renderList(currentType);
@@ -2847,217 +2833,142 @@ function setActiveTab(type) {
   });
 
   scrollBottomBtn.addEventListener("click", () => {
-  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-});
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+  });
 
-  // J→Eクイズ開始（修正：方向をセット）
-startQuizBtn.addEventListener("click", () => {
-  quizDirection = "J→E"; // 修正
-  startQuiz(currentType);
-});
+  startQuizBtn.addEventListener("click", () => { quizDirection = "J→E"; startQuiz(currentType); });
+  startQuizEnToJBtn.addEventListener("click", () => { quizDirection = "E→J"; startQuiz(currentType); });
 
-// E→Jクイズ開始（追加）
-startQuizEnToJBtn.addEventListener("click", () => {
-  quizDirection = "E→J"; // 追加
-  startQuiz(currentType);
-});
+  function startQuiz(type){
+    quizList = shuffleArray([...currentList[type]]);
+    currentQuizIndex = 0;
+    wrongQuizList = [];
+    if (quizList.length === 0) { alert("問題がありません"); return; }
+    showQuizQuestion();
+    quizOverlay.style.display = "flex";
+    autoSaveQuizState();
+  }
 
-// 共通関数にしてコード重複回避（追加）
-function startQuiz(type){
-  quizList = shuffleArray([...currentList[type]]);
-  currentQuizIndex = 0;
-  if (quizList.length === 0) { alert("問題がありません"); return; }
-  showQuizQuestion();
-  quizOverlay.style.display = "flex";
-}
-
-
-
-// --- 前へボタン処理 ---
-prevBtn.addEventListener("click", () => {
+  prevBtn.addEventListener("click", () => {
     if (currentQuizIndex > 0) {
         currentQuizIndex--;
         showQuizQuestion();
         autoSaveQuizState();
     }
-});
+  });
 
-// --- 答えボタン表示時に前へボタンも表示 ---
-showAnswerBtn.addEventListener("click", () => {
+  showAnswerBtn.addEventListener("click", () => {
     enText.style.display = "block";
     kanaText.style.display = "block";
-
     showAnswerBtn.style.display = "none";
     nextBtn.style.display = "inline-block";
     wrongBtn.style.display = "inline-block";
-
-prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
-
-
     if (quizDirection === "J→E") {
-        enText.onclick = () => playSound(enText.textContent);
-    } else {
         enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-        jpText.onclick = null;
     }
-});
-nextBtn.addEventListener("click", () => {
-    // --- 追加：もし「戻って正解」したなら、不正解リストから削除する ---
+  });
+
+  nextBtn.addEventListener("click", () => {
     const currentItem = quizList[currentQuizIndex];
     const indexInWrong = wrongQuizList.indexOf(currentItem);
     if (indexInWrong > -1) {
         wrongQuizList.splice(indexInWrong, 1);
     }
-    // ---------------------------------------------------------
-
     currentQuizIndex++;
-    autoSaveQuizState(); // 状態を保存
-
-    nextBtn.style.display = "none";
-    wrongBtn.style.display = "none";
-
-    nextBtn.addEventListener("click", () => {
-    // 追加：もし「戻って正解」したなら、不正解リストから削除する
-    const currentItem = quizList[currentQuizIndex];
-    const indexInWrong = wrongQuizList.indexOf(currentItem);
-    if (indexInWrong > -1) {
-        wrongQuizList.splice(indexInWrong, 1);
-    }
-
-    currentQuizIndex++;
-    autoSaveQuizState(); 
-
-    nextBtn.style.display = "none";
-    wrongBtn.style.display = "none";
-
+    autoSaveQuizState();
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            // ★ここを変更：不正解リストをシャッフルして新しいquizListにする
             quizList = [...wrongQuizList].sort(() => Math.random() - 0.5);
-            wrongQuizList = []; // 不正解リストを空にする
+            wrongQuizList = [];
             currentQuizIndex = 0;
             alert("不正解だけもう一回！（ランダム順）");
             showQuizQuestion();
-            autoSaveQuizState(); 
+            autoSaveQuizState();
         } else {
             alert("全問終了！");
             quizOverlay.style.display = "none";
-            localStorage.removeItem("savedQuiz"); 
+            localStorage.removeItem("savedQuiz");
+            resumeQuizBtn.style.display = "none";
         }
     } else {
         showQuizQuestion();
     }
+  });
 
-});
-
-
-
-wrongBtn.addEventListener("click", () => {
+  wrongBtn.addEventListener("click", () => {
     const currentItem = quizList[currentQuizIndex];
-
-    // 不正解を保存（重複防止）
     if (!wrongQuizList.includes(currentItem)) {
         wrongQuizList.push(currentItem);
     }
-    // リストに入れた直後に保存！
-    autoSaveQuizState();
-    
     currentQuizIndex++;
-    autoSaveQuizState(); // インデックスが進んだことも保存
-    wrongBtn.style.display = "none";
-    nextBtn.style.display = "none";
-
+    autoSaveQuizState();
     if (currentQuizIndex >= quizList.length) {
         if (wrongQuizList.length > 0) {
-            quizList = [...wrongQuizList];
+            quizList = [...wrongQuizList].sort(() => Math.random() - 0.5);
             wrongQuizList = [];
             currentQuizIndex = 0;
-            alert("不正解だけもう一回！");
+            alert("不正解だけもう一回！（ランダム順）");
             showQuizQuestion();
+            autoSaveQuizState();
         } else {
             alert("全問正解！");
             quizOverlay.style.display = "none";
+            localStorage.removeItem("savedQuiz");
+            resumeQuizBtn.style.display = "none";
         }
     } else {
         showQuizQuestion();
     }
-});
+  });
 
   quitQuizBtn.addEventListener("click", () => {
     if (confirm("本当にクイズをやめますか？")) {
         quizOverlay.style.display = "none";
-        localStorage.removeItem("savedQuiz"); // ← ここで保存データを削除
-        resumeQuizBtn.style.display = "none";  // 復帰ボタンも隠す
+        localStorage.removeItem("savedQuiz");
+        resumeQuizBtn.style.display = "none";
     }
-});
+  });
 
-// --- 一時離脱 & 復帰機能 ---
-const resumeQuizBtn = document.createElement("button");
-resumeQuizBtn.id = "resumeQuizBtn";
-resumeQuizBtn.className = "control-btn";
-resumeQuizBtn.textContent = "続きから再開";
-resumeQuizBtn.style.display = "none"; // 初期非表示
-resumeQuizBtn.style.marginLeft = "8px";
-document.getElementById("controls").appendChild(resumeQuizBtn);
+  const resumeQuizBtn = document.createElement("button");
+  resumeQuizBtn.id = "resumeQuizBtn";
+  resumeQuizBtn.className = "control-btn";
+  resumeQuizBtn.textContent = "続きから再開";
+  resumeQuizBtn.style.display = "none";
+  resumeQuizBtn.style.marginLeft = "8px";
+  document.getElementById("controls").appendChild(resumeQuizBtn);
 
+  let tempQuitBtn = document.getElementById("tempQuitBtn");
+  if(!tempQuitBtn){
+      const tempBtn = document.createElement("button");
+      tempBtn.id = "tempQuitBtn";
+      tempBtn.className = "control-btn";
+      tempBtn.textContent = "一時離脱";
+      tempBtn.style.position = "absolute";
+      tempBtn.style.bottom = "10px";
+      tempBtn.style.right = "10px";
+      tempBtn.onclick = saveQuizState;
+      document.getElementById("quizContainer").appendChild(tempBtn);
+  }
 
-
-// 手動保存用（一時離脱ボタン用）
-function saveQuizState() {
-    autoSaveQuizState();
-    alert("クイズを一時離脱しました");
-    quizOverlay.style.display = "none";
-    resumeQuizBtn.style.display = "inline-block";
-}
-
-
-function autoSaveQuizState() {
-    if(!quizList || quizList.length === 0) return;
-    const state = {
-        quizDirection,
-        currentType,
-        currentQuizIndex,
-        quizList,
-        wrongQuizList // ★リロードしても不正解を忘れないために追加
-    };
-    localStorage.setItem("savedQuiz", JSON.stringify(state));
-}
-
-
-// クイズポップアップ内に一時離脱ボタンを追加
-let tempQuitBtn = document.getElementById("tempQuitBtn");
-if(!tempQuitBtn){
-    const tempBtn = document.createElement("button");
-    tempBtn.id = "tempQuitBtn";
-    tempBtn.className = "control-btn";
-    tempBtn.textContent = "一時離脱";
-    tempBtn.style.position = "absolute";
-    tempBtn.style.bottom = "10px";
-    tempBtn.style.right = "10px";
-    tempBtn.onclick = saveQuizState;
-    document.getElementById("quizContainer").appendChild(tempBtn);
-}
-
-// 復帰ボタン押下時
-resumeQuizBtn.addEventListener("click", () => {
+  resumeQuizBtn.addEventListener("click", () => {
     const saved = localStorage.getItem("savedQuiz");
-    if(!saved) return alert("保存されたクイズがありません");
+    if(!saved) return;
     const state = JSON.parse(saved);
     quizDirection = state.quizDirection;
     currentType = state.currentType;
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
-    // ★保存された不正解リストがあれば読み込み、なければ空にする
     wrongQuizList = state.wrongQuizList || []; 
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
-});
+  });
 
-window.addEventListener("load", () => {
+  window.addEventListener("load", () => {
     const saved = localStorage.getItem("savedQuiz");
     if (saved) resumeQuizBtn.style.display = "inline-block";
-});
+    renderList(currentType);
+  });
 
   searchInput.addEventListener("input", () => {
     const keyword = searchInput.value.trim().toLowerCase();
@@ -3070,147 +2981,88 @@ window.addEventListener("load", () => {
     renderList(currentType);
   });
 
-  renderList(currentType);
-
   function showWeblioExampleModal(url) {
-    const iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-    iframe.style.border = "none";
-    exampleText.innerHTML = "";
-    exampleText.appendChild(iframe);
+    exampleText.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>`;
     document.getElementById("exampleModal").style.display = "flex";
   }
 
   function showCustomExampleModal(textsJp, textsEn, originalJp = "", originalEn = "") {
-    lastTapTime = 0; // ← モーダルを開くたびリセット
-  let html = "";
-  if (originalJp && originalEn) {
-    html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
-    html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`; // ← hidden-en は削除
-    html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
+    lastTapTime = 0;
+    let html = "";
+    if (originalJp && originalEn) {
+      html += `<p style="margin-bottom:4px;"><strong>${originalJp}</strong></p>`;
+      html += `<p style="margin-bottom:12px;"><strong>${originalEn}</strong></p>`;
+      html += `<hr style="border:0; border-top:1px solid #ccc; margin:8px 0;">`;
+    }
+    for (let i = 0; i < textsJp.length; i++) {
+      html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
+      html += `<p style="margin-bottom:12px;"><span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span></p>`;
+    }
+    exampleText.innerHTML = html;
+    document.getElementById("exampleModal").style.display = "flex";
   }
-  for (let i = 0; i < textsJp.length; i++) {
-    html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-    html += `<p style="margin-bottom:12px;"><span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span></p>`; // ← 例文のみ隠す
-  }
-  exampleText.innerHTML = html;
-  document.getElementById("exampleModal").style.display = "flex";
-}
   
   function closeExampleModal() {
-    document.getElementById("exampleText").innerHTML = "";
+    exampleText.innerHTML = "";
     document.getElementById("exampleModal").style.display = "none";
   }
 
   const exampleModalDiv = document.getElementById("exampleModal");
   let pressTimer = null;
+  function clearPressTimer() { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } }
+  exampleModalDiv.addEventListener("mousedown", (e) => { if(e.target === exampleModalDiv) pressTimer = setTimeout(() => closeExampleModal(), 150); });
+  exampleModalDiv.addEventListener("mouseup", clearPressTimer);
+  exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
+  exampleModalDiv.addEventListener("touchstart", (e) => { if(e.target === exampleModalDiv) pressTimer = setTimeout(() => closeExampleModal(), 150); });
+  exampleModalDiv.addEventListener("touchend", clearPressTimer);
+  exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
 
-// 共通で長押し判定
-function startPressTimer() {
-  pressTimer = setTimeout(() => {
-    closeExampleModal();
-  }, 150); // 0.15秒長押しで閉じる
-}
-
-function clearPressTimer() {
-  if (pressTimer) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
+  const exampleWhiteArea = document.getElementById("exampleText");
+  let lastTapTime = 0;
+  function handleWhiteAreaTap(e) {
+    if (e.target !== exampleWhiteArea) return;
+    const now = new Date().getTime();
+    if (now - lastTapTime < 300) closeExampleModal();
+    lastTapTime = now;
   }
-}
+  exampleWhiteArea.addEventListener("click", handleWhiteAreaTap);
+  exampleWhiteArea.addEventListener("touchend", handleWhiteAreaTap);
 
-// PC: マウス押下
-exampleModalDiv.addEventListener("mousedown", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("mouseup", clearPressTimer);
-exampleModalDiv.addEventListener("mouseleave", clearPressTimer);
+  document.addEventListener("click", (e) => { if (e.target.classList.contains("hidden-en")) e.stopPropagation(); });
+  document.addEventListener("touchend", (e) => { if (e.target.classList.contains("hidden-en")) e.stopPropagation(); });
 
-// スマホ: タッチ開始
-exampleModalDiv.addEventListener("touchstart", (e) => {
-  if(e.target === exampleModalDiv) startPressTimer();
-});
-exampleModalDiv.addEventListener("touchend", clearPressTimer);
-exampleModalDiv.addEventListener("touchcancel", clearPressTimer);
-
-// --- 白い部分のダブルタップ／ダブルクリックで閉じる ---
-const exampleWhiteArea = document.getElementById("exampleText");
-let lastTapTime = 0;
-
-function handleWhiteAreaTap(e) {
-  // クリック／タップが本文やボタンなら何もしない
-  if (e.target !== exampleWhiteArea) return;
-
-  const currentTime = new Date().getTime();
-  if (currentTime - lastTapTime < 300) {
-    closeExampleModal();
-  }
-  lastTapTime = currentTime;
-}
-
-// PC: クリック
-exampleWhiteArea.addEventListener("click", handleWhiteAreaTap);
-// スマホ: タップ
-exampleWhiteArea.addEventListener("touchend", handleWhiteAreaTap);
-
-// hidden-en をタップしたときはイベントを親に伝えない
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("hidden-en")) {
-    e.stopPropagation();
-  }
-});
-
-document.addEventListener("touchend", (e) => {
-  if (e.target.classList.contains("hidden-en")) {
-    e.stopPropagation();
-  }
-});
-
-  // --- 新規：左端長押しで初期化 ---
   let leftPressTimer;
-  leftResetZone.addEventListener("touchstart", (e) => {
-    leftPressTimer = setTimeout(() => {
-      // 初期状態に戻す
-      for (let type in currentList) {
-        currentList[type] = [...(originalData[type] || [])];
-      }
-      currentType = "verbs";
-      setActiveTab("verbs");
-      renderList(currentType);
-      searchInput.value = "";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 300); // 0.3秒長押し
+  const leftResetZone = document.getElementById("leftResetZone");
+  if(leftResetZone) {
+    leftResetZone.addEventListener("touchstart", (e) => {
+      leftPressTimer = setTimeout(() => {
+        for (let type in currentList) { currentList[type] = [...(originalData[type] || [])]; }
+        currentType = "verbs";
+        setActiveTab("verbs");
+        renderList(currentType);
+        searchInput.value = "";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 300);
+    });
+    leftResetZone.addEventListener("touchend", () => clearTimeout(leftPressTimer));
+    leftResetZone.addEventListener("touchcancel", () => clearTimeout(leftPressTimer));
+    leftResetZone.addEventListener("mousedown", (e) => {
+      leftPressTimer = setTimeout(() => {
+        for (let type in currentList) { currentList[type] = [...(originalData[type] || [])]; }
+        currentType = "verbs";
+        setActiveTab("verbs");
+        renderList(currentType);
+        searchInput.value = "";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 150);
+    });
+    leftResetZone.addEventListener("mouseup", () => clearTimeout(leftPressTimer));
+    leftResetZone.addEventListener("mouseleave", () => clearTimeout(leftPressTimer));
+  }
+
+  document.querySelectorAll(".hidden-en").forEach(el => {
+    el.addEventListener("click", () => { el.classList.add("revealed"); });
   });
-
-  leftResetZone.addEventListener("touchend", () => { clearTimeout(leftPressTimer); });
-  leftResetZone.addEventListener("touchcancel", () => { clearTimeout(leftPressTimer); });
-
-  // --- PC用：マウス短押しで初期化 ---
-leftResetZone.addEventListener("mousedown", (e) => {
-  leftPressTimer = setTimeout(() => {
-    // 初期化処理
-    for (let type in currentList) {
-      currentList[type] = [...(originalData[type] || [])];
-    }
-    currentType = "verbs";
-    setActiveTab("verbs");
-    renderList(currentType);
-    searchInput.value = "";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 150);
-});
-leftResetZone.addEventListener("mouseup", () => { clearTimeout(leftPressTimer); });
-leftResetZone.addEventListener("mouseleave", () => { clearTimeout(leftPressTimer); });
-
-});
-
-document.querySelectorAll(".hidden-en").forEach(el => {
-  el.addEventListener("click", () => {
-    el.classList.add("revealed");
-  });
-});
 
 </script>
 </body>
