@@ -2992,13 +2992,33 @@ wrongBtn.addEventListener("click", () => {
     }
 });
 
-  quitQuizBtn.addEventListener("click", () => {
-    if (confirm("本当にクイズをやめますか？")) {
-        quizOverlay.style.display = "none";
-        localStorage.removeItem("savedQuiz"); // ← ここで保存データを削除
-        resumeQuizBtn.style.display = "none";  // 復帰ボタンも隠す
-    }
-});
+let quitPressTimer;
+
+// 長押し開始
+function startQuitPress() {
+    quitPressTimer = setTimeout(() => {
+        if (confirm("本当にクイズをやめますか？")) {
+            quizOverlay.style.display = "none";
+            localStorage.removeItem("savedQuiz");
+            resumeQuizBtn.style.display = "none";
+        }
+    }, 600); // ← 長押し時間（0.6秒）
+}
+
+// 離したらキャンセル
+function cancelQuitPress() {
+    clearTimeout(quitPressTimer);
+}
+
+// PC
+quitQuizBtn.addEventListener("mousedown", startQuitPress);
+quitQuizBtn.addEventListener("mouseup", cancelQuitPress);
+quitQuizBtn.addEventListener("mouseleave", cancelQuitPress);
+
+// スマホ
+quitQuizBtn.addEventListener("touchstart", startQuitPress);
+quitQuizBtn.addEventListener("touchend", cancelQuitPress);
+quitQuizBtn.addEventListener("touchcancel", cancelQuitPress);
 
 // --- 一時離脱 & 復帰機能 ---
 const resumeQuizBtn = document.createElement("button");
