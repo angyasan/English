@@ -4159,7 +4159,10 @@ window.addEventListener("load", () => {
   }
   for (let i = 0; i < textsJp.length; i++) {
     html += `<p style="margin-bottom:2px;">${textsJp[i]}</p>`;
-    html += `<p style="margin-bottom:12px;"><span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span></p>`; // ← 例文のみ隠す
+html += `<p style="margin-bottom:12px;">
+  <span class="hidden-en" onclick="this.classList.remove('hidden-en');">${textsEn[i]}</span>
+  <button onclick="playSound('${textsEn[i]}')" style="margin-left:8px;">▶️</button>
+</p>`;
   }
   exampleText.innerHTML = html;
   document.getElementById("exampleModal").style.display = "flex";
@@ -4277,6 +4280,8 @@ document.querySelectorAll(".hidden-en").forEach(el => {
     el.classList.add("revealed");
   });
 });
+
+window.playSound = playSound;
 
 </script>
 </body>
