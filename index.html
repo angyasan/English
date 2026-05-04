@@ -3949,11 +3949,11 @@ prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
 
 
     if (quizDirection === "J→E") {
-
-    } else {
-        enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-        jpText.onclick = null;
-    }
+    enText.onclick = () => playSound(enText.textContent);
+} else {
+    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+    jpText.onclick = null;
+}
 });
 nextBtn.addEventListener("click", () => {
     // --- 追加：もし「戻って正解」したなら、不正解リストから削除する ---
