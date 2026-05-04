@@ -3710,6 +3710,9 @@ voiceBtn.addEventListener("click", () => {
 
   
 function playSound(word) {
+  
+  console.log("再生:", word);
+  
   const clean = word.trim().toLowerCase();
 
   if (voiceMode === "dictionary") {
