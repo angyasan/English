@@ -3694,8 +3694,16 @@ closeBtn.addEventListener("click", () => {
 
   
 function playSound(word) {
+  const voices = speechSynthesis.getVoices();
+
+  const voice = voices.find(v => v.lang === "en-US") || voices[0];
+
   const utterance = new SpeechSynthesisUtterance(word);
+  utterance.voice = voice;
   utterance.lang = "en-US";
+  utterance.rate = 0.9;
+  utterance.pitch = 1.1;
+
   speechSynthesis.speak(utterance);
 }
 
