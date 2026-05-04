@@ -208,6 +208,7 @@
   <button class="control-btn" id="resetBtn">元に戻す</button>
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
   <button id="startQuizEnToJBtn" class="control-btn">E→Jクイズ</button>
+  <button id="voiceToggleBtn" class="control-btn">辞書音声</button>
 </div>
 
 <div id="content"></div>
@@ -272,6 +273,7 @@
   
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  let voiceMode = "dictionary"; // "dictionary" or "tts"
   const scrollTopBtn = document.getElementById("scrollTopBtn");
   const leftResetZone = document.getElementById("leftResetZone");
   const closeBtn = document.getElementById("closeExampleBtn");
@@ -3684,7 +3686,21 @@ closeBtn.addEventListener("click", () => {
   const prevBtn = document.getElementById("prevBtn");
   const searchInput = document.getElementById("searchInput");
   const exampleText = document.getElementById("exampleText");
-  const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+
+// ここに追加
+const voiceBtn = document.getElementById("voiceToggleBtn");
+
+voiceBtn.addEventListener("click", () => {
+  if (voiceMode === "dictionary") {
+    voiceMode = "tts";
+    voiceBtn.textContent = "TTS音声";
+  } else {
+    voiceMode = "dictionary";
+    voiceBtn.textContent = "辞書音声";
+  }
+});
+
 
   let currentType = "verbs";
   let quizList = [];
@@ -3694,8 +3710,30 @@ closeBtn.addEventListener("click", () => {
 
   
 function playSound(word) {
-  const voices = speechSynthesis.getVoices();
+  const clean = word.trim().toLowerCase();
 
+  if (voiceMode === "dictionary") {
+    // 辞書音声
+    const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${clean}--_us_1.mp3`;
+    const audio = new Audio(url);
+
+    audio.onerror = () => {
+      playTTS(clean); // fallback
+    };
+
+    audio.play().catch(() => {
+      playTTS(clean);
+    });
+
+  } else {
+    // TTS
+    playTTS(clean);
+  }
+}
+
+// ← TTS部分を関数に分離（今のコードそのまま）
+function playTTS(word) {
+  const voices = speechSynthesis.getVoices();
   const voice = voices.find(v => v.lang === "en-US") || voices[0];
 
   const utterance = new SpeechSynthesisUtterance(word);
