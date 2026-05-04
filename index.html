@@ -3733,6 +3733,7 @@ function playSound(word) {
 
 // ← TTS部分を関数に分離（今のコードそのまま）
 function playTTS(word) {
+  speechSynthesis.cancel();
   const voices = speechSynthesis.getVoices();
   const voice = voices.find(v => v.lang === "en-US") || voices[0];
 
@@ -3948,7 +3949,7 @@ prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
 
 
     if (quizDirection === "J→E") {
-        enText.onclick = () => playSound(enText.textContent);
+
     } else {
         enText.onclick = () => playSound(quizList[currentQuizIndex].en);
         jpText.onclick = null;
