@@ -272,6 +272,18 @@
 ">↑</button>
   
 <script>
+
+function playSound(word) {
+  console.log("再生:", word);
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-US";
+
+  speechSynthesis.speak(utterance);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   let voiceMode = "dictionary"; // "dictionary" or "tts"
   const scrollTopBtn = document.getElementById("scrollTopBtn");
