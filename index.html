@@ -3784,7 +3784,6 @@ voiceBtn.addEventListener("click", () => {
   let wrongQuizList = [];   // ★追加：不正解保存用
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
-  let questionCount = 0;
   let currentBatchWrong = [];
   let batchSize = 10;
 
@@ -4049,7 +4048,6 @@ nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
     autoSaveQuizState(); // 状態を保存
 
-currentQuizIndex++;
 
 // ⭐ 10問ごとにチェック
 if (currentQuizIndex % batchSize === 0) {
@@ -4095,32 +4093,40 @@ if (currentQuizIndex % batchSize === 0) {
 wrongBtn.addEventListener("click", () => {
     const currentItem = quizList[currentQuizIndex];
 
-   if (!currentBatchWrong.includes(currentItem)) {
-    currentBatchWrong.push(currentItem);
-}
-    // リストに入れた直後に保存！
-    autoSaveQuizState();
-    
+    if (!currentBatchWrong.includes(currentItem)) {
+        currentBatchWrong.push(currentItem);
+    }
 
-    autoSaveQuizState(); // インデックスが進んだことも保存
+    // 🔥 次へ進む（これがないと進まない）
+    currentQuizIndex++;
+
+    autoSaveQuizState();
+
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 
-    if (currentQuizIndex >= quizList.length) {
-        if (wrongQuizList.length > 0) {
-            // 不正解リストをシャッフルして代入
-            quizList = shuffleArray([...wrongQuizList]); 
-            wrongQuizList = [];
-            currentQuizIndex = 0;
-            alert("不正解だけもう一回！（ランダムに出題します）");
-            showQuizQuestion();
-        } else {
-            alert("全問正解！");
-            quizOverlay.style.display = "none";
+    // 🔥 10問ごとの復習
+    if (currentQuizIndex % batchSize === 0) {
+        if (currentBatchWrong.length > 0) {
+            const review = shuffleArray([...currentBatchWrong]);
+
+            // 👉 今の位置に差し込む
+            quizList.splice(currentQuizIndex, 0, ...review);
+
+            currentBatchWrong = [];
+
+            alert("この10問の復習！");
         }
-    } else {
-        showQuizQuestion();
     }
+
+    // 終了判定
+    if (currentQuizIndex >= quizList.length) {
+        alert("全問終了！");
+        quizOverlay.style.display = "none";
+        return;
+    }
+
+    showQuizQuestion();
 });
 
 let quitPressTimer;
