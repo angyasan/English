@@ -3785,7 +3785,9 @@ voiceBtn.addEventListener("click", () => {
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
   let questionCount = 0;
-  
+  let currentBatchWrong = [];
+  let batchSize = 10;
+
 function playSound(word) {
   
   console.log("再生:", word);
@@ -4047,15 +4049,22 @@ nextBtn.addEventListener("click", () => {
     currentQuizIndex++;
     autoSaveQuizState(); // 状態を保存
 
-questionCount++;
+currentQuizIndex++;
 
-if (questionCount % 5 === 0 && wrongQuizList.length > 0) {
-    const review = shuffleArray([...wrongQuizList]);
+// ⭐ 10問ごとにチェック
+if (currentQuizIndex % batchSize === 0) {
 
-    // 次の問題の位置に差し込む
-    quizList.splice(currentQuizIndex, 0, ...review);
+    if (currentBatchWrong.length > 0) {
 
-    wrongQuizList = [];
+        const review = shuffleArray([...currentBatchWrong]);
+
+        // 👉 今の位置に差し込む（＝11問目の前）
+        quizList.splice(currentQuizIndex, 0, ...review);
+
+        currentBatchWrong = [];
+
+        alert("この10問の復習！");
+    }
 }
 
     nextBtn.style.display = "none";
@@ -4086,10 +4095,9 @@ if (questionCount % 5 === 0 && wrongQuizList.length > 0) {
 wrongBtn.addEventListener("click", () => {
     const currentItem = quizList[currentQuizIndex];
 
-    // 不正解を保存（重複防止）
-    if (!wrongQuizList.includes(currentItem)) {
-        wrongQuizList.push(currentItem);
-    }
+   if (!currentBatchWrong.includes(currentItem)) {
+    currentBatchWrong.push(currentItem);
+}
     // リストに入れた直後に保存！
     autoSaveQuizState();
     
