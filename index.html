@@ -3786,6 +3786,10 @@ voiceBtn.addEventListener("click", () => {
   let quizDirection = "J→E";
   let currentBatchWrong = [];
   let batchSize = 10;
+  let isReviewMode = false;
+  let reviewList = [];
+  let reviewIndex = 0;
+
 
 function playSound(word) {
   
@@ -3894,6 +3898,29 @@ function playTTS(word) {
       contentDiv.appendChild(entry);
     });
   }
+
+function showReviewQuestion() {
+    const item = reviewList[reviewIndex];
+
+    if (quizDirection === "J→E") {
+        jpText.textContent = "【復習】 " + item.jp;
+        enText.textContent = item.en;
+    } else {
+        jpText.textContent = "【復習】 " + item.en;
+        enText.textContent = item.jp;
+    }
+
+    kanaText.textContent = item.reading || "";
+
+    enText.style.display = "none";
+    kanaText.style.display = "none";
+
+    quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+}
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
@@ -4037,6 +4064,21 @@ prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
 }
 });
 nextBtn.addEventListener("click", () => {
+  
+  if (isReviewMode) {
+    reviewIndex++;
+
+    if (reviewIndex >= reviewList.length) {
+        isReviewMode = false;
+        alert("復習おわり！");
+        showQuizQuestion();
+        return;
+    }
+
+    showReviewQuestion();
+    return;
+}
+
     // --- 追加：もし「戻って正解」したなら、不正解リストから削除する ---
     const currentItem = quizList[currentQuizIndex];
     const indexInWrong = wrongQuizList.indexOf(currentItem);
@@ -4050,20 +4092,22 @@ nextBtn.addEventListener("click", () => {
 
 
 // ⭐ 10問ごとにチェック
-if (currentQuizIndex % batchSize === 0) {
+if (!isReviewMode && currentQuizIndex % batchSize === 0) {
 
     if (currentBatchWrong.length > 0) {
 
-        const review = shuffleArray([...currentBatchWrong]);
-
-        // 👉 今の位置に差し込む（＝11問目の前）
-        quizList.splice(currentQuizIndex, 0, ...review);
-
+        reviewList = shuffleArray([...currentBatchWrong]);
         currentBatchWrong = [];
 
-        alert("この10問の復習！");
+        isReviewMode = true;
+        reviewIndex = 0;
+
+        alert("復習スタート！");
+        showReviewQuestion();
+        return;
     }
 }
+
 
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
