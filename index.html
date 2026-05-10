@@ -3903,6 +3903,8 @@ function playTTS(word) {
 function showReviewQuestion() {
     const item = reviewList[reviewIndex];
 
+ jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
+
     if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
@@ -3925,6 +3927,8 @@ function showReviewQuestion() {
 
   function showQuizQuestion() {
   const item = quizList[currentQuizIndex];
+  jpText.style.color = ""; // ← 追加（通常に戻す）
+  
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
