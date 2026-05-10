@@ -4049,7 +4049,7 @@ nextBtn.addEventListener("click", () => {
 
 questionCount++;
 
-if (questionCount % 30 === 0 && wrongQuizList.length > 0) {
+if (questionCount % 5 === 0 && wrongQuizList.length > 0) {
     const review = shuffleArray([...wrongQuizList]);
 
     // 次の問題の位置に差し込む
