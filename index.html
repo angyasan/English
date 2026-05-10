@@ -4138,19 +4138,9 @@ wrongBtn.addEventListener("click", () => {
   
   // ⭐ 復習モード中の処理
 if (isReviewMode) {
-    const currentItem = reviewList[reviewIndex];
+    alert("もう一度復習します");
 
-    reviewList.push(currentItem); // もう一回出す
-
-    reviewIndex++;
-
-    if (reviewIndex >= reviewList.length) {
-        isReviewMode = false;
-        alert("復習おわり！");
-        showQuizQuestion();
-        return;
-    }
-
+    // indexを進めない = 同じ問題をもう一回出す
     showReviewQuestion();
     return;
 }
