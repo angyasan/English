@@ -4140,9 +4140,21 @@ wrongBtn.addEventListener("click", () => {
 if (isReviewMode) {
     const currentItem = reviewList[reviewIndex];
 
-    reviewList.push(currentItem); // もう一回出す
+    // ⭐ pushをこれに変更
+    reviewList.splice(reviewIndex + 1, 0, currentItem);
 
     reviewIndex++;
+
+    if (reviewIndex >= reviewList.length) {
+        isReviewMode = false;
+        alert("復習おわり！");
+        showQuizQuestion();
+        return;
+    }
+
+    showReviewQuestion();
+    return;
+}
 
     if (reviewIndex >= reviewList.length) {
         isReviewMode = false;
