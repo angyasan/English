@@ -4158,13 +4158,32 @@ wrongBtn.addEventListener("click", () => {
 if (isReviewMode) {
     const currentItem = reviewList[reviewIndex];
 
-    // 間違えた問題を記録だけする
+    // 間違えた問題を記録
     if (!reviewWrongList.includes(currentItem)) {
         reviewWrongList.push(currentItem);
     }
 
-    // 次へ進む（判定は nextBtn に任せる）
     reviewIndex++;
+
+    // ⭐ 最後まで行ったかチェック（これが不足してた）
+    if (reviewIndex >= reviewList.length) {
+
+        if (reviewWrongList.length > 0) {
+            alert("間違えた問題をもう一度復習します");
+
+            reviewList = shuffleArray([...reviewWrongList]);
+            reviewWrongList = [];
+            reviewIndex = 0;
+
+            showReviewQuestion();
+            return;
+        }
+
+        isReviewMode = false;
+        alert("復習おわり！");
+        showQuizQuestion();
+        return;
+    }
 
     showReviewQuestion();
     return;
