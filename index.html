@@ -3789,6 +3789,7 @@ voiceBtn.addEventListener("click", () => {
   let isReviewMode = false;
   let reviewList = [];
   let reviewIndex = 0;
+  let reviewWrongList = [];
 
 
 function playSound(word) {
@@ -4097,10 +4098,12 @@ if (!isReviewMode && currentQuizIndex % batchSize === 0) {
     if (currentBatchWrong.length > 0) {
 
         reviewList = shuffleArray([...currentBatchWrong]);
-        currentBatchWrong = [];
+currentBatchWrong = [];
 
-        isReviewMode = true;
-        reviewIndex = 0;
+reviewWrongList = []; // ← 追加（毎回リセット）
+
+isReviewMode = true;
+reviewIndex = 0;
 
         alert("復習スタート！");
         showReviewQuestion();
@@ -4138,13 +4141,38 @@ wrongBtn.addEventListener("click", () => {
   
   // ⭐ 復習モード中の処理
 if (isReviewMode) {
-    alert("もう一度復習します");
+    const currentItem = reviewList[reviewIndex];
 
-    // indexを進めない = 同じ問題をもう一回出す
+    // 間違えた問題を記録
+    if (!reviewWrongList.includes(currentItem)) {
+        reviewWrongList.push(currentItem);
+    }
+
+    reviewIndex++;
+
+    // 復習1周終わったら
+    if (reviewIndex >= reviewList.length) {
+
+        if (reviewWrongList.length > 0) {
+            alert("間違えた問題をもう一度復習します");
+
+            reviewList = shuffleArray([...reviewWrongList]);
+            reviewWrongList = [];
+            reviewIndex = 0;
+
+            showReviewQuestion();
+            return;
+        }
+
+        isReviewMode = false;
+        alert("復習おわり！");
+        showQuizQuestion();
+        return;
+    }
+
     showReviewQuestion();
     return;
 }
-
     const currentItem = quizList[currentQuizIndex];
 
     if (!currentBatchWrong.includes(currentItem)) {
