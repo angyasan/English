@@ -4135,6 +4135,26 @@ if (!isReviewMode && currentQuizIndex % batchSize === 0) {
 
 
 wrongBtn.addEventListener("click", () => {
+  
+  // ⭐ 復習モード中の処理
+if (isReviewMode) {
+    const currentItem = reviewList[reviewIndex];
+
+    reviewList.push(currentItem); // もう一回出す
+
+    reviewIndex++;
+
+    if (reviewIndex >= reviewList.length) {
+        isReviewMode = false;
+        alert("復習おわり！");
+        showQuizQuestion();
+        return;
+    }
+
+    showReviewQuestion();
+    return;
+}
+
     const currentItem = quizList[currentQuizIndex];
 
     if (!currentBatchWrong.includes(currentItem)) {
