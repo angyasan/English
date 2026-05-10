@@ -3784,7 +3784,7 @@ voiceBtn.addEventListener("click", () => {
   let wrongQuizList = [];   // ★追加：不正解保存用
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
-
+  let questionCount = 0;
   
 function playSound(word) {
   
@@ -4046,6 +4046,17 @@ nextBtn.addEventListener("click", () => {
 
     currentQuizIndex++;
     autoSaveQuizState(); // 状態を保存
+
+questionCount++;
+
+if (questionCount % 30 === 0 && wrongQuizList.length > 0) {
+    const review = shuffleArray([...wrongQuizList]);
+
+    // 次の問題の位置に差し込む
+    quizList.splice(currentQuizIndex, 0, ...review);
+
+    wrongQuizList = [];
+}
 
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
