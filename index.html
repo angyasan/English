@@ -3904,12 +3904,12 @@ function showReviewQuestion() {
     const item = reviewList[reviewIndex];
 
     if (quizDirection === "J→E") {
-        jpText.textContent = "【復習】 " + item.jp;
-        enText.textContent = item.en;
-    } else {
-        jpText.textContent = "【復習】 " + item.en;
-        enText.textContent = item.jp;
-    }
+    jpText.textContent = item.jp;
+    enText.textContent = item.en;
+} else {
+    jpText.textContent = item.en;
+    enText.textContent = item.jp;
+}
 
     kanaText.textContent = item.reading || "";
 
