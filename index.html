@@ -4135,37 +4135,50 @@ if (!isReviewMode && currentQuizIndex % batchSize === 0) {
 
 
 wrongBtn.addEventListener("click", () => {
-  
-  // ⭐ 復習モード中の処理
-if (isReviewMode) {
+
+  // ⭐ 復習モード中
+  if (isReviewMode) {
     const currentItem = reviewList[reviewIndex];
 
-    // ⭐ pushをこれに変更
+    // 👉 すぐ次にもう一回出す（総数は増えない感覚）
     reviewList.splice(reviewIndex + 1, 0, currentItem);
 
     reviewIndex++;
 
-    if (reviewIndex >= reviewList.length) {
-        isReviewMode = false;
-        alert("復習おわり！");
-        showQuizQuestion();
-        return;
-    }
-
     showReviewQuestion();
     return;
-}
+  }
 
-    if (reviewIndex >= reviewList.length) {
-        isReviewMode = false;
-        alert("復習おわり！");
-        showQuizQuestion();
-        return;
-    }
+  // --- 通常クイズ ---
+  const currentItem = quizList[currentQuizIndex];
 
-    showReviewQuestion();
-    return;
-}
+  if (!currentBatchWrong.includes(currentItem)) {
+      currentBatchWrong.push(currentItem);
+  }
+
+  currentQuizIndex++;
+  autoSaveQuizState();
+
+  wrongBtn.style.display = "none";
+  nextBtn.style.display = "none";
+
+  if (currentQuizIndex % batchSize === 0) {
+      if (currentBatchWrong.length > 0) {
+          const review = shuffleArray([...currentBatchWrong]);
+          quizList.splice(currentQuizIndex, 0, ...review);
+          currentBatchWrong = [];
+          alert("この10問の復習！");
+      }
+  }
+
+  if (currentQuizIndex >= quizList.length) {
+      alert("全問終了！");
+      quizOverlay.style.display = "none";
+      return;
+  }
+
+  showQuizQuestion();
+});
 
     const currentItem = quizList[currentQuizIndex];
 
