@@ -4092,9 +4092,10 @@ if (isReviewMode) {
 }
 });
 nextBtn.addEventListener("click", () => {
+  // --- 復習モード中の処理 ---
   if (isReviewMode) {
-    // ✅ 修正：戻って「正解（次へ）」を押した場合、不正解リストから削除する
     const currentItem = reviewList[reviewIndex];
+    // 戻って正解（次へ）を押した場合、リストから削除
     const indexInReviewWrong = reviewWrongList.indexOf(currentItem);
     if (indexInReviewWrong > -1) {
       reviewWrongList.splice(indexInReviewWrong, 1);
@@ -4121,38 +4122,36 @@ nextBtn.addEventListener("click", () => {
   }
 
   // --- 通常モードの処理 ---
-  const currentItem = quizList[currentQuizIndex];
-  
-  // ✅ 修正：通常モードでも戻って正解したならリストから消す
-  const indexInWrong = wrongQuizList.indexOf(currentItem);
-  if (indexInWrong > -1) {
-    wrongQuizList.splice(indexInWrong, 1);
-  }
-  const indexInBatch = currentBatchWrong.indexOf(currentItem);
-  if (indexInBatch > -1) {
-    currentBatchWrong.splice(indexInBatch, 1);
+  if (quizList[currentQuizIndex]) {
+    const currentItem = quizList[currentQuizIndex];
+    
+    // 不正解リストに入っていたら削除（やり直し対応）
+    const indexInWrong = wrongQuizList.indexOf(currentItem);
+    if (indexInWrong > -1) wrongQuizList.splice(indexInWrong, 1);
+    
+    const indexInBatch = currentBatchWrong.indexOf(currentItem);
+    if (indexInBatch > -1) currentBatchWrong.splice(indexInBatch, 1);
   }
 
   currentQuizIndex++;
   autoSaveQuizState();
 
-  // 10問ごとのチェック
-  if (!isReviewMode && currentQuizIndex % batchSize === 0) {
-    if (currentBatchWrong.length > 0) {
-      reviewList = shuffleArray([...currentBatchWrong]);
-      currentBatchWrong = [];
-      reviewWrongList = []; 
-      isReviewMode = true;
-      reviewIndex = 0;
-      alert("復習スタート！");
-      showReviewQuestion();
-      return;
-    }
+  // 10問ごとの復習チェック
+  if (currentQuizIndex % batchSize === 0 && currentBatchWrong.length > 0) {
+    reviewList = shuffleArray([...currentBatchWrong]);
+    currentBatchWrong = [];
+    reviewWrongList = []; 
+    isReviewMode = true;
+    reviewIndex = 0;
+    alert("復習スタート！");
+    showReviewQuestion();
+    return;
   }
 
   nextBtn.style.display = "none";
   wrongBtn.style.display = "none";
 
+  // 終了判定
   if (currentQuizIndex >= quizList.length) {
     if (wrongQuizList.length > 0) {
       quizList = shuffleArray([...wrongQuizList]); 
@@ -4169,6 +4168,7 @@ nextBtn.addEventListener("click", () => {
     showQuizQuestion();
   }
 });
+
 
 
 
