@@ -4030,13 +4030,35 @@ startQuizEnToJBtn.addEventListener("click", () => {
 });
 
 // 共通関数にしてコード重複回避（追加）
+// 共通関数にしてコード重複回避（追加）
 function startQuiz(type){
   // ✅ 保存データがあるかチェックして確認を出す
   const saved = localStorage.getItem("savedQuiz");
   if (saved) {
-    const confirmNew = confirm("中断したクイズデータがあります。破棄して新しく始めますか？\n（「キャンセル」を押せば、今のデータを消さずに『続きから再開』できます）");
-    if (!confirmNew) {
-      return; // キャンセルなら何もしない
+    try {
+      const state = JSON.parse(saved);
+      
+      // 保存データから「項目名」を日本語に変換
+      const typeNames = {
+        others: "その他", various: "色々", verbs: "動詞", nouns: "名詞",
+        adverbs: "副詞", adjectives: "形容詞", tenses: "時制",
+        pronouns: "代名詞", prepositions: "前置詞", conjunctions: "接続詞", nsfw: "ダメー"
+      };
+      
+      const savedTypeName = typeNames[state.currentType] || state.currentType;
+      const savedDirection = state.quizDirection || "不明";
+
+      // ポップアップのメッセージ作成
+      const message = `【中断データがあります】\n\n` +
+                      `進行中：${savedTypeName} (${savedDirection} クイズ)\n\n` +
+                      `このデータを破棄して新しく始めますか？\n` +
+                      `（キャンセルで元のクイズを再開できます）`;
+
+      if (!confirm(message)) {
+        return; // キャンセルなら何もしない
+      }
+    } catch (e) {
+      console.error("保存データの解析に失敗しました", e);
     }
   }
 
@@ -4051,7 +4073,7 @@ function startQuiz(type){
 
   if (quizList.length === 0) { alert("問題がありません"); return; }
   
-  // 新しく始めるので、念のため古い保存を一度クリアして最新の状態に
+  // 新しく始めるので、古い保存を一度クリアして最新の状態に
   localStorage.removeItem("savedQuiz");
   autoSaveQuizState(); 
 
@@ -4061,6 +4083,7 @@ function startQuiz(type){
   // 新しく始めたので「再開」ボタンは隠す
   resumeQuizBtn.style.display = "none";
 }
+
 
 
 
