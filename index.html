@@ -3790,6 +3790,7 @@ voiceBtn.addEventListener("click", () => {
   let reviewList = [];
   let reviewIndex = 0;
   let reviewWrongList = [];
+let pendingAction = null;
 
 
 function playSound(word) {
@@ -4097,10 +4098,6 @@ currentBatchWrong = [];
 closePopup(); // ← 追加（もし開いてたら閉じる）
 showPopup("復習おわり！");
 
-setTimeout(() => {
-    closePopup();
-    showQuizQuestion();
-}, 800);
 
 return;
     }
@@ -4133,14 +4130,11 @@ if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex %
         isReviewMode = true;
         reviewIndex = 0;
 
-        showPopup("復習スタート！");
-
-document.getElementById("popupCloseBtn").onclick = () => {
-    closePopup();
-    showReviewQuestion();
-};
-
+        pendingAction = "startReview";
+showPopup("復習スタート！");
 return;
+
+
 
     }
 }
@@ -4199,13 +4193,8 @@ if (isReviewMode) {
         }
 
         isReviewMode = false;
-        showPopup("復習おわり！");
-
-document.getElementById("popupCloseBtn").onclick = () => {
-    closePopup();
-    showQuizQuestion();
-};
-
+        pendingAction = "endReview";
+showPopup("復習おわり！");
 return;
     }
 
@@ -4319,7 +4308,20 @@ function closePopup() {
     document.getElementById("popup").style.display = "none";
 }
 
-document.getElementById("popupCloseBtn").addEventListener("click", closePopup);
+document.getElementById("popupCloseBtn").addEventListener("click", () => {
+    closePopup();
+
+    if (pendingAction === "startReview") {
+        showReviewQuestion();
+    }
+
+    if (pendingAction === "endReview") {
+        showQuizQuestion();
+    }
+
+    pendingAction = null;
+});
+
 
 // クイズポップアップ内に一時離脱ボタンを追加
 let tempQuitBtn = document.getElementById("tempQuitBtn");
