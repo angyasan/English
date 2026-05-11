@@ -263,6 +263,17 @@
 </div>
 <!-- 🔼 ここまで追加 -->
 
+<!-- ✨ ここから追加 -->
+<div id="reviewFinishNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; justify-content:center; align-items:center;">
+  <div style="background:white; padding:30px; border-radius:15px; text-align:center; width:80%; max-width:300px;">
+    <div style="font-size:40px; margin-bottom:10px;">✨</div>
+    <h2 style="color:#333; margin-top:0;">復習完了！</h2>
+    <p style="color:#666;">バッチリですね。次の問題に進みましょう！</p>
+    <button id="finishReviewConfirm" style="background:#28a745; color:white; border:none; padding:12px 24px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; width:100%;">次へ進む</button>
+  </div>
+</div>
+<!-- ✨ ここまで追加 -->
+
 <!-- 例文モーダル -->
 
 <div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
@@ -4170,10 +4181,17 @@ nextBtn.addEventListener("click", () => {
         showReviewQuestion();
         return;
       }
-      isReviewMode = false;
-      alert("復習おわり！");
-      showQuizQuestion();
+            isReviewMode = false;
+      // --- 置き換え ---
+      const finishNotice = document.getElementById("reviewFinishNotice");
+      finishNotice.style.display = "flex";
+      document.getElementById("finishReviewConfirm").onclick = () => {
+          finishNotice.style.display = "none";
+          showQuizQuestion();
+      };
+      // ---------------
       return;
+
     }
     showReviewQuestion();
     return;
@@ -4266,10 +4284,17 @@ if (isReviewMode) {
             return;
         }
 
-        isReviewMode = false;
-        alert("復習おわり！");
-        showQuizQuestion();
+                isReviewMode = false;
+        // --- 置き換え ---
+        const finishNotice = document.getElementById("reviewFinishNotice");
+        finishNotice.style.display = "flex";
+        document.getElementById("finishReviewConfirm").onclick = () => {
+            finishNotice.style.display = "none";
+            showQuizQuestion();
+        };
+        // ---------------
         return;
+
     }
 
     showReviewQuestion();
