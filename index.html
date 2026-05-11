@@ -4320,10 +4320,6 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
 });
 
 function handlePopupAction(action) {
-
-    // -----------------------
-    // 復習開始
-    // -----------------------
     if (action === "startReview") {
         isReviewMode = true;
         reviewIndex = 0;
@@ -4332,39 +4328,36 @@ function handlePopupAction(action) {
     }
 
     // -----------------------
-    // 復習終了（ここが重要）
+    // 復習終了
     // -----------------------
     if (action === "endReview") {
         isReviewMode = false;
-
         reviewList = [];
         reviewIndex = 0;
         reviewWrongList = [];
         currentBatchWrong = [];
 
-        // ★ここで「6問目に戻す」
-        currentQuizIndex = batchSize;
+        // 5問終わった直後なら、次はインデックス5（＝6問目）
+        currentQuizIndex = batchSize; 
 
         // UIリセット
         showAnswerBtn.style.display = "inline-block";
         nextBtn.style.display = "none";
         wrongBtn.style.display = "none";
         prevBtn.style.display = "none";
-
         enText.style.display = "none";
         kanaText.style.display = "none";
-
         jpText.onclick = null;
         enText.onclick = null;
 
         showQuizQuestion();
-        return;
+        return; // ✅【追加】ここで処理を抜けることで、下の++を防止！
     }
 
     // -----------------------
-    // 通常処理（ここが重要）
+    // 通常処理（復習以外のポップアップ時のみ実行される）
     // -----------------------
-    currentQuizIndex++;
+    currentQuizIndex++; 
 
     if (currentQuizIndex >= quizList.length) {
         alert("終了");
