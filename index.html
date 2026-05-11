@@ -4328,7 +4328,7 @@ function handlePopupAction(action) {
         isReviewMode = true;
         reviewIndex = 0;
         showReviewQuestion();
-        return; // ここで止める
+        return;
     }
 
     // -----------------------
@@ -4341,9 +4341,11 @@ function handlePopupAction(action) {
         reviewWrongList = [];
         currentBatchWrong = [];
 
-        // ✅ ここが重要：
-        // すでに「次へ」ボタンを押した時点で currentQuizIndex は「次の問題」を指しているので、
-        // ここでは ++ をせず、そのまま表示するだけでOK。
+        // ✅ 強制補正：
+        // 5問目で「次へ」や「不正解」を押した瞬間に、ボタン側の処理で +1 されて「6」になっている。
+        // ポップアップを閉じた瞬間に、さらに下の処理で +1 されて「7」になってしまうので、
+        // ここであえて 1 引いておくことで、最終的に正しい「6」になるように調整します。
+        currentQuizIndex--;
 
         // UIリセット
         showAnswerBtn.style.display = "inline-block";
@@ -4355,14 +4357,12 @@ function handlePopupAction(action) {
         jpText.onclick = null;
         enText.onclick = null;
 
-        showQuizQuestion();
-        return; // ✅ return することで、下の「さらに++」を確実に防ぐ
+        // 次の行の処理（共通の++）に流すために、ここでは return しない
     }
 
     // -----------------------
-    // 通常処理（アクションがない場合のみカウントを進める）
+    // 共通処理（ここで +1 される）
     // -----------------------
-    // ここに来るのは「復習」に関係ない、単なるメッセージ通知などの時だけ
     currentQuizIndex++;
 
     if (currentQuizIndex >= quizList.length) {
@@ -4373,6 +4373,7 @@ function handlePopupAction(action) {
 
     showQuizQuestion();
 }
+
 
 
 
