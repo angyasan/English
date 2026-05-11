@@ -4336,6 +4336,9 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
     reviewWrongList = [];
     currentBatchWrong = [];
 
+    // ⭐ ここが重要：次の未復習位置へ飛ばす
+    currentQuizIndex = batchSize; // ← 5問なら index=5 = 6問目
+
     showQuizQuestion();
     return;
 }
