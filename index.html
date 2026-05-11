@@ -4224,7 +4224,7 @@ return;
             const review = shuffleArray([...currentBatchWrong]);
 
             // 👉 今の位置に差し込む
-            quizList.splice(currentQuizIndex, 0, ...review);
+
 
             currentBatchWrong = [];
 
@@ -4324,15 +4324,18 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
     }
 
     if (action === "endReview") {
-        isReviewMode = false;
-        reviewList = [];
-        reviewIndex = 0;
-        reviewWrongList = [];
-        currentBatchWrong = [];
+    isReviewMode = false;
 
-        showQuizQuestion();
-        return;
-    }
+    reviewList = [];
+    reviewIndex = 0;
+    reviewWrongList = [];
+    currentBatchWrong = [];
+
+    currentQuizIndex = 0;   // ←これ超重要
+
+    showQuizQuestion();
+    return;
+}
 });
 
 
