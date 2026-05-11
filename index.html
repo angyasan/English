@@ -4192,8 +4192,11 @@ if (isReviewMode) {
             return;
         }
 
-        isReviewMode = false;
         pendingAction = "endReview";
+isReviewMode = false;
+reviewWrongList = [];
+currentBatchWrong = [];
+
 showPopup("復習おわり！");
 return;
     }
@@ -4311,15 +4314,25 @@ function closePopup() {
 document.getElementById("popupCloseBtn").addEventListener("click", () => {
     closePopup();
 
-    if (pendingAction === "startReview") {
-        showReviewQuestion();
-    }
-
-    if (pendingAction === "endReview") {
-        showQuizQuestion();
-    }
-
+    const action = pendingAction;
     pendingAction = null;
+
+    if (action === "startReview") {
+        isReviewMode = true;
+        showReviewQuestion();
+        return;
+    }
+
+    if (action === "endReview") {
+        isReviewMode = false;
+        reviewList = [];
+        reviewIndex = 0;
+        reviewWrongList = [];
+        currentBatchWrong = [];
+
+        showQuizQuestion();
+        return;
+    }
 });
 
 
