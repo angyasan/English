@@ -4031,12 +4031,37 @@ startQuizEnToJBtn.addEventListener("click", () => {
 
 // 共通関数にしてコード重複回避（追加）
 function startQuiz(type){
+  // ✅ 保存データがあるかチェックして確認を出す
+  const saved = localStorage.getItem("savedQuiz");
+  if (saved) {
+    const confirmNew = confirm("中断したクイズデータがあります。破棄して新しく始めますか？\n（「キャンセル」を押せば、今のデータを消さずに『続きから再開』できます）");
+    if (!confirmNew) {
+      return; // キャンセルなら何もしない
+    }
+  }
+
+  // --- 以下、新しく始めるための初期化 ---
   quizList = shuffleArray([...currentList[type]]);
   currentQuizIndex = 0;
+  
+  // 復習関連の状態もリセット
+  isReviewMode = false;
+  currentBatchWrong = [];
+  reviewWrongList = [];
+
   if (quizList.length === 0) { alert("問題がありません"); return; }
+  
+  // 新しく始めるので、念のため古い保存を一度クリアして最新の状態に
+  localStorage.removeItem("savedQuiz");
+  autoSaveQuizState(); 
+
   showQuizQuestion();
   quizOverlay.style.display = "flex";
+  
+  // 新しく始めたので「再開」ボタンは隠す
+  resumeQuizBtn.style.display = "none";
 }
+
 
 
 
