@@ -4092,89 +4092,84 @@ if (isReviewMode) {
 }
 });
 nextBtn.addEventListener("click", () => {
-  
   if (isReviewMode) {
+    // ✅ 修正：戻って「正解（次へ）」を押した場合、不正解リストから削除する
+    const currentItem = reviewList[reviewIndex];
+    const indexInReviewWrong = reviewWrongList.indexOf(currentItem);
+    if (indexInReviewWrong > -1) {
+      reviewWrongList.splice(indexInReviewWrong, 1);
+    }
+
     reviewIndex++;
 
-    // ⭐ 復習1周終了
     if (reviewIndex >= reviewList.length) {
-
-        // ⭐ 間違えた問題があるならもう1周
-        if (reviewWrongList.length > 0) {
-            alert("間違えた問題をもう一度復習します");
-
-            reviewList = shuffleArray([...reviewWrongList]);
-            reviewWrongList = [];
-            reviewIndex = 0;
-
-            showReviewQuestion();
-            return;
-        }
-
-        // ⭐ 完全終了
-        isReviewMode = false;
-        alert("復習おわり！");
-        showQuizQuestion();
-        return;
-    }
-
-    showReviewQuestion();
-    return;
-}
-
-    // --- 追加：もし「戻って正解」したなら、不正解リストから削除する ---
-    const currentItem = quizList[currentQuizIndex];
-    const indexInWrong = wrongQuizList.indexOf(currentItem);
-    if (indexInWrong > -1) {
-        wrongQuizList.splice(indexInWrong, 1);
-    }
-    // ---------------------------------------------------------
-
-    currentQuizIndex++;
-    autoSaveQuizState(); // 状態を保存
-
-
-// ⭐ 10問ごとにチェック
-if (!isReviewMode && currentQuizIndex % batchSize === 0) {
-
-    if (currentBatchWrong.length > 0) {
-
-        reviewList = shuffleArray([...currentBatchWrong]);
-currentBatchWrong = [];
-
-reviewWrongList = []; // ← 追加（毎回リセット）
-
-isReviewMode = true;
-reviewIndex = 0;
-
-        alert("復習スタート！");
+      if (reviewWrongList.length > 0) {
+        alert("間違えた問題をもう一度復習します");
+        reviewList = shuffleArray([...reviewWrongList]);
+        reviewWrongList = [];
+        reviewIndex = 0;
         showReviewQuestion();
         return;
+      }
+      isReviewMode = false;
+      alert("復習おわり！");
+      showQuizQuestion();
+      return;
     }
-}
+    showReviewQuestion();
+    return;
+  }
 
+  // --- 通常モードの処理 ---
+  const currentItem = quizList[currentQuizIndex];
+  
+  // ✅ 修正：通常モードでも戻って正解したならリストから消す
+  const indexInWrong = wrongQuizList.indexOf(currentItem);
+  if (indexInWrong > -1) {
+    wrongQuizList.splice(indexInWrong, 1);
+  }
+  const indexInBatch = currentBatchWrong.indexOf(currentItem);
+  if (indexInBatch > -1) {
+    currentBatchWrong.splice(indexInBatch, 1);
+  }
 
-    nextBtn.style.display = "none";
-    wrongBtn.style.display = "none";
+  currentQuizIndex++;
+  autoSaveQuizState();
 
-    if (currentQuizIndex >= quizList.length) {
-        if (wrongQuizList.length > 0) {
-            // 不正解リストをシャッフルして代入
-            quizList = shuffleArray([...wrongQuizList]); 
-            wrongQuizList = [];
-            currentQuizIndex = 0;
-            alert("不正解だけもう一回！（ランダムに出題します）");
-            showQuizQuestion();
-            autoSaveQuizState(); // リストが入れ替わった状態を保存
-        } else {
-            alert("全問終了！");
-            quizOverlay.style.display = "none";
-            localStorage.removeItem("savedQuiz"); // 完走したらデータを削除
-        }
+  // 10問ごとのチェック
+  if (!isReviewMode && currentQuizIndex % batchSize === 0) {
+    if (currentBatchWrong.length > 0) {
+      reviewList = shuffleArray([...currentBatchWrong]);
+      currentBatchWrong = [];
+      reviewWrongList = []; 
+      isReviewMode = true;
+      reviewIndex = 0;
+      alert("復習スタート！");
+      showReviewQuestion();
+      return;
+    }
+  }
+
+  nextBtn.style.display = "none";
+  wrongBtn.style.display = "none";
+
+  if (currentQuizIndex >= quizList.length) {
+    if (wrongQuizList.length > 0) {
+      quizList = shuffleArray([...wrongQuizList]); 
+      wrongQuizList = [];
+      currentQuizIndex = 0;
+      alert("不正解だけもう一回！");
+      showQuizQuestion();
     } else {
-        showQuizQuestion();
+      alert("全問終了！");
+      quizOverlay.style.display = "none";
+      localStorage.removeItem("savedQuiz");
     }
+  } else {
+    showQuizQuestion();
+  }
 });
+
 
 
 
