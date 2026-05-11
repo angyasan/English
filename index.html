@@ -4318,10 +4318,15 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
     pendingAction = null;
 
     if (action === "startReview") {
-        isReviewMode = true;
-        showReviewQuestion();
-        return;
-    }
+    isReviewMode = true;
+
+    // 🔥追加：復習開始時に「次の未復習問題へ戻す」
+    currentQuizIndex = reviewList.length; 
+    // ← これで「6問目相当」に飛ぶ（1〜5やった後なら5）
+
+    showReviewQuestion();
+    return;
+}
 
     if (action === "endReview") {
     isReviewMode = false;
