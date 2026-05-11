@@ -4317,32 +4317,44 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
     const action = pendingAction;
     pendingAction = null;
 
+    handlePopupAction(action);
+});
+
+function handlePopupAction(action) {
+
     if (action === "startReview") {
-    isReviewMode = true;
-
-    // 🔥追加：復習開始時に「次の未復習問題へ戻す」
-    currentQuizIndex = reviewList.length; 
-    // ← これで「6問目相当」に飛ぶ（1〜5やった後なら5）
-
-    showReviewQuestion();
-    return;
-}
+        isReviewMode = true;
+        reviewIndex = 0;
+        showReviewQuestion();
+        return;
+    }
 
     if (action === "endReview") {
-    isReviewMode = false;
+        isReviewMode = false;
 
-    reviewList = [];
-    reviewIndex = 0;
-    reviewWrongList = [];
-    currentBatchWrong = [];
+        reviewList = [];
+        reviewIndex = 0;
+        reviewWrongList = [];
+        currentBatchWrong = [];
 
-    // ⭐ ここが重要：次の未復習位置へ飛ばす
-    currentQuizIndex = batchSize; // ← 5問なら index=5 = 6問目
+        currentQuizIndex = batchSize;
+
+        showQuizQuestion();
+        return;
+    }
+
+    // 通常時（ポップアップなしの安全処理）
+    currentQuizIndex++;
+
+    if (currentQuizIndex >= quizList.length) {
+        alert("終了");
+        quizOverlay.style.display = "none";
+        return;
+    }
 
     showQuizQuestion();
-    return;
 }
-});
+
 
 
 // クイズポップアップ内に一時離脱ボタンを追加
