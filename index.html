@@ -4380,7 +4380,7 @@ tempBtn.style.boxShadow = "0 0 8px rgba(255,152,0,0.8)";
 // --- 復帰ボタン：クリックで再開、長押しでリセット ---
 let resumePressTimer;
 
-// 再開処理を関数化
+// 再開処理
 function resumeQuiz() {
     const saved = localStorage.getItem("savedQuiz");
     if(!saved) return;
@@ -4401,34 +4401,33 @@ function startResumePress() {
         if (confirm("【警告】進行中のクイズデータを完全に破棄しますか？")) {
             localStorage.removeItem("savedQuiz");
             resumeQuizBtn.style.display = "none";
-            alert("クイズデータを消去しました。");
+            // alertは削除しました
         }
     }, 800);
 }
 
-// 離したらタイマー解除
+// タイマー解除
 function cancelResumePress() {
     clearTimeout(resumePressTimer);
 }
 
-// 短押し（クリック）で再開
+// 短押しで再開
 resumeQuizBtn.addEventListener("click", () => {
-    // 長押しタイマーが完了する前に離されたら再開
     resumeQuiz();
 });
 
-// PC用のマウス操作
+// PC操作用
 resumeQuizBtn.addEventListener("mousedown", startResumePress);
 resumeQuizBtn.addEventListener("mouseup", cancelResumePress);
 resumeQuizBtn.addEventListener("mouseleave", cancelResumePress);
 
-// スマホ用のタッチ操作
+// スマホ操作用
 resumeQuizBtn.addEventListener("touchstart", (e) => {
-    // デフォルトの挙動（メニュー表示など）を防ぐと長押しが安定します
     startResumePress();
 });
 resumeQuizBtn.addEventListener("touchend", cancelResumePress);
 resumeQuizBtn.addEventListener("touchcancel", cancelResumePress);
+
 
 
 window.addEventListener("load", () => {
