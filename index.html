@@ -4122,17 +4122,16 @@ return;
 
 
 // ⭐ 10問ごとにチェック
-if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex % batchSize === 0)
+if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex % batchSize === 0) {
 
     if (currentBatchWrong.length > 0) {
 
         reviewList = shuffleArray([...currentBatchWrong]);
-currentBatchWrong = [];
+        currentBatchWrong = [];
 
-reviewWrongList = []; // ← 追加（毎回リセット）
-
-isReviewMode = true;
-reviewIndex = 0;
+        reviewWrongList = [];
+        isReviewMode = true;
+        reviewIndex = 0;
 
         showPopup("復習スタート！");
         showReviewQuestion();
