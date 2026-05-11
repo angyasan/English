@@ -4328,31 +4328,42 @@ function handlePopupAction(action) {
         return;
     }
 
-    if (action === "endReview") {
-        isReviewMode = false;
+   if (action === "endReview") {
+    isReviewMode = false;
 
-        reviewList = [];
-        reviewIndex = 0;
-        reviewWrongList = [];
-        currentBatchWrong = [];
+    reviewList = [];
+    reviewIndex = 0;
+    reviewWrongList = [];
+    currentBatchWrong = [];
 
-        currentQuizIndex = batchSize;
+    currentQuizIndex = batchSize;
 
-        showQuizQuestion();
-        return;
-    }
+    // 🔥UIリセット（重要）
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+    prevBtn.style.display = "none";
 
-    // 通常時（ポップアップなしの安全処理）
-    currentQuizIndex++;
+    enText.style.display = "none";
+    kanaText.style.display = "none";
 
-    if (currentQuizIndex >= quizList.length) {
-        alert("終了");
-        quizOverlay.style.display = "none";
-        return;
-    }
+    jpText.onclick = null;
+    enText.onclick = null;
 
     showQuizQuestion();
+    return;
 }
+
+// 通常時（ポップアップなしの安全処理）
+currentQuizIndex++;
+
+if (currentQuizIndex >= quizList.length) {
+    alert("終了");
+    quizOverlay.style.display = "none";
+    return;
+}
+
+showQuizQuestion();
 
 
 
