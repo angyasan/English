@@ -4116,7 +4116,7 @@ return;
 
 
     autoSaveQuizState(); // 状態を保存
-
+    currentQuizIndex++;
 
 // ⭐ 10問ごとにチェック
 if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex % batchSize === 0) {
@@ -4211,7 +4211,7 @@ return;
     }
 
 
-
+    currentQuizIndex++;
     autoSaveQuizState();
 
     wrongBtn.style.display = "none";
