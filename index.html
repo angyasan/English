@@ -3901,6 +3901,7 @@ function playTTS(word) {
   }
 
 function showReviewQuestion() {
+  closePopup();
     const item = reviewList[reviewIndex];
 
  jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
@@ -4090,9 +4091,18 @@ nextBtn.addEventListener("click", () => {
 
         // ⭐ 完全終了
         isReviewMode = false;
-        alert("復習おわり！");
-        showQuizQuestion();
-        return;
+reviewWrongList = [];
+currentBatchWrong = [];
+
+closePopup(); // ← 追加（もし開いてたら閉じる）
+showPopup("復習おわり！");
+
+setTimeout(() => {
+    closePopup();
+    showQuizQuestion();
+}, 800);
+
+return;
     }
 
     showReviewQuestion();
@@ -4112,7 +4122,7 @@ nextBtn.addEventListener("click", () => {
 
 
 // ⭐ 10問ごとにチェック
-if (!isReviewMode && currentQuizIndex % batchSize === 0) {
+if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex % batchSize === 0)
 
     if (currentBatchWrong.length > 0) {
 
