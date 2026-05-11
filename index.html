@@ -4166,80 +4166,60 @@ return;
 
 
 wrongBtn.addEventListener("click", () => {
-  
-  // ⭐ 復習モード中の処理
-if (isReviewMode) {
-    const currentItem = reviewList[reviewIndex];
-
-    // 間違えた問題を記録
-    if (!reviewWrongList.includes(currentItem)) {
-        reviewWrongList.push(currentItem);
-    }
-
-    reviewIndex++;
-
-    // ⭐ 最後まで行ったかチェック（これが不足してた）
-    if (reviewIndex >= reviewList.length) {
-
-        if (reviewWrongList.length > 0) {
-            alert("間違えた問題をもう一度復習します");
-
-            reviewList = shuffleArray([...reviewWrongList]);
+    // 復習モード中の処理
+    if (isReviewMode) {
+        const currentItem = reviewList[reviewIndex];
+        if (!reviewWrongList.includes(currentItem)) {
+            reviewWrongList.push(currentItem);
+        }
+        reviewIndex++;
+        if (reviewIndex >= reviewList.length) {
+            if (reviewWrongList.length > 0) {
+                alert("間違えた問題をもう一度復習します");
+                reviewList = shuffleArray([...reviewWrongList]);
+                reviewWrongList = [];
+                reviewIndex = 0;
+                showReviewQuestion();
+                return;
+            }
+            pendingAction = "endReview";
+            isReviewMode = false;
             reviewWrongList = [];
-            reviewIndex = 0;
-
-            showReviewQuestion();
+            currentBatchWrong = [];
+            showPopup("復習おわり！");
             return;
         }
-
-        pendingAction = "endReview";
-isReviewMode = false;
-reviewWrongList = [];
-currentBatchWrong = [];
-
-showPopup("復習おわり！");
-return;
+        showReviewQuestion();
+        return;
     }
 
-    showReviewQuestion();
-    return;
-}
+    // 通常モード中の処理
     const currentItem = quizList[currentQuizIndex];
-
     if (!currentBatchWrong.includes(currentItem)) {
         currentBatchWrong.push(currentItem);
     }
 
+    // ✅ 修正ポイント：10問ごとの区切り（復習タイミング）なら、ここで勝手に進めない
+    if ((currentQuizIndex + 1) % batchSize === 0) {
+        pendingAction = "startReview";
+        showPopup("復習スタート！");
+        // ここで return して、下の currentQuizIndex++ を実行させない
+        return; 
+    }
 
     currentQuizIndex++;
     autoSaveQuizState();
-
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 
-    // 🔥 10問ごとの復習
-    if (currentQuizIndex % batchSize === 0) {
-        if (currentBatchWrong.length > 0) {
-            const review = shuffleArray([...currentBatchWrong]);
-
-            // 👉 今の位置に差し込む
-
-
-            currentBatchWrong = [];
-
-            alert("この10問の復習！");
-        }
-    }
-
-    // 終了判定
     if (currentQuizIndex >= quizList.length) {
         alert("全問終了！");
         quizOverlay.style.display = "none";
         return;
     }
-
     showQuizQuestion();
 });
+
 
 let quitPressTimer;
 
@@ -4320,10 +4300,6 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
 });
 
 function handlePopupAction(action) {
-
-    // -----------------------
-    // 復習開始
-    // -----------------------
     if (action === "startReview") {
         isReviewMode = true;
         reviewIndex = 0;
@@ -4331,20 +4307,14 @@ function handlePopupAction(action) {
         return;
     }
 
-    // -----------------------
-    // 復習終了（ここを根本的に修正）
-    // -----------------------
     if (action === "endReview") {
         isReviewMode = false;
-
         reviewList = [];
         reviewIndex = 0;
         reviewWrongList = [];
         currentBatchWrong = [];
 
-        // ✅ 強制リセット
-        // 復習が終わったら、強制的に「区切り（5問目、10問目...）の直後」の番号を指定します。
-        // これにより、ボタン側で勝手に進んでいたカウントを完全に上書きします。
+        // ✅ 強制的に「6問目(Index 5)」に固定する
         currentQuizIndex = batchSize; 
 
         // UIリセット
@@ -4352,33 +4322,26 @@ function handlePopupAction(action) {
         nextBtn.style.display = "none";
         wrongBtn.style.display = "none";
         prevBtn.style.display = "none";
-
         enText.style.display = "none";
         kanaText.style.display = "none";
-
         jpText.onclick = null;
         enText.onclick = null;
 
         showQuizQuestion();
-        
-        // ✅ 非常に重要：
-        // ここで return することで、この下にある「通常処理の++」を絶対に実行させません。
+        // ✅ 下の currentQuizIndex++ を絶対に実行させない
         return; 
     }
 
-    // -----------------------
-    // 通常処理（復習以外の通知のみ）
-    // -----------------------
+    // 復習以外のポップアップの時だけここを通る
     currentQuizIndex++;
-
     if (currentQuizIndex >= quizList.length) {
         alert("終了");
         quizOverlay.style.display = "none";
         return;
     }
-
     showQuizQuestion();
 }
+
 
 
 
