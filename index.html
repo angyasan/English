@@ -248,13 +248,23 @@
     <button id="showAnswerBtn">答えを見る</button>
     <button id="nextBtn" style="display:none;">次へ</button>
   </div>
-</div>
-
-
+    </div>
   </div>
 </div>
 
+<!-- 🔽 ここから追加 -->
+<div id="reviewNotice" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; justify-content:center; align-items:center;">
+  <div style="background:white; padding:30px; border-radius:15px; text-align:center; width:80%; max-width:300px;">
+    <div style="font-size:40px; margin-bottom:10px;">🔄</div>
+    <h2 style="color:#333; margin-top:0;">復習タイム！</h2>
+    <p style="color:#666;">間違えた問題を解き直しましょう。</p>
+    <button id="startReviewConfirm" style="background:#007bff; color:white; border:none; padding:12px 24px; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; width:100%;">復習をはじめる</button>
+  </div>
+</div>
+<!-- 🔼 ここまで追加 -->
+
 <!-- 例文モーダル -->
+
 <div id="exampleModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
   <div style="background:#fff; width:90%; max-width:800px; height:80%; border-radius:8px; overflow:hidden; display:flex; flex-direction:column;">
     <div style="padding:8px; background:#007bff; color:white; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
@@ -4190,10 +4200,17 @@ nextBtn.addEventListener("click", () => {
     currentBatchWrong = [];
     reviewWrongList = []; 
     isReviewMode = true;
-    reviewIndex = 0;
-    alert("復習スタート！");
-    showReviewQuestion();
+        reviewIndex = 0;
+    // --- 置き換え箇所 ---
+    const notice = document.getElementById("reviewNotice");
+    notice.style.display = "flex";
+    document.getElementById("startReviewConfirm").onclick = () => {
+      notice.style.display = "none";
+      showReviewQuestion();
+    };
+    // ------------------
     return;
+
   }
 
   nextBtn.style.display = "none";
@@ -4280,10 +4297,18 @@ if (isReviewMode) {
             // 👉 今の位置に差し込む
             quizList.splice(currentQuizIndex, 0, ...review);
 
-            currentBatchWrong = [];
+                        currentBatchWrong = [];
 
-            alert("この10問の復習！");
+            // --- 置き換え箇所 ---
+            const notice = document.getElementById("reviewNotice");
+            notice.style.display = "flex";
+            document.getElementById("startReviewConfirm").onclick = () => {
+                notice.style.display = "none";
+                showReviewQuestion();
+            };
+            // ------------------
         }
+
     }
 
     // 終了判定
