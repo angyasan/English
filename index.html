@@ -4134,8 +4134,14 @@ if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex %
         reviewIndex = 0;
 
         showPopup("復習スタート！");
-        showReviewQuestion();
-        return;
+
+document.getElementById("popupCloseBtn").onclick = () => {
+    closePopup();
+    showReviewQuestion();
+};
+
+return;
+
     }
 }
 
@@ -4194,8 +4200,13 @@ if (isReviewMode) {
 
         isReviewMode = false;
         showPopup("復習おわり！");
-        showQuizQuestion();
-        return;
+
+document.getElementById("popupCloseBtn").onclick = () => {
+    closePopup();
+    showQuizQuestion();
+};
+
+return;
     }
 
     showReviewQuestion();
