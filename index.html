@@ -4321,6 +4321,9 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
 
 function handlePopupAction(action) {
 
+    // -----------------------
+    // 復習開始
+    // -----------------------
     if (action === "startReview") {
         isReviewMode = true;
         reviewIndex = 0;
@@ -4328,42 +4331,49 @@ function handlePopupAction(action) {
         return;
     }
 
-   if (action === "endReview") {
-    isReviewMode = false;
+    // -----------------------
+    // 復習終了（ここが重要）
+    // -----------------------
+    if (action === "endReview") {
+        isReviewMode = false;
 
-    reviewList = [];
-    reviewIndex = 0;
-    reviewWrongList = [];
-    currentBatchWrong = [];
+        reviewList = [];
+        reviewIndex = 0;
+        reviewWrongList = [];
+        currentBatchWrong = [];
 
-    currentQuizIndex = batchSize;
+        // ★ここで「6問目に戻す」
+        currentQuizIndex = batchSize;
 
-    // 🔥UIリセット（重要）
-    showAnswerBtn.style.display = "inline-block";
-    nextBtn.style.display = "none";
-    wrongBtn.style.display = "none";
-    prevBtn.style.display = "none";
+        // UIリセット
+        showAnswerBtn.style.display = "inline-block";
+        nextBtn.style.display = "none";
+        wrongBtn.style.display = "none";
+        prevBtn.style.display = "none";
 
-    enText.style.display = "none";
-    kanaText.style.display = "none";
+        enText.style.display = "none";
+        kanaText.style.display = "none";
 
-    jpText.onclick = null;
-    enText.onclick = null;
+        jpText.onclick = null;
+        enText.onclick = null;
+
+        showQuizQuestion();
+        return;
+    }
+
+    // -----------------------
+    // 通常処理（ここが重要）
+    // -----------------------
+    currentQuizIndex++;
+
+    if (currentQuizIndex >= quizList.length) {
+        alert("終了");
+        quizOverlay.style.display = "none";
+        return;
+    }
 
     showQuizQuestion();
-    return;
 }
-
-// 通常時（ポップアップなしの安全処理）
-currentQuizIndex++;
-
-if (currentQuizIndex >= quizList.length) {
-    alert("終了");
-    quizOverlay.style.display = "none";
-    return;
-}
-
-showQuizQuestion();
 
 
 
