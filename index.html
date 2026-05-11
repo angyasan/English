@@ -4320,11 +4320,15 @@ document.getElementById("popupCloseBtn").addEventListener("click", () => {
 });
 
 function handlePopupAction(action) {
+
+    // -----------------------
+    // 復習開始
+    // -----------------------
     if (action === "startReview") {
         isReviewMode = true;
         reviewIndex = 0;
         showReviewQuestion();
-        return;
+        return; // ここで止める
     }
 
     // -----------------------
@@ -4337,8 +4341,9 @@ function handlePopupAction(action) {
         reviewWrongList = [];
         currentBatchWrong = [];
 
-        // 5問終わった直後なら、次はインデックス5（＝6問目）
-        currentQuizIndex = batchSize; 
+        // ✅ ここが重要：
+        // すでに「次へ」ボタンを押した時点で currentQuizIndex は「次の問題」を指しているので、
+        // ここでは ++ をせず、そのまま表示するだけでOK。
 
         // UIリセット
         showAnswerBtn.style.display = "inline-block";
@@ -4351,13 +4356,14 @@ function handlePopupAction(action) {
         enText.onclick = null;
 
         showQuizQuestion();
-        return; // ✅【追加】ここで処理を抜けることで、下の++を防止！
+        return; // ✅ return することで、下の「さらに++」を確実に防ぐ
     }
 
     // -----------------------
-    // 通常処理（復習以外のポップアップ時のみ実行される）
+    // 通常処理（アクションがない場合のみカウントを進める）
     // -----------------------
-    currentQuizIndex++; 
+    // ここに来るのは「復習」に関係ない、単なるメッセージ通知などの時だけ
+    currentQuizIndex++;
 
     if (currentQuizIndex >= quizList.length) {
         alert("終了");
