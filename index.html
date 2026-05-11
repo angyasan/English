@@ -4040,14 +4040,31 @@ function startQuiz(type){
 
 
 
-// --- 前へボタン処理 ---
+// --- 前へボタン処理（修正版） ---
 prevBtn.addEventListener("click", () => {
-    if (currentQuizIndex > 0) {
-        currentQuizIndex--;
-        showQuizQuestion();
-        autoSaveQuizState();
+    if (isReviewMode) {
+        // 復習モード中なら、復習のインデックスを戻す
+        if (reviewIndex > 0) {
+            reviewIndex--;
+            showReviewQuestion();
+        }
+    } else {
+        // 通常モードなら、元の問題のインデックスを戻す
+        if (currentQuizIndex > 0) {
+            currentQuizIndex--;
+            showQuizQuestion();
+            autoSaveQuizState();
+        }
     }
+
+    // 戻ったときにUIをリセット（「答えを見る」を再表示）
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+    enText.style.display = "none";
+    kanaText.style.display = "none";
 });
+
 
 // --- 答えボタン表示時に前へボタンも表示 ---
 showAnswerBtn.addEventListener("click", () => {
@@ -4058,7 +4075,13 @@ showAnswerBtn.addEventListener("click", () => {
     nextBtn.style.display = "inline-block";
     wrongBtn.style.display = "inline-block";
 
-prevBtn.style.display = currentQuizIndex > 0 ? "block" : "none";
+// 通常ならIndex、復習ならreviewIndexを見てボタンを出すか決める
+if (isReviewMode) {
+    prevBtn.style.display = reviewIndex > 0 ? "inline-block" : "none";
+} else {
+    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
+}
+
 
 
     if (quizDirection === "J→E") {
