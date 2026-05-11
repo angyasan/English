@@ -3785,12 +3785,11 @@ voiceBtn.addEventListener("click", () => {
   let currentQuizIndex = 0;
   let quizDirection = "J→E";
   let currentBatchWrong = [];
-  let batchSize = 5;
+  let batchSize = 30;
   let isReviewMode = false;
   let reviewList = [];
   let reviewIndex = 0;
   let reviewWrongList = [];
-let pendingAction = null;
 
 
 function playSound(word) {
@@ -3902,7 +3901,6 @@ function playTTS(word) {
   }
 
 function showReviewQuestion() {
-  closePopup();
     const item = reviewList[reviewIndex];
 
  jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
@@ -4092,14 +4090,9 @@ nextBtn.addEventListener("click", () => {
 
         // ⭐ 完全終了
         isReviewMode = false;
-reviewWrongList = [];
-currentBatchWrong = [];
-
-closePopup(); // ← 追加（もし開いてたら閉じる）
-showPopup("復習おわり！");
-
-
-return;
+        alert("復習おわり！");
+        showQuizQuestion();
+        return;
     }
 
     showReviewQuestion();
@@ -4114,28 +4107,26 @@ return;
     }
     // ---------------------------------------------------------
 
-
-    autoSaveQuizState(); // 状態を保存
     currentQuizIndex++;
+    autoSaveQuizState(); // 状態を保存
+
 
 // ⭐ 10問ごとにチェック
-if (!isReviewMode && batchSize > 0 && currentQuizIndex > 0 && currentQuizIndex % batchSize === 0) {
+if (!isReviewMode && currentQuizIndex % batchSize === 0) {
 
     if (currentBatchWrong.length > 0) {
 
         reviewList = shuffleArray([...currentBatchWrong]);
-        currentBatchWrong = [];
+currentBatchWrong = [];
 
-        reviewWrongList = [];
-        isReviewMode = true;
-        reviewIndex = 0;
+reviewWrongList = []; // ← 追加（毎回リセット）
 
-        pendingAction = "startReview";
-showPopup("復習スタート！");
-return;
+isReviewMode = true;
+reviewIndex = 0;
 
-
-
+        alert("復習スタート！");
+        showReviewQuestion();
+        return;
     }
 }
 
@@ -4166,60 +4157,78 @@ return;
 
 
 wrongBtn.addEventListener("click", () => {
-    // 復習モード中の処理
-    if (isReviewMode) {
-        const currentItem = reviewList[reviewIndex];
-        if (!reviewWrongList.includes(currentItem)) {
-            reviewWrongList.push(currentItem);
-        }
-        reviewIndex++;
-        if (reviewIndex >= reviewList.length) {
-            if (reviewWrongList.length > 0) {
-                alert("間違えた問題をもう一度復習します");
-                reviewList = shuffleArray([...reviewWrongList]);
-                reviewWrongList = [];
-                reviewIndex = 0;
-                showReviewQuestion();
-                return;
-            }
-            pendingAction = "endReview";
-            isReviewMode = false;
+  
+  // ⭐ 復習モード中の処理
+if (isReviewMode) {
+    const currentItem = reviewList[reviewIndex];
+
+    // 間違えた問題を記録
+    if (!reviewWrongList.includes(currentItem)) {
+        reviewWrongList.push(currentItem);
+    }
+
+    reviewIndex++;
+
+    // ⭐ 最後まで行ったかチェック（これが不足してた）
+    if (reviewIndex >= reviewList.length) {
+
+        if (reviewWrongList.length > 0) {
+            alert("間違えた問題をもう一度復習します");
+
+            reviewList = shuffleArray([...reviewWrongList]);
             reviewWrongList = [];
-            currentBatchWrong = [];
-            showPopup("復習おわり！");
+            reviewIndex = 0;
+
+            showReviewQuestion();
             return;
         }
-        showReviewQuestion();
+
+        isReviewMode = false;
+        alert("復習おわり！");
+        showQuizQuestion();
         return;
     }
 
-    // 通常モード中の処理
+    showReviewQuestion();
+    return;
+}
     const currentItem = quizList[currentQuizIndex];
+
     if (!currentBatchWrong.includes(currentItem)) {
         currentBatchWrong.push(currentItem);
     }
 
-    // ✅ 修正ポイント：10問ごとの区切り（復習タイミング）なら、ここで勝手に進めない
-    if ((currentQuizIndex + 1) % batchSize === 0) {
-        pendingAction = "startReview";
-        showPopup("復習スタート！");
-        // ここで return して、下の currentQuizIndex++ を実行させない
-        return; 
-    }
-
+    // 🔥 次へ進む（これがないと進まない）
     currentQuizIndex++;
+
     autoSaveQuizState();
+
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 
+    // 🔥 10問ごとの復習
+    if (currentQuizIndex % batchSize === 0) {
+        if (currentBatchWrong.length > 0) {
+            const review = shuffleArray([...currentBatchWrong]);
+
+            // 👉 今の位置に差し込む
+            quizList.splice(currentQuizIndex, 0, ...review);
+
+            currentBatchWrong = [];
+
+            alert("この10問の復習！");
+        }
+    }
+
+    // 終了判定
     if (currentQuizIndex >= quizList.length) {
         alert("全問終了！");
         quizOverlay.style.display = "none";
         return;
     }
+
     showQuizQuestion();
 });
-
 
 let quitPressTimer;
 
@@ -4280,71 +4289,6 @@ function autoSaveQuizState() {
     };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
-
-function showPopup(text) {
-    document.getElementById("popupText").textContent = text;
-    document.getElementById("popup").style.display = "flex";
-}
-
-function closePopup() {
-    document.getElementById("popup").style.display = "none";
-}
-
-document.getElementById("popupCloseBtn").addEventListener("click", () => {
-    closePopup();
-
-    const action = pendingAction;
-    pendingAction = null;
-
-    handlePopupAction(action);
-});
-
-function handlePopupAction(action) {
-    if (action === "startReview") {
-        isReviewMode = true;
-        reviewIndex = 0;
-        showReviewQuestion();
-        return;
-    }
-
-    if (action === "endReview") {
-        isReviewMode = false;
-        reviewList = [];
-        reviewIndex = 0;
-        reviewWrongList = [];
-        currentBatchWrong = [];
-
-        // ✅ 強制的に「6問目(Index 5)」に固定する
-        currentQuizIndex = batchSize; 
-
-        // UIリセット
-        showAnswerBtn.style.display = "inline-block";
-        nextBtn.style.display = "none";
-        wrongBtn.style.display = "none";
-        prevBtn.style.display = "none";
-        enText.style.display = "none";
-        kanaText.style.display = "none";
-        jpText.onclick = null;
-        enText.onclick = null;
-
-        showQuizQuestion();
-        // ✅ 下の currentQuizIndex++ を絶対に実行させない
-        return; 
-    }
-
-    // 復習以外のポップアップの時だけここを通る
-    currentQuizIndex++;
-    if (currentQuizIndex >= quizList.length) {
-        alert("終了");
-        quizOverlay.style.display = "none";
-        return;
-    }
-    showQuizQuestion();
-}
-
-
-
-
 
 
 // クイズポップアップ内に一時離脱ボタンを追加
@@ -4546,31 +4490,5 @@ document.querySelectorAll(".hidden-en").forEach(el => {
 window.playSound = playSound;
 
 </script>
-<div id="popup" style="
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0,0,0,0.5);
-  z-index: 9999;
-">
-
-  <div style="
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    min-width: 250px;
-  ">
-
-    <div id="popupText" style="margin-bottom: 15px;"></div>
-
-    <button id="popupCloseBtn" class="control-btn">OK</button>
-
-  </div>
-</div>
-
 </body>
 </html>
