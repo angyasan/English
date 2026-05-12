@@ -4179,7 +4179,13 @@ prevBtn.addEventListener("click", () => {
 
 // --- 答えボタン表示時に前へボタンも表示 ---
 showAnswerBtn.addEventListener("click", () => {
+    // 🔽 ここに追加（答えを見た瞬間にロック）
+    const bSelect = document.getElementById("batchSizeSelect");
+    bSelect.disabled = true;
+    bSelect.style.background = "#eee";
+
     enText.style.display = "block";
+
     kanaText.style.display = "block";
 
     showAnswerBtn.style.display = "none";
@@ -4204,9 +4210,7 @@ if (isReviewMode) {
 });
 nextBtn.addEventListener("click", () => {
   // 🔽 ここに追加（解き始めたらロック）
-  const bSelect = document.getElementById("batchSizeSelect");
-  bSelect.disabled = true;
-  bSelect.style.background = "#eee";
+  
 
   // --- 復習モード中の処理 ---
 
@@ -4314,8 +4318,13 @@ nextBtn.addEventListener("click", () => {
 
 
 wrongBtn.addEventListener("click", () => {
+  // 🔽 ここに追加（間違えた瞬間にロック）
+  const bSelect = document.getElementById("batchSizeSelect");
+  bSelect.disabled = true;
+  bSelect.style.background = "#eee";
   
   // ⭐ 復習モード中の処理
+
   if (isReviewMode) {
     const currentItem = reviewList[reviewIndex];
     if (!reviewWrongList.includes(currentItem)) {
