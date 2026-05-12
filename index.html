@@ -230,7 +230,23 @@
 <div id="quizOverlay">
   <div id="quizContainer">
     <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
+
+    <!-- 🔽 ここに追加 -->
+    <div style="margin-bottom: 15px; text-align: center;">
+      <span style="font-size: 12px; color: #666;">復習の間隔:</span>
+      <select id="batchSizeSelect" style="padding: 4px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; cursor: pointer; background: #f9f9f9; color: #333;">
+        <option value="5">5問おき</option>
+        <option value="10" selected>10問おき</option>
+        <option value="20">20問おき</option>
+        <option value="30">30問おき</option>
+        <option value="40">40問おき</option>
+        <option value="50">50問おき</option>
+        <option value="100">100問おき</option>
+      </select>
+    </div>
+
     <div id="jpText" class="quiz-jp"></div>
+
     <div id="quizAnswerRow">
       <div id="enText" class="quiz-en"></div>
       <div id="kanaText" class="quiz-kana"></div>
@@ -3823,10 +3839,16 @@ voiceBtn.addEventListener("click", () => {
   let isReviewMode = false;
   let reviewList = [];
   let reviewIndex = 0;
-  let reviewWrongList = [];
+    let reviewWrongList = [];
 
+  // 🔽 ここに追加
+  document.getElementById("batchSizeSelect").addEventListener("change", (e) => {
+    batchSize = parseInt(e.target.value);
+    autoSaveQuizState(); 
+  });
 
-function playSound(word) {
+  function playSound(word) {
+
   
   console.log("再生:", word);
   
@@ -4395,13 +4417,15 @@ function saveQuizState() {
 
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
-    const state = {
+        const state = {
         quizDirection,
         currentType,
         currentQuizIndex,
         quizList,
-        wrongQuizList // ★リロードしても不正解を忘れないために追加
+        wrongQuizList,
+        batchSize // 🔽 これを追加
     };
+
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
@@ -4436,10 +4460,18 @@ function resumeQuiz() {
     const state = JSON.parse(saved);
     quizDirection = state.quizDirection;
     currentType = state.currentType;
-    quizList = state.quizList;
+        quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
     wrongQuizList = state.wrongQuizList || []; 
+
+    // 🔽 保存された値を復元し、プルダウンの見た目も合わせる
+    if (state.batchSize) {
+      batchSize = state.batchSize;
+      document.getElementById("batchSizeSelect").value = batchSize;
+    }
+
     showQuizQuestion();
+
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
 }
