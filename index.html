@@ -4185,14 +4185,20 @@ prevBtn.addEventListener("click", () => {
         }
     }
 
-    // 戻ったときにUIをリセット（「答えを見る」を再表示）
+        // 戻ったときにUIをリセット（「答えを見る」を再表示）
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
     enText.style.display = "none";
     kanaText.style.display = "none";
-    prevBtn.style.visibility = "hidden";
 
+    // 追加：戻った先が1問目でない限り、ボタンを隠さない
+    if (isReviewMode) {
+        prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
+    } else {
+        prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
+    }
+    prevBtn.style.display = "inline-block";
 });
 
 
