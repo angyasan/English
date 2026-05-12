@@ -4282,6 +4282,7 @@ nextBtn.addEventListener("click", () => {
   // 判定を stepCounter に変更
   if (stepCounter >= batchSize && currentBatchWrong.length > 0) {
     stepCounter = 0; // リセット
+  } // ← これを足す
 
 
   // 10問ごとの復習チェック
@@ -4377,6 +4378,7 @@ wrongBtn.addEventListener("click", () => {
     // 判定を stepCounter に変更
     if (stepCounter >= batchSize) {
         stepCounter = 0; // リセット
+    } // ← これを足す
 
 
     wrongBtn.style.display = "none";
