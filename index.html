@@ -3847,6 +3847,7 @@ voiceBtn.addEventListener("click", () => {
   // 🔽 ここに追加
   document.getElementById("batchSizeSelect").addEventListener("change", (e) => {
     batchSize = parseInt(e.target.value);
+    stepCounter = 0; // 設定を変えたらそこからカウントし直し
     autoSaveQuizState(); 
   });
 
@@ -4279,30 +4280,24 @@ nextBtn.addEventListener("click", () => {
   stepCounter++; // 追加
   autoSaveQuizState();
 
-  // 判定を stepCounter に変更
+    // 判定を stepCounter だけに統一（古い % 判定は削除）
   if (stepCounter >= batchSize && currentBatchWrong.length > 0) {
-    stepCounter = 0; // リセット
-  } // ← これを足す
-
-
-  // 10問ごとの復習チェック
-  if (currentQuizIndex % batchSize === 0 && currentBatchWrong.length > 0) {
+    stepCounter = 0; 
     reviewList = shuffleArray([...currentBatchWrong]);
     currentBatchWrong = [];
     reviewWrongList = []; 
     isReviewMode = true;
-        reviewIndex = 0;
-    // --- 置き換え箇所 ---
+    reviewIndex = 0;
+
     const notice = document.getElementById("reviewNotice");
     notice.style.display = "flex";
     document.getElementById("startReviewConfirm").onclick = () => {
       notice.style.display = "none";
       showReviewQuestion();
     };
-    // ------------------
     return;
-
   }
+
 
   nextBtn.style.display = "none";
   wrongBtn.style.display = "none";
@@ -4375,36 +4370,26 @@ wrongBtn.addEventListener("click", () => {
 
     autoSaveQuizState();
 
-    // 判定を stepCounter に変更
+        // 判定を stepCounter だけに統一
     if (stepCounter >= batchSize) {
-        stepCounter = 0; // リセット
-    } // ← これを足す
-
-
-    wrongBtn.style.display = "none";
-    nextBtn.style.display = "none";
-
-    // 🔥 10問ごとの復習
-    if (currentQuizIndex % batchSize === 0) {
+        stepCounter = 0; 
         if (currentBatchWrong.length > 0) {
             const review = shuffleArray([...currentBatchWrong]);
-
-            // 👉 今の位置に差し込む
             quizList.splice(currentQuizIndex, 0, ...review);
+            currentBatchWrong = [];
 
-                        currentBatchWrong = [];
-
-            // --- 置き換え箇所 ---
             const notice = document.getElementById("reviewNotice");
             notice.style.display = "flex";
             document.getElementById("startReviewConfirm").onclick = () => {
                 notice.style.display = "none";
                 showReviewQuestion();
             };
-            // ------------------
         }
-
     }
+
+    wrongBtn.style.display = "none";
+    nextBtn.style.display = "none";
+
 
     // 終了判定
     if (currentQuizIndex >= quizList.length) {
