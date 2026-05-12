@@ -4004,6 +4004,8 @@ function showReviewQuestion() {
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
+  wrongBtn.style.display = "none"; // 不正解ボタンを隠す
+
 
   // --- ここが追加部分 ---
 if (quizDirection === "E→J") {
