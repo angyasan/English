@@ -3837,10 +3837,12 @@ voiceBtn.addEventListener("click", () => {
   let quizDirection = "J→E";
   let currentBatchWrong = [];
   let batchSize = 10;
+  let stepCounter = 0;
   let isReviewMode = false;
   let reviewList = [];
   let reviewIndex = 0;
     let reviewWrongList = [];
+    
 
   // 🔽 ここに追加
   document.getElementById("batchSizeSelect").addEventListener("change", (e) => {
@@ -4122,6 +4124,8 @@ function startQuiz(type){
   // --- 以下、新しく始めるための初期化 ---
   quizList = shuffleArray([...currentList[type]]);
   currentQuizIndex = 0;
+    stepCounter = 0;
+
   
   // 復習関連の状態もリセット
   isReviewMode = false;
@@ -4269,11 +4273,14 @@ nextBtn.addEventListener("click", () => {
     if (indexInBatch > -1) currentBatchWrong.splice(indexInBatch, 1);
   }
 
-  currentQuizIndex++;
+    currentQuizIndex++;
   autoSaveQuizState();
 
-  // 10問ごとの復習チェック
-  if (currentQuizIndex % batchSize === 0 && currentBatchWrong.length > 0) {
+  // 🔽 ここを書き換え：ポイントを1増やして、設定数に達したかチェック
+  stepCounter++; 
+  if (stepCounter >= batchSize && currentBatchWrong.length > 0) {
+    stepCounter = 0; // ポイントをリセット
+
     reviewList = shuffleArray([...currentBatchWrong]);
     currentBatchWrong = [];
     reviewWrongList = []; 
@@ -4358,13 +4365,21 @@ wrongBtn.addEventListener("click", () => {
     // 🔥 次へ進む（これがないと進まない）
     currentQuizIndex++;
 
-    autoSaveQuizState();
+        autoSaveQuizState();
+
+    // 🔽 ロック用のコードを追加
+    const bSelect = document.getElementById("batchSizeSelect");
+    bSelect.disabled = true;
+    bSelect.style.background = "#eee";
 
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 
-    // 🔥 10問ごとの復習
-    if (currentQuizIndex % batchSize === 0) {
+    // 🔽 書き換え：ポイントを1増やしてチェック
+    stepCounter++;
+    if (stepCounter >= batchSize) {
+        stepCounter = 0; // ポイントをリセット
+
         if (currentBatchWrong.length > 0) {
             const review = shuffleArray([...currentBatchWrong]);
 
