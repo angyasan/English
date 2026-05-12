@@ -4342,22 +4342,17 @@ nextBtn.addEventListener("click", () => {
 
 
 wrongBtn.addEventListener("click", () => {
-  // 🔽 ここに追加（間違えた瞬間にロック）
   const bSelect = document.getElementById("batchSizeSelect");
   bSelect.disabled = true;
   bSelect.style.background = "#eee";
   
-  // ⭐ 復習モード中の処理
-
   if (isReviewMode) {
     const currentItem = reviewList[reviewIndex];
     if (!reviewWrongList.includes(currentItem)) {
       reviewWrongList.push(currentItem);
     }
     reviewIndex++;
-
     if (reviewIndex >= reviewList.length) {
-      // 間違いがある場合：必ず「再復習スタート」を出す
       const reNotice = document.getElementById("reReviewNotice");
       reNotice.style.display = "flex";
       document.getElementById("startReReviewConfirm").onclick = () => {
@@ -4373,48 +4368,55 @@ wrongBtn.addEventListener("click", () => {
     return;
   }
 
-    const currentItem = quizList[currentQuizIndex];
+  const currentItem = quizList[currentQuizIndex];
+  if (!currentBatchWrong.includes(currentItem)) {
+      currentBatchWrong.push(currentItem);
+  }
 
-    if (!currentBatchWrong.includes(currentItem)) {
-        currentBatchWrong.push(currentItem);
-    }
+  currentQuizIndex++;
+  stepCounter++; 
+  autoSaveQuizState();
 
-    // 🔥 次へ進む（これがないと進まない）
-        // 🔥 次へ進む
-    currentQuizIndex++;
-    stepCounter++; // 追加
+  if (stepCounter >= batchSize) {
+      stepCounter = 0; 
+      if (currentBatchWrong.length > 0) {
+          reviewList = shuffleArray([...currentBatchWrong]);
+          currentBatchWrong = [];
+          reviewWrongList = []; 
+          isReviewMode = true;
+          reviewIndex = 0;
 
-    autoSaveQuizState();
+          const notice = document.getElementById("reviewNotice");
+          notice.style.display = "flex";
+          document.getElementById("startReviewConfirm").onclick = () => {
+              notice.style.display = "none";
+              showReviewQuestion();
+          };
+          
+          wrongBtn.style.display = "none";
+          nextBtn.style.display = "none";
+          return; 
+      }
+  }
 
-        // 判定を stepCounter だけに統一
-    if (stepCounter >= batchSize) {
-        stepCounter = 0; 
-        if (currentBatchWrong.length > 0) {
-            const review = shuffleArray([...currentBatchWrong]);
-            quizList.splice(currentQuizIndex, 0, ...review);
-            currentBatchWrong = [];
+  if (currentQuizIndex >= quizList.length) {
+      if (wrongQuizList.length > 0) {
+          quizList = shuffleArray([...wrongQuizList]);
+          wrongQuizList = [];
+          currentQuizIndex = 0;
+          alert("不正解だけもう一回！");
+          showQuizQuestion();
+      } else {
+          alert("全問終了！");
+          quizOverlay.style.display = "none";
+          localStorage.removeItem("savedQuiz");
+      }
+      return;
+  }
 
-            const notice = document.getElementById("reviewNotice");
-            notice.style.display = "flex";
-            document.getElementById("startReviewConfirm").onclick = () => {
-                notice.style.display = "none";
-                showReviewQuestion();
-            };
-        }
-    }
-
-    wrongBtn.style.display = "none";
-    nextBtn.style.display = "none";
-
-
-    // 終了判定
-    if (currentQuizIndex >= quizList.length) {
-        alert("全問終了！");
-        quizOverlay.style.display = "none";
-        return;
-    }
-
-    showQuizQuestion();
+  wrongBtn.style.display = "none";
+  nextBtn.style.display = "none";
+  showQuizQuestion();
 });
 
 let quitPressTimer;
