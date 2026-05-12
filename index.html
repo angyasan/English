@@ -3841,10 +3841,13 @@ voiceBtn.addEventListener("click", () => {
   let reviewList = [];
   let reviewIndex = 0;
     let reviewWrongList = [];
+    let stepCounter = 0;
+
 
   // 🔽 ここに追加
   document.getElementById("batchSizeSelect").addEventListener("change", (e) => {
     batchSize = parseInt(e.target.value);
+    stepCounter = 0; // 設定を変えたらそこからカウントし直し
     autoSaveQuizState(); 
   });
 
@@ -4127,6 +4130,9 @@ function startQuiz(type){
   isReviewMode = false;
   currentBatchWrong = [];
   reviewWrongList = [];
+  stepCounter = 0;
+
+  
 
   if (quizList.length === 0) { alert("問題がありません"); return; }
   
@@ -4241,6 +4247,7 @@ nextBtn.addEventListener("click", () => {
         finishNotice.style.display = "flex";
                 document.getElementById("finishReviewConfirm").onclick = () => {
           finishNotice.style.display = "none";
+          stepCounter = 0;
           showQuizQuestion();
 
           // 🔽 ここに追加（復習直後だけ変更を許可）
@@ -4269,27 +4276,28 @@ nextBtn.addEventListener("click", () => {
     if (indexInBatch > -1) currentBatchWrong.splice(indexInBatch, 1);
   }
 
-  currentQuizIndex++;
+    currentQuizIndex++;
+  stepCounter++; // 追加
   autoSaveQuizState();
 
-  // 10問ごとの復習チェック
-  if (currentQuizIndex % batchSize === 0 && currentBatchWrong.length > 0) {
+    // 判定を stepCounter だけに統一（古い % 判定は削除）
+  if (stepCounter >= batchSize && currentBatchWrong.length > 0) {
+    stepCounter = 0; 
     reviewList = shuffleArray([...currentBatchWrong]);
     currentBatchWrong = [];
     reviewWrongList = []; 
     isReviewMode = true;
-        reviewIndex = 0;
-    // --- 置き換え箇所 ---
+    reviewIndex = 0;
+
     const notice = document.getElementById("reviewNotice");
     notice.style.display = "flex";
     document.getElementById("startReviewConfirm").onclick = () => {
       notice.style.display = "none";
       showReviewQuestion();
     };
-    // ------------------
     return;
-
   }
+
 
   nextBtn.style.display = "none";
   wrongBtn.style.display = "none";
@@ -4356,34 +4364,32 @@ wrongBtn.addEventListener("click", () => {
     }
 
     // 🔥 次へ進む（これがないと進まない）
+        // 🔥 次へ進む
     currentQuizIndex++;
+    stepCounter++; // 追加
 
     autoSaveQuizState();
 
-    wrongBtn.style.display = "none";
-    nextBtn.style.display = "none";
-
-    // 🔥 10問ごとの復習
-    if (currentQuizIndex % batchSize === 0) {
+        // 判定を stepCounter だけに統一
+    if (stepCounter >= batchSize) {
+        stepCounter = 0; 
         if (currentBatchWrong.length > 0) {
             const review = shuffleArray([...currentBatchWrong]);
-
-            // 👉 今の位置に差し込む
             quizList.splice(currentQuizIndex, 0, ...review);
+            currentBatchWrong = [];
 
-                        currentBatchWrong = [];
-
-            // --- 置き換え箇所 ---
             const notice = document.getElementById("reviewNotice");
             notice.style.display = "flex";
             document.getElementById("startReviewConfirm").onclick = () => {
                 notice.style.display = "none";
                 showReviewQuestion();
             };
-            // ------------------
         }
-
     }
+
+    wrongBtn.style.display = "none";
+    nextBtn.style.display = "none";
+
 
     // 終了判定
     if (currentQuizIndex >= quizList.length) {
@@ -4449,6 +4455,7 @@ function autoSaveQuizState() {
         quizDirection,
         currentType,
         currentQuizIndex,
+        stepCounter,
         quizList,
         wrongQuizList,
         batchSize // 🔽 これを追加
@@ -4490,6 +4497,7 @@ function resumeQuiz() {
     currentType = state.currentType;
         quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
+    stepCounter = state.stepCounter || 0;
     wrongQuizList = state.wrongQuizList || []; 
 
     // 🔽 保存された値を復元し、プルダウンの見た目も合わせる
