@@ -4182,6 +4182,8 @@ prevBtn.addEventListener("click", () => {
     wrongBtn.style.display = "none";
     enText.style.display = "none";
     kanaText.style.display = "none";
+    prevBtn.style.visibility = "hidden";
+
 });
 
 
@@ -4196,16 +4198,20 @@ showAnswerBtn.addEventListener("click", () => {
 
     kanaText.style.display = "block";
 
-    showAnswerBtn.style.display = "none";
-    nextBtn.style.display = "inline-block";
-    wrongBtn.style.display = "inline-block";
+            showAnswerBtn.style.display = "none";
 
-// 通常ならIndex、復習ならreviewIndexを見てボタンを出すか決める
-if (isReviewMode) {
-    prevBtn.style.display = reviewIndex > 0 ? "inline-block" : "none";
-} else {
-    prevBtn.style.display = currentQuizIndex > 0 ? "inline-block" : "none";
-}
+    // 先に「前へ」の場所を確保しつつ、透明度だけで表示・非表示を切り替える
+    if (isReviewMode) {
+        prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
+    } else {
+        prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
+    }
+    prevBtn.style.display = "inline-block"; 
+
+    // その後に「不正解」と「次へ」を出すことで、位置が固定される
+    wrongBtn.style.display = "inline-block";
+    nextBtn.style.display = "inline-block";
+
 
 
 
