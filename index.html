@@ -4083,96 +4083,106 @@ function playTTS(word) {
   }
 
 function showReviewQuestion() {
-    const item = reviewList[reviewIndex];
+    // reviewListに入っている「番号」を使って、現在のカテゴリの最新データを直接見に行く
+    const dataIndex = reviewList[reviewIndex];
+    const item = currentList[currentType][dataIndex];
 
- jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
+    // 万が一、クイズ中にデータが削除されて存在しない場合はスキップ
+    if (!item) {
+        reviewIndex++;
+        if (reviewIndex >= reviewList.length) { isReviewMode = false; showQuizQuestion(); }
+        else { showReviewQuestion(); }
+        return;
+    }
+
+    jpText.style.color = "orange"; 
 
     if (quizDirection === "J→E") {
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-} else {
-    jpText.textContent = item.en;
-    enText.textContent = item.jp;
+        jpText.textContent = item.jp;
+        enText.textContent = item.en;
+    } else {
+        jpText.textContent = item.en;
+        enText.textContent = item.jp;
+    }
+
+    kanaText.textContent = item.reading || "";
+    enText.style.display = "none";
+    kanaText.style.display = "none";
+    quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+    showAnswerBtn.style.display = "inline-block";
+    nextBtn.style.display = "none";
+    wrongBtn.style.display = "none";
+    prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
+    prevBtn.style.display = "inline-block";
 }
 
+function showQuizQuestion() {
+    // クイズ中に新しい単語が追加されていた場合、quizListにその新しい番号(インデックス)を自動追記する
+    while (quizList.length < currentList[currentType].length) {
+        const newIndex = quizList.length;
+        // 新しい単語をランダムな位置に滑り込ませる
+        const insertPos = Math.floor(Math.random() * (quizList.length + 1));
+        quizList.splice(insertPos, 0, newIndex);
+    }
+
+    // quizListに入っている「番号」を使って、大元から最新データを取得
+    const dataIndex = quizList[currentQuizIndex];
+    const item = currentList[currentType][dataIndex];
+
+    jpText.style.color = ""; 
+  
+    if (quizDirection === "J→E") {
+        jpText.textContent = item.jp;
+        enText.textContent = item.en;
+    } else { 
+        jpText.textContent = item.en;
+        enText.textContent = item.jp;
+    }
     kanaText.textContent = item.reading || "";
 
     enText.style.display = "none";
     kanaText.style.display = "none";
 
-    quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
-
+    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
-    wrongBtn.style.display = "none";
-    
-        // 復習モードでも1問目以外なら「前へ」を出す
-    prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
+    wrongBtn.style.display = "none"; 
+    prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
     prevBtn.style.display = "inline-block";
 
+    if (quizDirection === "E→J") {
+        enText.onclick = () => playSound(currentList[currentType][quizList[currentQuizIndex]].en);
+        jpText.onclick = null;
+        jpText.style.cursor = "default";
+    } else { 
+        enText.onclick = null;
+        jpText.onclick = null;
+        jpText.style.cursor = "pointer";
+    }
+
+    let existingBtn = document.getElementById("quizExampleBtn");
+    if(existingBtn) existingBtn.remove();
+
+    if(currentType === "others") {
+        const exampleBtn = document.createElement("button");
+        exampleBtn.id = "quizExampleBtn";
+        exampleBtn.className = "control-btn";
+        exampleBtn.textContent = "例文";
+        exampleBtn.style.marginLeft = "8px";
+
+        exampleBtn.onclick = () => {
+            // 常に最新のitemを参照してモーダルを開く
+            const currentItem = currentList[currentType][quizList[currentQuizIndex]];
+            if(currentItem && currentItem.example && currentItem.exampleJp){
+                showCustomExampleModal(currentItem.exampleJp, currentItem.example, currentItem.jp, currentItem.en);
+            } else if (currentItem) {
+                showCustomExampleModal([], [], currentItem.jp, currentItem.en);
+            }
+        };
+        quizContainer.appendChild(exampleBtn);
+    }
 }
 
-  function showQuizQuestion() {
-  const item = quizList[currentQuizIndex];
-  jpText.style.color = ""; // ← 追加（通常に戻す）
-  
-  if (quizDirection === "J→E") {
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-  } else { // E→J
-    jpText.textContent = item.en;
-    enText.textContent = item.jp;
-  }
-  kanaText.textContent = item.reading || "";
-
-  enText.style.display = "none";
-  kanaText.style.display = "none";
-
-  quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-  showAnswerBtn.style.display = "inline-block";
-  nextBtn.style.display = "none";
-  wrongBtn.style.display = "none"; // 不正解ボタンを隠す
-  // 1問目以外なら「前へ」を常に出しておく（場所は常に確保）
-  prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
-  prevBtn.style.display = "inline-block";
-
-
-
-  // --- ここが追加部分 ---
-if (quizDirection === "E→J") {
-    // 英語を常に再生可能に
-    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-    // 日本語はクリック無効化
-    jpText.onclick = null;
-    jpText.style.cursor = "default";
-} else { // J→E
-    enText.onclick = null;
-    jpText.onclick = null;
-    jpText.style.cursor = "pointer";
-}
-
-  // 例文ボタンの処理は元と同じ
-  let existingBtn = document.getElementById("quizExampleBtn");
-  if(existingBtn) existingBtn.remove();
-
-  if(currentType === "others") {
-    const exampleBtn = document.createElement("button");
-    exampleBtn.id = "quizExampleBtn";
-    exampleBtn.className = "control-btn";
-    exampleBtn.textContent = "例文";
-    exampleBtn.style.marginLeft = "8px";
-
-    exampleBtn.onclick = () => {
-      if(item.example && item.exampleJp){
-        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-      } else {
-        showCustomExampleModal([], [], item.jp, item.en);
-      }
-    };
-
-    quizContainer.appendChild(exampleBtn);
-  }
-}
 
 function setActiveTab(type) {
   tabButtons.forEach(btn => {
@@ -4255,9 +4265,12 @@ function startQuiz(type){
     }
   }
 
-  // --- 以下、新しく始めるための初期化 ---
-  quizList = shuffleArray([...currentList[type]]);
+   // --- 以下、新しく始めるための初期化 ---
+  // 単語データそのものではなく、0, 1, 2... というデータの「位置（番号）」の配列を作ってシャッフルする
+  const indexArray = Array.from({ length: currentList[type].length }, (_, i) => i);
+  quizList = shuffleArray(indexArray);
   currentQuizIndex = 0;
+
   
   // 復習関連の状態もリセット
   isReviewMode = false;
