@@ -4083,43 +4083,79 @@ function playTTS(word) {
   }
 
 function showReviewQuestion() {
-    const item = reviewList[reviewIndex];
+    // 復習リストの持ち方を自動判別して常に最新の単語データを大元に見に行く
+    const rawData = reviewList[reviewIndex];
+    let item = rawData;
+    if (typeof rawData === "number") {
+        item = currentList[currentType][rawData];
+    } else if (rawData && typeof rawData === "object" && quizList.length > 0 && typeof quizList[0] === "number") {
+        // 通常クイズがインデックス管理に切り替わっている場合のケア
+        const foundIndex = currentList[currentType].findIndex(x => x.en === rawData.en);
+        if (foundIndex > -1) item = currentList[currentType][foundIndex];
+    }
 
- jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
+    // 万が一データが存在しない場合はスキップ
+    if (!item) {
+        reviewIndex++;
+        if (reviewIndex >= reviewList.length) { 
+            isReviewMode = false; 
+            showQuizQuestion(); 
+        } else { 
+            showReviewQuestion(); 
+        }
+        return;
+    }
+
+    jpText.style.color = "orange"; 
 
     if (quizDirection === "J→E") {
-    jpText.textContent = item.jp;
-    enText.textContent = item.en;
-} else {
-    jpText.textContent = item.en;
-    enText.textContent = item.jp;
-}
+        jpText.textContent = item.jp;
+        enText.textContent = item.en;
+    } else {
+        jpText.textContent = item.en;
+        enText.textContent = item.jp;
+    }
 
     kanaText.textContent = item.reading || "";
-
     enText.style.display = "none";
     kanaText.style.display = "none";
 
     quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
-
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
-    
-        // 復習モードでも1問目以外なら「前へ」を出す
     prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
     prevBtn.style.display = "inline-block";
-
 }
 
-  function showQuizQuestion() {
-  const item = quizList[currentQuizIndex];
-  jpText.style.color = ""; // ← 追加（通常に戻す）
+
+    function showQuizQuestion() {
+  // クイズプレイ中に新しく単語が追加されていた場合、quizListにその新しい番号(インデックス)を自動追記する
+  if (quizList.length > 0 && typeof quizList[0] === "number") {
+    while (quizList.length < currentList[currentType].length) {
+      const newIndex = quizList.length;
+      const insertPos = Math.floor(Math.random() * (quizList.length + 1));
+      quizList.splice(insertPos, 0, newIndex);
+    }
+  }
+
+  // リストの持ち方（データそのものか、番号か）を自動判別して常に最新の単語データを参照する
+  const rawData = quizList[currentQuizIndex];
+  const item = (typeof rawData === "number") ? currentList[currentType][rawData] : rawData;
+
+  // 万が一、データが削除されるなどして存在しない場合は次の問題へスキップ
+  if (!item) {
+    currentQuizIndex++;
+    if (currentQuizIndex >= quizList.length) { finishQuiz(); } else { showQuizQuestion(); }
+    return;
+  }
+
+  jpText.style.color = ""; 
   
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
     enText.textContent = item.en;
-  } else { // E→J
+  } else { 
     jpText.textContent = item.en;
     enText.textContent = item.jp;
   }
@@ -4131,27 +4167,20 @@ function showReviewQuestion() {
   quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
   showAnswerBtn.style.display = "inline-block";
   nextBtn.style.display = "none";
-  wrongBtn.style.display = "none"; // 不正解ボタンを隠す
-  // 1問目以外なら「前へ」を常に出しておく（場所は常に確保）
+  wrongBtn.style.display = "none"; 
   prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
   prevBtn.style.display = "inline-block";
 
-
-
-  // --- ここが追加部分 ---
-if (quizDirection === "E→J") {
-    // 英語を常に再生可能に
-    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-    // 日本語はクリック無効化
+  if (quizDirection === "E→J") {
+    enText.onclick = () => playSound(item.en);
     jpText.onclick = null;
     jpText.style.cursor = "default";
-} else { // J→E
+  } else { 
     enText.onclick = null;
     jpText.onclick = null;
     jpText.style.cursor = "pointer";
-}
+  }
 
-  // 例文ボタンの処理は元と同じ
   let existingBtn = document.getElementById("quizExampleBtn");
   if(existingBtn) existingBtn.remove();
 
@@ -4163,16 +4192,20 @@ if (quizDirection === "E→J") {
     exampleBtn.style.marginLeft = "8px";
 
     exampleBtn.onclick = () => {
-      if(item.example && item.exampleJp){
-        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
-      } else {
-        showCustomExampleModal([], [], item.jp, item.en);
+      // 開いた瞬間の最新のデータを再取得して表示
+      const currentRaw = quizList[currentQuizIndex];
+      const currentItem = (typeof currentRaw === "number") ? currentList[currentType][currentRaw] : currentRaw;
+      if(currentItem && currentItem.example && currentItem.exampleJp){
+        showCustomExampleModal(currentItem.exampleJp, currentItem.example, currentItem.jp, currentItem.en);
+      } else if (currentItem) {
+        showCustomExampleModal([], [], currentItem.jp, currentItem.en);
       }
     };
 
     quizContainer.appendChild(exampleBtn);
   }
 }
+
 
 function setActiveTab(type) {
   tabButtons.forEach(btn => {
@@ -4256,8 +4289,11 @@ function startQuiz(type){
   }
 
   // --- 以下、新しく始めるための初期化 ---
-  quizList = shuffleArray([...currentList[type]]);
+  // 単語データそのものではなく、大元データの「番号」の配列を作ってシャッフルする
+  const indexArray = Array.from({ length: currentList[type].length }, (_, i) => i);
+  quizList = shuffleArray(indexArray);
   currentQuizIndex = 0;
+
   
   // 復習関連の状態もリセット
   isReviewMode = false;
