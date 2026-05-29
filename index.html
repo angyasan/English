@@ -4083,112 +4083,96 @@ function playTTS(word) {
   }
 
 function showReviewQuestion() {
-    // reviewListに入っている「番号」を使って最新データを取得
-    const dataIndex = reviewList[reviewIndex];
-    const item = currentList[currentType][dataIndex];
+    const item = reviewList[reviewIndex];
 
-    // 万が一データが存在しない場合はスキップ
-    if (!item) {
-        reviewIndex++;
-        if (reviewIndex >= reviewList.length) { 
-            isReviewMode = false; 
-            showQuizQuestion(); 
-        } else { 
-            showReviewQuestion(); 
-        }
-        return;
-    }
-
-    jpText.style.color = "orange"; 
+ jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
 
     if (quizDirection === "J→E") {
-        jpText.textContent = item.jp;
-        enText.textContent = item.en;
-    } else {
-        jpText.textContent = item.en;
-        enText.textContent = item.jp;
-    }
+    jpText.textContent = item.jp;
+    enText.textContent = item.en;
+} else {
+    jpText.textContent = item.en;
+    enText.textContent = item.jp;
+}
 
     kanaText.textContent = item.reading || "";
+
     enText.style.display = "none";
     kanaText.style.display = "none";
-    
-    // 正しい復習問題数を表示
+
     quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
+    
+        // 復習モードでも1問目以外なら「前へ」を出す
     prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
     prevBtn.style.display = "inline-block";
+
 }
 
-function showQuizQuestion() {
-    // 通常モード中のみ、新しく追加された単語をquizListに自動追記する
-    if (!isReviewMode) {
-        while (quizList.length < currentList[currentType].length) {
-            const newIndex = quizList.length;
-            const insertPos = Math.floor(Math.random() * (quizList.length + 1));
-            quizList.splice(insertPos, 0, newIndex);
-        }
-    }
-
-    const dataIndex = quizList[currentQuizIndex];
-    const item = currentList[currentType][dataIndex];
-
-    jpText.style.color = ""; 
+  function showQuizQuestion() {
+  const item = quizList[currentQuizIndex];
+  jpText.style.color = ""; // ← 追加（通常に戻す）
   
-    if (quizDirection === "J→E") {
-        jpText.textContent = item.jp;
-        enText.textContent = item.en;
-    } else { 
-        jpText.textContent = item.en;
-        enText.textContent = item.jp;
-    }
-    kanaText.textContent = item.reading || "";
+  if (quizDirection === "J→E") {
+    jpText.textContent = item.jp;
+    enText.textContent = item.en;
+  } else { // E→J
+    jpText.textContent = item.en;
+    enText.textContent = item.jp;
+  }
+  kanaText.textContent = item.reading || "";
 
-    enText.style.display = "none";
-    kanaText.style.display = "none";
+  enText.style.display = "none";
+  kanaText.style.display = "none";
 
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
-    showAnswerBtn.style.display = "inline-block";
-    nextBtn.style.display = "none";
-    wrongBtn.style.display = "none"; 
-    prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
-    prevBtn.style.display = "inline-block";
+  quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+  showAnswerBtn.style.display = "inline-block";
+  nextBtn.style.display = "none";
+  wrongBtn.style.display = "none"; // 不正解ボタンを隠す
+  // 1問目以外なら「前へ」を常に出しておく（場所は常に確保）
+  prevBtn.style.visibility = currentQuizIndex > 0 ? "visible" : "hidden";
+  prevBtn.style.display = "inline-block";
 
-    if (quizDirection === "E→J") {
-        enText.onclick = () => playSound(currentList[currentType][quizList[currentQuizIndex]].en);
-        jpText.onclick = null;
-        jpText.style.cursor = "default";
-    } else { 
-        enText.onclick = null;
-        jpText.onclick = null;
-        jpText.style.cursor = "pointer";
-    }
 
-    let existingBtn = document.getElementById("quizExampleBtn");
-    if(existingBtn) existingBtn.remove();
 
-    if(currentType === "others" && item) {
-        const exampleBtn = document.createElement("button");
-        exampleBtn.id = "quizExampleBtn";
-        exampleBtn.className = "control-btn";
-        exampleBtn.textContent = "例文";
-        exampleBtn.style.marginLeft = "8px";
-
-        exampleBtn.onclick = () => {
-            const currentItem = currentList[currentType][quizList[currentQuizIndex]];
-            if(currentItem && currentItem.example && currentItem.exampleJp){
-                showCustomExampleModal(currentItem.exampleJp, currentItem.example, currentItem.jp, currentItem.en);
-            } else if (currentItem) {
-                showCustomExampleModal([], [], currentItem.jp, currentItem.en);
-            }
-        };
-        const qContainer = document.getElementById("quizContainer");
-        if (qContainer) qContainer.appendChild(exampleBtn);
-    }
+  // --- ここが追加部分 ---
+if (quizDirection === "E→J") {
+    // 英語を常に再生可能に
+    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+    // 日本語はクリック無効化
+    jpText.onclick = null;
+    jpText.style.cursor = "default";
+} else { // J→E
+    enText.onclick = null;
+    jpText.onclick = null;
+    jpText.style.cursor = "pointer";
 }
 
+  // 例文ボタンの処理は元と同じ
+  let existingBtn = document.getElementById("quizExampleBtn");
+  if(existingBtn) existingBtn.remove();
+
+  if(currentType === "others") {
+    const exampleBtn = document.createElement("button");
+    exampleBtn.id = "quizExampleBtn";
+    exampleBtn.className = "control-btn";
+    exampleBtn.textContent = "例文";
+    exampleBtn.style.marginLeft = "8px";
+
+    exampleBtn.onclick = () => {
+      if(item.example && item.exampleJp){
+        showCustomExampleModal(item.exampleJp, item.example, item.jp, item.en);
+      } else {
+        showCustomExampleModal([], [], item.jp, item.en);
+      }
+    };
+
+    quizContainer.appendChild(exampleBtn);
+  }
+}
 
 function setActiveTab(type) {
   tabButtons.forEach(btn => {
@@ -4239,6 +4223,7 @@ startQuizEnToJBtn.addEventListener("click", () => {
 });
 
 // 共通関数にしてコード重複回避（追加）
+// 共通関数にしてコード重複回避（追加）
 function startQuiz(type){
   // ✅ 保存データがあるかチェックして確認を出す
   const saved = localStorage.getItem("savedQuiz");
@@ -4270,41 +4255,51 @@ function startQuiz(type){
     }
   }
 
-   // --- 以下、新しく始めるための初期化 ---
-  const indexArray = Array.from({ length: currentList[type].length }, (_, i) => i);
-  quizList = shuffleArray(indexArray);
+  // --- 以下、新しく始めるための初期化 ---
+  quizList = shuffleArray([...currentList[type]]);
   currentQuizIndex = 0;
-
+  
+  // 復習関連の状態もリセット
   isReviewMode = false;
   currentBatchWrong = [];
   reviewWrongList = [];
   stepCounter = 0;
 
+  
+
   if (quizList.length === 0) { alert("問題がありません"); return; }
   
+  // 新しく始めるので、古い保存を一度クリアして最新の状態に
   localStorage.removeItem("savedQuiz");
   autoSaveQuizState(); 
 
-  showQuizQuestion();
+    showQuizQuestion();
   quizOverlay.style.display = "flex";
   
+  // 🔽 ここに追加（ロックを解除して明るくする）
   const bSelect = document.getElementById("batchSizeSelect");
-  if (bSelect) {
-    bSelect.disabled = false;
-    bSelect.style.background = "#f9f9f9";
-  }
+  bSelect.disabled = false;
+  bSelect.style.background = "#f9f9f9";
+
+  // 新しく始めたので「再開」ボタンは隠す
 
   resumeQuizBtn.style.display = "none";
 }
 
+
+
+
+
 // --- 前へボタン処理（修正版） ---
 prevBtn.addEventListener("click", () => {
     if (isReviewMode) {
+        // 復習モード中なら、復習のインデックスを戻す
         if (reviewIndex > 0) {
             reviewIndex--;
             showReviewQuestion();
         }
     } else {
+        // 通常モードなら、元の問題のインデックスを戻す
         if (currentQuizIndex > 0) {
             currentQuizIndex--;
             showQuizQuestion();
@@ -4312,12 +4307,14 @@ prevBtn.addEventListener("click", () => {
         }
     }
 
+        // 戻ったときにUIをリセット（「答えを見る」を再表示）
     showAnswerBtn.style.display = "inline-block";
     nextBtn.style.display = "none";
     wrongBtn.style.display = "none";
     enText.style.display = "none";
     kanaText.style.display = "none";
 
+    // 追加：戻った先が1問目でない限り、ボタンを隠さない
     if (isReviewMode) {
         prevBtn.style.visibility = reviewIndex > 0 ? "visible" : "hidden";
     } else {
@@ -4326,38 +4323,41 @@ prevBtn.addEventListener("click", () => {
     prevBtn.style.display = "inline-block";
 });
 
-// --- 答えボタン表示 ---
+
+// --- 答えボタン表示時に前へボタンも表示 ---
 showAnswerBtn.addEventListener("click", () => {
+    // 🔽 ここに追加（答えを見た瞬間にロック）
     const bSelect = document.getElementById("batchSizeSelect");
-    if (bSelect) {
-        bSelect.disabled = true;
-        bSelect.style.background = "#eee";
-    }
+    bSelect.disabled = true;
+    bSelect.style.background = "#eee";
 
     enText.style.display = "block";
-    kanaText.style.display = "block";
-    showAnswerBtn.style.display = "none";
 
+    kanaText.style.display = "block";
+
+                showAnswerBtn.style.display = "none";
+
+    // 不正解と次へを出すだけ（前への判定は showQuizQuestion 等で行い済み）
     wrongBtn.style.display = "inline-block";
     nextBtn.style.display = "inline-block";
 
-    if (quizDirection === "J→E") {
-        enText.onclick = () => playSound(enText.textContent);
-    } else {
-        enText.onclick = () => playSound(currentList[currentType][quizList[currentQuizIndex]].en);
-        jpText.onclick = null;
-    }
-});
 
+
+
+
+    if (quizDirection === "J→E") {
+    enText.onclick = () => playSound(enText.textContent);
+} else {
+    enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+    jpText.onclick = null;
+}
+});
 nextBtn.addEventListener("click", () => {
   if (isReviewMode) {
-    const currentItemNumber = reviewList[reviewIndex]; 
-    const indexInReviewWrong = reviewWrongList.indexOf(currentItemNumber);
-    if (indexInReviewWrong > -1) {
-      reviewWrongList.splice(indexInReviewWrong, 1);
-    }
+    const currentItem = reviewList[reviewIndex];
+    const indexInReviewWrong = reviewWrongList.indexOf(currentItem);
+    if (indexInReviewWrong > -1) reviewWrongList.splice(indexInReviewWrong, 1);
     reviewIndex++;
-
     if (reviewIndex >= reviewList.length) {
       if (reviewWrongList.length > 0) {
         document.getElementById("reReviewNotice").style.display = "flex";
@@ -4370,16 +4370,13 @@ nextBtn.addEventListener("click", () => {
         };
       } else {
         isReviewMode = false;
-        const finishNotice = document.getElementById("reviewFinishNotice");
-        if (finishNotice) {
-          finishNotice.style.display = "flex";
-          document.getElementById("finishReviewConfirm").onclick = () => {
-            finishNotice.style.display = "none";
-            advanceAfterReview();
-          };
-        } else {
-          advanceAfterReview();
-        }
+        document.getElementById("reviewFinishNotice").style.display = "flex";
+        document.getElementById("finishReviewConfirm").onclick = () => {
+          document.getElementById("reviewFinishNotice").style.display = "none";
+          currentQuizIndex++;
+          if (currentQuizIndex >= quizList.length) { finishQuiz(); } 
+          else { showQuizQuestion(); document.getElementById("batchSizeSelect").disabled = false; }
+        };
       }
       return;
     }
@@ -4387,13 +4384,11 @@ nextBtn.addEventListener("click", () => {
     return;
   }
 
-  // --- 通常モードの処理 ---
-  if (quizList[currentQuizIndex] !== undefined) {
-    const currentItemNumber = quizList[currentQuizIndex]; 
-    
-    const idxW = wrongQuizList.indexOf(currentItemNumber);
+  if (quizList[currentQuizIndex]) {
+    const currentItem = quizList[currentQuizIndex];
+    const idxW = wrongQuizList.indexOf(currentItem);
     if (idxW > -1) wrongQuizList.splice(idxW, 1);
-    const idxB = currentBatchWrong.indexOf(currentItemNumber);
+    const idxB = currentBatchWrong.indexOf(currentItem);
     if (idxB > -1) currentBatchWrong.splice(idxB, 1);
   }
 
@@ -4404,39 +4399,23 @@ nextBtn.addEventListener("click", () => {
 
   currentQuizIndex++;
   autoSaveQuizState();
-  if (currentQuizIndex >= quizList.length) { 
-    finishQuiz(); 
-  } else { 
-    nextBtn.style.display = "none"; 
-    wrongBtn.style.display = "none"; 
-    showQuizQuestion(); 
-  }
+  if (currentQuizIndex >= quizList.length) { finishQuiz(); } 
+  else { nextBtn.style.display = "none"; wrongBtn.style.display = "none"; showQuizQuestion(); }
 });
 
-function advanceAfterReview() {
-  currentQuizIndex++;
-  autoSaveQuizState();
-  if (currentQuizIndex >= quizList.length) {
-    finishQuiz();
-  } else {
-    showQuizQuestion();
-    const bSelect = document.getElementById("batchSizeSelect");
-    if (bSelect) {
-      bSelect.disabled = false;
-      bSelect.style.background = "#f9f9f9";
-    }
-  }
-}
+
+
+
+
+
 
 wrongBtn.addEventListener("click", () => {
   const bSelect = document.getElementById("batchSizeSelect");
-  if (bSelect) bSelect.disabled = true;
+  bSelect.disabled = true;
   
   if (isReviewMode) {
-    const currentItemNumber = reviewList[reviewIndex]; 
-    if (!reviewWrongList.includes(currentItemNumber)) {
-      reviewWrongList.push(currentItemNumber);
-    }
+    const currentItem = reviewList[reviewIndex];
+    if (!reviewWrongList.includes(currentItem)) reviewWrongList.push(currentItem);
     reviewIndex++;
     if (reviewIndex >= reviewList.length) {
       document.getElementById("reReviewNotice").style.display = "flex";
@@ -4453,14 +4432,9 @@ wrongBtn.addEventListener("click", () => {
     return;
   }
 
-  // --- 通常モードの処理 ---
-  const currentItemNumber = quizList[currentQuizIndex]; 
-  if (!currentBatchWrong.includes(currentItemNumber)) {
-    currentBatchWrong.push(currentItemNumber);
-  }
-  if (!wrongQuizList.includes(currentItemNumber)) {
-    wrongQuizList.push(currentItemNumber);
-  }
+  const currentItem = quizList[currentQuizIndex];
+  if (!currentBatchWrong.includes(currentItem)) currentBatchWrong.push(currentItem);
+  if (!wrongQuizList.includes(currentItem)) wrongQuizList.push(currentItem);
 
   if ((currentQuizIndex + 1) % batchSize === 0 && currentBatchWrong.length > 0) {
     startBatchReview();
@@ -4469,18 +4443,14 @@ wrongBtn.addEventListener("click", () => {
 
   currentQuizIndex++;
   autoSaveQuizState();
-  if (currentQuizIndex >= quizList.length) { 
-    finishQuiz(); 
-  } else { 
-    wrongBtn.style.display = "none"; 
-    nextBtn.style.display = "none"; 
-    showQuizQuestion(); 
-  }
+  if (currentQuizIndex >= quizList.length) { finishQuiz(); } 
+  else { wrongBtn.style.display = "none"; nextBtn.style.display = "none"; showQuizQuestion(); }
 });
 
 
 let quitPressTimer;
 
+// 長押し開始
 function startQuitPress() {
     quitPressTimer = setTimeout(() => {
         if (confirm("本当にクイズをやめますか？")) {
@@ -4488,29 +4458,36 @@ function startQuitPress() {
             localStorage.removeItem("savedQuiz");
             resumeQuizBtn.style.display = "none";
         }
-    }, 600); 
+    }, 600); // ← 長押し時間（0.6秒）
 }
 
+// 離したらキャンセル
 function cancelQuitPress() {
     clearTimeout(quitPressTimer);
 }
 
+// PC
 quitQuizBtn.addEventListener("mousedown", startQuitPress);
 quitQuizBtn.addEventListener("mouseup", cancelQuitPress);
 quitQuizBtn.addEventListener("mouseleave", cancelQuitPress);
 
+// スマホ
 quitQuizBtn.addEventListener("touchstart", startQuitPress);
 quitQuizBtn.addEventListener("touchend", cancelQuitPress);
 quitQuizBtn.addEventListener("touchcancel", cancelQuitPress);
 
+// --- 一時離脱 & 復帰機能 ---
 const resumeQuizBtn = document.createElement("button");
 resumeQuizBtn.id = "resumeQuizBtn";
 resumeQuizBtn.className = "control-btn";
 resumeQuizBtn.textContent = "続きから再開";
-resumeQuizBtn.style.display = "none"; 
+resumeQuizBtn.style.display = "none"; // 初期非表示
 resumeQuizBtn.style.marginLeft = "8px";
 document.getElementById("controls").appendChild(resumeQuizBtn);
 
+
+
+// 手動保存用（一時離脱ボタン用）
 function saveQuizState() {
     autoSaveQuizState();
     alert("クイズを一時離脱しました");
@@ -4518,27 +4495,27 @@ function saveQuizState() {
     resumeQuizBtn.style.display = "inline-block";
 }
 
+
+// --- ここから貼り付け ---
+
+// 復習モードを起動する関数
 function startBatchReview() {
     reviewList = shuffleArray([...currentBatchWrong]);
     currentBatchWrong = [];
     reviewWrongList = []; 
     isReviewMode = true;
     reviewIndex = 0;
-    
     const notice = document.getElementById("reviewNotice");
-    if (notice) {
-        notice.style.display = "flex";
-        document.getElementById("startReviewConfirm").onclick = () => {
-            notice.style.display = "none";
-            showReviewQuestion();
-        };
-    } else {
+    notice.style.display = "flex";
+    document.getElementById("startReviewConfirm").onclick = () => {
+        notice.style.display = "none";
         showReviewQuestion();
-    }
+    };
     wrongBtn.style.display = "none";
     nextBtn.style.display = "none";
 }
 
+// クイズが最後まで到達した時の処理をする関数
 function finishQuiz() {
     if (wrongQuizList.length > 0) {
         quizList = shuffleArray([...wrongQuizList]);
@@ -4553,6 +4530,7 @@ function finishQuiz() {
     }
 }
 
+// 状態を保存する関数（stepCounterを削除し整理したもの）
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
@@ -4566,77 +4544,89 @@ function autoSaveQuizState() {
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
+// --- ここまで貼り付け ---
+
+
+
+// クイズポップアップ内に一時離脱ボタンを追加
 let tempQuitBtn = document.getElementById("tempQuitBtn");
 if(!tempQuitBtn){
     const tempBtn = document.createElement("button");
     tempBtn.id = "tempQuitBtn";
-    tempBtn.className = "control-btn";
-    tempBtn.style.background = "#ff9800";
-    tempBtn.style.color = "white";
-    tempBtn.style.fontWeight = "bold";
-    tempBtn.style.border = "none";
-    tempBtn.style.boxShadow = "0 0 8px rgba(255,152,0,0.8)";
+tempBtn.className = "control-btn";
+tempBtn.style.background = "#ff9800";
+tempBtn.style.color = "white";
+tempBtn.style.fontWeight = "bold";
+tempBtn.style.border = "none";
+tempBtn.style.boxShadow = "0 0 8px rgba(255,152,0,0.8)";
     tempBtn.textContent = "一時離脱";
     tempBtn.style.position = "absolute";
     tempBtn.style.bottom = "10px";
     tempBtn.style.right = "10px";
     tempBtn.onclick = saveQuizState;
-    const qContainer = document.getElementById("quizContainer");
-    if (qContainer) qContainer.appendChild(tempBtn);
+    document.getElementById("quizContainer").appendChild(tempBtn);
 }
 
+// 復帰ボタン押下時
+// --- 復帰ボタン：クリックで再開、長押しでリセット ---
 let resumePressTimer;
 
+// 再開処理
 function resumeQuiz() {
     const saved = localStorage.getItem("savedQuiz");
     if(!saved) return;
     const state = JSON.parse(saved);
     quizDirection = state.quizDirection;
     currentType = state.currentType;
-    quizList = state.quizList;
+        quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
     stepCounter = state.stepCounter || 0;
     wrongQuizList = state.wrongQuizList || []; 
 
+    // 🔽 保存された値を復元し、プルダウンの見た目も合わせる
     if (state.batchSize) {
       batchSize = state.batchSize;
-      const bSelect = document.getElementById("batchSizeSelect");
-      if (bSelect) bSelect.value = batchSize;
+      document.getElementById("batchSizeSelect").value = batchSize;
     }
 
     showQuizQuestion();
+
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
 }
 
+// 長押し開始（0.8秒後にリセット確認）
 function startResumePress() {
     resumePressTimer = setTimeout(() => {
         if (confirm("【警告】進行中のクイズデータを完全に破棄しますか？")) {
             localStorage.removeItem("savedQuiz");
             resumeQuizBtn.style.display = "none";
+            // alertは削除しました
         }
     }, 800);
 }
 
+// タイマー解除
 function cancelResumePress() {
     clearTimeout(resumePressTimer);
 }
 
+// 短押しで再開
 resumeQuizBtn.addEventListener("click", () => {
     resumeQuiz();
 });
 
+// PC操作用
 resumeQuizBtn.addEventListener("mousedown", startResumePress);
 resumeQuizBtn.addEventListener("mouseup", cancelResumePress);
 resumeQuizBtn.addEventListener("mouseleave", cancelResumePress);
 
+// スマホ操作用
 resumeQuizBtn.addEventListener("touchstart", (e) => {
     startResumePress();
 });
 resumeQuizBtn.addEventListener("touchend", cancelResumePress);
 resumeQuizBtn.addEventListener("touchcancel", cancelResumePress);
-
-
 
 
 
