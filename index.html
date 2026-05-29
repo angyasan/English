@@ -4366,11 +4366,15 @@ showAnswerBtn.addEventListener("click", () => {
 }
 });
 nextBtn.addEventListener("click", () => {
+  // --- 復習モード中の処理 ---
   if (isReviewMode) {
-    const currentItem = reviewList[reviewIndex];
-    const indexInReviewWrong = reviewWrongList.indexOf(currentItem);
-    if (indexInReviewWrong > -1) reviewWrongList.splice(indexInReviewWrong, 1);
+    const currentItemNumber = reviewList[reviewIndex]; // 現在解いている問題の「番号」
+    const indexInReviewWrong = reviewWrongList.indexOf(currentItemNumber);
+    if (indexInReviewWrong > -1) {
+      reviewWrongList.splice(indexInReviewWrong, 1);
+    }
     reviewIndex++;
+
     if (reviewIndex >= reviewList.length) {
       if (reviewWrongList.length > 0) {
         document.getElementById("reReviewNotice").style.display = "flex";
@@ -4387,8 +4391,14 @@ nextBtn.addEventListener("click", () => {
         document.getElementById("finishReviewConfirm").onclick = () => {
           document.getElementById("reviewFinishNotice").style.display = "none";
           currentQuizIndex++;
-          if (currentQuizIndex >= quizList.length) { finishQuiz(); } 
-          else { showQuizQuestion(); document.getElementById("batchSizeSelect").disabled = false; }
+          if (currentQuizIndex >= quizList.length) {
+            finishQuiz();
+          } else {
+            showQuizQuestion();
+            const bSelect = document.getElementById("batchSizeSelect");
+            bSelect.disabled = false;
+            bSelect.style.background = "#f9f9f9";
+          }
         };
       }
       return;
@@ -4397,14 +4407,18 @@ nextBtn.addEventListener("click", () => {
     return;
   }
 
-  if (quizList[currentQuizIndex]) {
-    const currentItem = quizList[currentQuizIndex];
-    const idxW = wrongQuizList.indexOf(currentItem);
+  // --- 通常モードの処理 ---
+  if (quizList[currentQuizIndex] !== undefined) {
+    const currentItemNumber = quizList[currentQuizIndex]; // 現在の問題「番号」
+    
+    // 正解したので、ミス保存用リストからこの「番号」を消す
+    const idxW = wrongQuizList.indexOf(currentItemNumber);
     if (idxW > -1) wrongQuizList.splice(idxW, 1);
-    const idxB = currentBatchWrong.indexOf(currentItem);
+    const idxB = currentBatchWrong.indexOf(currentItemNumber);
     if (idxB > -1) currentBatchWrong.splice(idxB, 1);
   }
 
+  // 区切り判定：設定値の倍数、かつミスが1つでもある場合
   if ((currentQuizIndex + 1) % batchSize === 0 && currentBatchWrong.length > 0) {
     startBatchReview();
     return;
@@ -4412,23 +4426,25 @@ nextBtn.addEventListener("click", () => {
 
   currentQuizIndex++;
   autoSaveQuizState();
-  if (currentQuizIndex >= quizList.length) { finishQuiz(); } 
-  else { nextBtn.style.display = "none"; wrongBtn.style.display = "none"; showQuizQuestion(); }
+  if (currentQuizIndex >= quizList.length) { 
+    finishQuiz(); 
+  } else { 
+    nextBtn.style.display = "none"; 
+    wrongBtn.style.display = "none"; 
+    showQuizQuestion(); 
+  }
 });
-
-
-
-
-
-
 
 wrongBtn.addEventListener("click", () => {
   const bSelect = document.getElementById("batchSizeSelect");
   bSelect.disabled = true;
   
+  // --- 復習モード中の処理 ---
   if (isReviewMode) {
-    const currentItem = reviewList[reviewIndex];
-    if (!reviewWrongList.includes(currentItem)) reviewWrongList.push(currentItem);
+    const currentItemNumber = reviewList[reviewIndex]; // 現在の「番号」
+    if (!reviewWrongList.includes(currentItemNumber)) {
+      reviewWrongList.push(currentItemNumber);
+    }
     reviewIndex++;
     if (reviewIndex >= reviewList.length) {
       document.getElementById("reReviewNotice").style.display = "flex";
@@ -4445,10 +4461,16 @@ wrongBtn.addEventListener("click", () => {
     return;
   }
 
-  const currentItem = quizList[currentQuizIndex];
-  if (!currentBatchWrong.includes(currentItem)) currentBatchWrong.push(currentItem);
-  if (!wrongQuizList.includes(currentItem)) wrongQuizList.push(currentItem);
+  // --- 通常モードの処理 ---
+  const currentItemNumber = quizList[currentQuizIndex]; // 現在の「番号」
+  if (!currentBatchWrong.includes(currentItemNumber)) {
+    currentBatchWrong.push(currentItemNumber);
+  }
+  if (!wrongQuizList.includes(currentItemNumber)) {
+    wrongQuizList.push(currentItemNumber);
+  }
 
+  // 区切り判定：設定値の倍数、かつミスが1つでもある場合
   if ((currentQuizIndex + 1) % batchSize === 0 && currentBatchWrong.length > 0) {
     startBatchReview();
     return;
@@ -4456,8 +4478,13 @@ wrongBtn.addEventListener("click", () => {
 
   currentQuizIndex++;
   autoSaveQuizState();
-  if (currentQuizIndex >= quizList.length) { finishQuiz(); } 
-  else { wrongBtn.style.display = "none"; nextBtn.style.display = "none"; showQuizQuestion(); }
+  if (currentQuizIndex >= quizList.length) { 
+    finishQuiz(); 
+  } else { 
+    wrongBtn.style.display = "none"; 
+    nextBtn.style.display = "none"; 
+    showQuizQuestion(); 
+  }
 });
 
 
@@ -4498,8 +4525,6 @@ resumeQuizBtn.style.display = "none"; // 初期非表示
 resumeQuizBtn.style.marginLeft = "8px";
 document.getElementById("controls").appendChild(resumeQuizBtn);
 
-
-
 // 手動保存用（一時離脱ボタン用）
 function saveQuizState() {
     autoSaveQuizState();
@@ -4508,10 +4533,7 @@ function saveQuizState() {
     resumeQuizBtn.style.display = "inline-block";
 }
 
-
-// --- ここから貼り付け ---
-
-// 復習モードを起動する関数
+// 復習モードを起動する関数（インデックス管理用に修正）
 function startBatchReview() {
     reviewList = shuffleArray([...currentBatchWrong]);
     currentBatchWrong = [];
@@ -4528,7 +4550,7 @@ function startBatchReview() {
     nextBtn.style.display = "none";
 }
 
-// クイズが最後まで到達した時の処理をする関数
+// クイズが最後まで到達した時の処理をする関数（インデックス管理用に修正）
 function finishQuiz() {
     if (wrongQuizList.length > 0) {
         quizList = shuffleArray([...wrongQuizList]);
@@ -4543,7 +4565,7 @@ function finishQuiz() {
     }
 }
 
-// 状態を保存する関数（stepCounterを削除し整理したもの）
+// 状態を保存する関数
 function autoSaveQuizState() {
     if(!quizList || quizList.length === 0) return;
     const state = {
@@ -4557,21 +4579,17 @@ function autoSaveQuizState() {
     localStorage.setItem("savedQuiz", JSON.stringify(state));
 }
 
-// --- ここまで貼り付け ---
-
-
-
 // クイズポップアップ内に一時離脱ボタンを追加
 let tempQuitBtn = document.getElementById("tempQuitBtn");
 if(!tempQuitBtn){
     const tempBtn = document.createElement("button");
     tempBtn.id = "tempQuitBtn";
-tempBtn.className = "control-btn";
-tempBtn.style.background = "#ff9800";
-tempBtn.style.color = "white";
-tempBtn.style.fontWeight = "bold";
-tempBtn.style.border = "none";
-tempBtn.style.boxShadow = "0 0 8px rgba(255,152,0,0.8)";
+    tempBtn.className = "control-btn";
+    tempBtn.style.background = "#ff9800";
+    tempBtn.style.color = "white";
+    tempBtn.style.fontWeight = "bold";
+    tempBtn.style.border = "none";
+    tempBtn.style.boxShadow = "0 0 8px rgba(255,152,0,0.8)";
     tempBtn.textContent = "一時離脱";
     tempBtn.style.position = "absolute";
     tempBtn.style.bottom = "10px";
@@ -4581,65 +4599,56 @@ tempBtn.style.boxShadow = "0 0 8px rgba(255,152,0,0.8)";
 }
 
 // 復帰ボタン押下時
-// --- 復帰ボタン：クリックで再開、長押しでリセット ---
 let resumePressTimer;
 
-// 再開処理
 function resumeQuiz() {
     const saved = localStorage.getItem("savedQuiz");
     if(!saved) return;
     const state = JSON.parse(saved);
     quizDirection = state.quizDirection;
     currentType = state.currentType;
-        quizList = state.quizList;
+    quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
     stepCounter = state.stepCounter || 0;
     wrongQuizList = state.wrongQuizList || []; 
 
-    // 🔽 保存された値を復元し、プルダウンの見た目も合わせる
     if (state.batchSize) {
       batchSize = state.batchSize;
       document.getElementById("batchSizeSelect").value = batchSize;
     }
 
     showQuizQuestion();
-
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
 }
 
-// 長押し開始（0.8秒後にリセット確認）
 function startResumePress() {
     resumePressTimer = setTimeout(() => {
         if (confirm("【警告】進行中のクイズデータを完全に破棄しますか？")) {
             localStorage.removeItem("savedQuiz");
             resumeQuizBtn.style.display = "none";
-            // alertは削除しました
         }
     }, 800);
 }
 
-// タイマー解除
 function cancelResumePress() {
     clearTimeout(resumePressTimer);
 }
 
-// 短押しで再開
 resumeQuizBtn.addEventListener("click", () => {
     resumeQuiz();
 });
 
-// PC操作用
 resumeQuizBtn.addEventListener("mousedown", startResumePress);
 resumeQuizBtn.addEventListener("mouseup", cancelResumePress);
 resumeQuizBtn.addEventListener("mouseleave", cancelResumePress);
 
-// スマホ操作用
 resumeQuizBtn.addEventListener("touchstart", (e) => {
     startResumePress();
 });
 resumeQuizBtn.addEventListener("touchend", cancelResumePress);
 resumeQuizBtn.addEventListener("touchcancel", cancelResumePress);
+
 
 
 
