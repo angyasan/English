@@ -4083,12 +4083,9 @@ function playTTS(word) {
   }
 
 function showReviewQuestion() {
-    const listItem = reviewList[reviewIndex];
-    // ★復習画面でも同様に、表示する瞬間に大元から「最新のデータ」を探してくる
-    const item = currentList[currentType].find(x => x.en === listItem.en) || listItem;
+    const item = reviewList[reviewIndex];
 
-    jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
-
+ jpText.style.color = "orange"; // ← 追加（復習はオレンジ）
 
     if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
@@ -4115,25 +4112,9 @@ function showReviewQuestion() {
 
 }
 
-    function showQuizQuestion() {
-  // クイズプレイ中に新しい単語が追加されていたら、クイズリストの最後尾にも自動で追加する
-  if (quizList.length < currentList[currentType].length) {
-    currentList[currentType].forEach(originalItem => {
-      const alreadyInQuiz = quizList.some(q => q.en === originalItem.en);
-      if (!alreadyInQuiz) {
-        // まだクイズリストにない新しい単語があれば、ランダムな位置に滑り込ませる
-        const insertPos = Math.floor(Math.random() * (quizList.length + 1));
-        quizList.splice(insertPos, 0, { ...originalItem });
-      }
-    });
-  }
-
-  const listItem = quizList[currentQuizIndex];
-  // ★常に大元のリスト(currentList)から、同じ英語を持つ「最新のデータ」を探してきて身代わりに設定する
-  const item = currentList[currentType].find(x => x.en === listItem.en) || listItem;
-  
+  function showQuizQuestion() {
+  const item = quizList[currentQuizIndex];
   jpText.style.color = ""; // ← 追加（通常に戻す）
-
   
   if (quizDirection === "J→E") {
     jpText.textContent = item.jp;
