@@ -26,17 +26,18 @@ const CATEGORY_LIST = Object.keys(CATEGORY_MARKERS);
 
 // メモの行にこれらの日本語ラベルを単独で書くと、それ以降の単語は
 // 次に別のラベルが出てくるまでずっとそのカテゴリに確定される
+// 漢字・ひらがなどちらでもOK
 const JAPANESE_LABEL_TO_KEY = {
-  'その他': 'others',
-  '色々': 'various',
-  '動詞': 'verbs',
-  '名詞': 'nouns',
-  '副詞': 'adverbs',
-  '形容詞': 'adjectives',
-  '時制': 'tenses',
-  '前置詞': 'prepositions',
-  '接続詞': 'conjunctions',
-  'ダメー': 'nsfw',
+  'その他': 'others', 'そのた': 'others',
+  '色々': 'various', 'いろいろ': 'various',
+  '動詞': 'verbs', 'どうし': 'verbs',
+  '名詞': 'nouns', 'めいし': 'nouns',
+  '副詞': 'adverbs', 'ふくし': 'adverbs',
+  '形容詞': 'adjectives', 'けいようし': 'adjectives',
+  '時制': 'tenses', 'じせい': 'tenses',
+  '前置詞': 'prepositions', 'ぜんちし': 'prepositions',
+  '接続詞': 'conjunctions', 'せつぞくし': 'conjunctions',
+  'ダメー': 'nsfw', 'だめー': 'nsfw',
 };
 
 // このラベルを書くと、以降はまたAIの自動判定に戻る
