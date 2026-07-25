@@ -1,0 +1,34 @@
+name: Add vocab from inbox
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'inbox.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  process-inbox:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Process inbox
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/process-inbox.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "vocab-bot"
+          git config user.email "actions@github.com"
+          git add index.html inbox.txt
+          git diff --cached --quiet || git commit -m "単語帳を自動更新"
+          git push
