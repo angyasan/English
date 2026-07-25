@@ -51,6 +51,12 @@ async function classifyEntry(jp, en) {
     }),
   });
   const data = await res.json();
+
+  if (!res.ok) {
+    console.log(`APIエラー (status ${res.status}):`, JSON.stringify(data));
+    return { category: null, reading: '' };
+  }
+
   const text = data.content?.[0]?.text?.trim() || '{}';
   const cleaned = text.replace(/```json|```/g, '').trim();
   try {
