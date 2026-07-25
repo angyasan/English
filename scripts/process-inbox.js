@@ -86,19 +86,19 @@ async function main() {
     return;
   }
 
-  // 空行で区切られたブロック、各ブロックは「日本語」→「英語」の2行
-  const blocks = raw.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+  // 空行の有無に関わらず、中身のある行だけを取り出して2行ずつペアにする
+  const allLines = raw.split('\n').map(l => l.trim()).filter(Boolean);
   let html = fs.readFileSync(HTML_PATH, 'utf8');
   const processed = [];
   const skipped = [];
 
-  for (const block of blocks) {
-    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
-    if (lines.length < 2) {
-      skipped.push(`形式が不正: ${block}`);
-      continue;
-    }
-    const [jp, en] = lines;
+  if (allLines.length % 2 !== 0) {
+    skipped.push(`行数が奇数(${allLines.length}行)のため最後の1行を無視します: ${allLines[allLines.length - 1]}`);
+  }
+
+  for (let i = 0; i + 1 < allLines.length; i += 2) {
+    const jp = allLines[i];
+    const en = allLines[i + 1];
 
     const { category, reading } = await classifyEntry(jp, en);
     if (!category) {
