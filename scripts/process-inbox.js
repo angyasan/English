@@ -24,8 +24,8 @@ const CATEGORY_MARKERS = {
 
 const CATEGORY_LIST = Object.keys(CATEGORY_MARKERS);
 
-// メモの1行目にこれらの日本語ラベルを書くと、AI判定を経由せず
-// そのカテゴリに確定させられる（例: "動詞" と書いてから jp/en の2行）
+// メモの行にこれらの日本語ラベルを単独で書くと、それ以降の単語は
+// 次に別のラベルが出てくるまでずっとそのカテゴリに確定される
 const JAPANESE_LABEL_TO_KEY = {
   'その他': 'others',
   '色々': 'various',
@@ -38,6 +38,9 @@ const JAPANESE_LABEL_TO_KEY = {
   '接続詞': 'conjunctions',
   'ダメー': 'nsfw',
 };
+
+// このラベルを書くと、以降はまたAIの自動判定に戻る
+const AUTO_LABELS = ['自動', 'AI', 'auto'];
 
 async function classifyEntry(jp, en) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -112,33 +115,41 @@ async function main() {
   const processed = [];
   const skipped = [];
 
-  for (let i = 0; i < allLines.length; ) {
-    const forcedCategory = JAPANESE_LABEL_TO_KEY[allLines[i]];
-    let jp, en, category, reading;
+  let stickyCategory = null; // nullなら常にAI判定
 
-    if (forcedCategory) {
-      // 1行目がカテゴリ名 → 次の2行がjp/en、AI判定はスキップ
-      if (i + 2 >= allLines.length) {
-        skipped.push(`カテゴリ指定(${allLines[i]})の後に日本語/英語が足りません`);
-        break;
-      }
-      jp = allLines[i + 1];
-      en = allLines[i + 2];
-      category = forcedCategory;
+  for (let i = 0; i < allLines.length; ) {
+    const line = allLines[i];
+
+    // ラベル行なら、以降の既定カテゴリを更新してこの行だけ読み飛ばす
+    if (JAPANESE_LABEL_TO_KEY[line]) {
+      stickyCategory = JAPANESE_LABEL_TO_KEY[line];
+      i += 1;
+      continue;
+    }
+    if (AUTO_LABELS.includes(line)) {
+      stickyCategory = null;
+      i += 1;
+      continue;
+    }
+
+    if (i + 1 >= allLines.length) {
+      skipped.push(`ペアが不完全なため無視: ${line}`);
+      break;
+    }
+
+    const jp = allLines[i];
+    const en = allLines[i + 1];
+    i += 2;
+
+    let category, reading;
+    if (stickyCategory) {
+      category = stickyCategory;
       const result = await classifyEntry(jp, en); // 読みだけ使う
       reading = result.reading;
-      i += 3;
     } else {
-      if (i + 1 >= allLines.length) {
-        skipped.push(`ペアが不完全なため無視: ${allLines[i]}`);
-        break;
-      }
-      jp = allLines[i];
-      en = allLines[i + 1];
       const result = await classifyEntry(jp, en);
       category = result.category;
       reading = result.reading;
-      i += 2;
     }
 
     if (!category) {
