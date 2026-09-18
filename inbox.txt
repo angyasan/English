@@ -1,0 +1,12 @@
+改札
+ticket gate
+乗り換え
+transfer
+満員電車
+packed train
+各駅停車
+local train
+片道
+one-way
+往復
+round trip
