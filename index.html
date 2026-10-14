@@ -4442,7 +4442,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function pickBestVoice() {
-    const voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang) && !NOVELTY_VOICES.test(v.name));
+    // ネタ系の声は名前が日本語化されることもあるので、内部ID（speech.synthesis.voice.〜）でも除外する
+    const voices = speechSynthesis.getVoices().filter(v =>
+      /^en[-_]/i.test(v.lang) && !NOVELTY_VOICES.test(v.name) && !/speech\.synthesis\.voice\./i.test(v.voiceURI)
+    );
     if (voices.length === 0) return null;
     const score = v => voiceQuality(v) * 10 + (/en[-_]US/i.test(v.lang) ? 2 : 0) + (/Samantha|Ava|Zoe|Allison|Evan|Nathan/i.test(v.name) ? 1 : 0);
     return voices.slice().sort((a, b) => score(b) - score(a))[0];
