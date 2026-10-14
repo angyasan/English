@@ -15,29 +15,40 @@ const CONCURRENCY = 4;
 
 let voice = VOICES[0];
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 async function synthesize(text, voiceName = voice) {
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        input: { text },
-        voice: { languageCode: 'en-US', name: voiceName },
-        audioConfig: { audioEncoding: 'MP3' },
-      }),
-    });
+  let lastError = '';
+  for (let attempt = 0; attempt < 8; attempt++) {
+    // 混雑・通信切れのときは、待つ時間を少しずつ延ばしてやり直す（1,2,4,8…最大30秒）
+    if (attempt > 0) await sleep(Math.min(30000, 1000 * 2 ** (attempt - 1)));
+    let res;
+    try {
+      res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          input: { text },
+          voice: { languageCode: 'en-US', name: voiceName },
+          audioConfig: { audioEncoding: 'MP3' },
+        }),
+      });
+    } catch (e) {
+      lastError = `通信エラー: ${e.message}`;
+      continue;
+    }
     if (res.ok) {
       const data = await res.json();
       return Buffer.from(data.audioContent, 'base64');
     }
     const body = await res.text();
     if (res.status === 429 || res.status >= 500) {
-      await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+      lastError = `status ${res.status}: ${body.slice(0, 200)}`;
       continue;
     }
     throw new Error(`Text-to-Speech エラー (status ${res.status}): ${body.slice(0, 300)}`);
   }
-  throw new Error('Text-to-Speech が混み合っていて作れませんでした');
+  throw new Error(`何度やり直しても作れませんでした（最後のエラー ${lastError}）`);
 }
 
 // 最初に1回試して、使える声を決める（全部の音声を同じ声にそろえるため）
