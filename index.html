@@ -255,7 +255,7 @@
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
   <button id="startQuizEnToJBtn" class="control-btn">E→Jクイズ</button>
   <button id="startAllQuizBtn" class="control-btn">全体クイズ</button>
-  <button id="voiceToggleBtn" class="control-btn">辞書音声</button>
+  <button id="voiceToggleBtn" class="control-btn">AI音声</button>
   <button id="resumeQuizBtn" class="control-btn" style="display:none; margin-left:8px;">続きから再開</button>
 </div>
 
@@ -4379,7 +4379,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollBottomBtn = document.getElementById("scrollBottomBtn");
   const leftResetZone = document.getElementById("leftResetZone");
 
-  let voiceMode = "dictionary"; // "dictionary" or "tts"
+  // 音声モード："tts"（AI音声・最初はこちら）/ "dictionary"（辞書の録音を優先）。選んだモードは次回も使う
+  let voiceMode = "tts";
+  try {
+    if (localStorage.getItem("voiceMode") === "dictionary") voiceMode = "dictionary";
+  } catch (e) {}
   let currentType = "verbs";
   let quizList = [];
   let wrongQuizList = [];   // 不正解保存用
@@ -4411,6 +4415,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- 音声 ---
   voiceBtn.addEventListener("click", () => {
     voiceMode = voiceMode === "dictionary" ? "tts" : "dictionary";
+    try { localStorage.setItem("voiceMode", voiceMode); } catch (e) {}
     updateVoiceButton();
   });
 
@@ -4485,6 +4490,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (voiceMode === "tts") updateVoiceButton();
   }
   refreshVoice();
+  updateVoiceButton();
   speechSynthesis.addEventListener?.("voiceschanged", refreshVoice);
 
   // TTSモードのときは、使っている声の名前もボタンに出す
