@@ -1,0 +1,48 @@
+name: Generate word audio
+
+# index.html の単語（英語・例文）が変わったら、まだない音声ファイルを作る
+on:
+  push:
+    branches: [main, 'claude/**']
+    paths:
+      - 'index.html'
+      - 'scripts/generate-audio.js'
+      - 'scripts/audio-lib.js'
+      - '.github/workflows/audio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audio-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate-audio:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate audio
+        env:
+          GOOGLE_TTS_API_KEY: ${{ secrets.GOOGLE_TTS_API_KEY }}
+        run: node scripts/generate-audio.js
+
+      - name: Commit audio
+        run: |
+          git config user.name "vocab-bot"
+          git config user.email "actions@github.com"
+          if [ -d audio ]; then git add -A audio; fi
+          if git diff --cached --quiet; then
+            echo "音声の変更なし"
+            exit 0
+          fi
+          git commit -m "音声ファイルを自動更新"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

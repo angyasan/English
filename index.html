@@ -223,7 +223,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.4.0</span>
+  <span id="appVersion">v1.5.0</span>
 </h2>
 
 <div class="tabs">
@@ -4414,19 +4414,48 @@ document.addEventListener("DOMContentLoaded", () => {
     updateVoiceButton();
   });
 
+  // 音声の再生順
+  //   辞書音声モード：辞書の録音（人の声） → 作り置きのAI音声 → 端末の読み上げ
+  //   AI音声モード　：作り置きのAI音声 → 端末の読み上げ
+  let currentAudio = null;
+
+  function playAudioFile(url, onFail) {
+    speechSynthesis.cancel();
+    if (currentAudio) currentAudio.pause();
+    const audio = new Audio(url);
+    currentAudio = audio;
+    let failed = false;
+    const fail = () => {
+      if (failed || currentAudio !== audio) return;
+      failed = true;
+      onFail();
+    };
+    audio.onerror = fail;
+    audio.play().catch(fail);
+  }
+
   function playSound(word) {
     console.log("再生:", word);
     const clean = word.trim().toLowerCase();
 
     if (voiceMode === "dictionary") {
-      // 辞書音声（辞書にない単語はTTSで読む）
       const url = `https://ssl.gstatic.com/dictionary/static/sounds/20200429/${clean}--_us_1.mp3`;
-      const audio = new Audio(url);
-      audio.onerror = () => playTTS(clean);
-      audio.play().catch(() => playTTS(clean));
+      playAudioFile(url, () => playTTS(word));
     } else {
-      playTTS(clean);
+      playTTS(word);
     }
+  }
+
+  // 英語欄の文字列 → 作り置き音声のファイル名（scripts/audio-lib.js の audioId と同じ計算）
+  function audioFileFor(text) {
+    let h1 = 0x811c9dc5;
+    let h2 = 5381;
+    for (let i = 0; i < text.length; i++) {
+      const c = text.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 0x01000193) >>> 0;
+      h2 = (Math.imul(h2, 33) + c) >>> 0;
+    }
+    return "audio/" + h1.toString(16).padStart(8, "0") + h2.toString(16).padStart(8, "0") + ".mp3";
   }
 
   // 端末にある英語の声から、一番自然なものを選ぶ
@@ -4460,15 +4489,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // TTSモードのときは、使っている声の名前もボタンに出す
   function updateVoiceButton() {
-    if (voiceMode === "dictionary") {
-      voiceBtn.textContent = "辞書音声";
-    } else {
-      const name = bestVoice ? bestVoice.name.replace(/\s*\(.*\)\s*$/, "") : "";
-      voiceBtn.textContent = name ? `TTS音声（${name}${voiceQuality(bestVoice) > 1 ? "★" : ""}）` : "TTS音声";
-    }
+    voiceBtn.textContent = voiceMode === "dictionary" ? "辞書音声" : "AI音声";
   }
 
-  function playTTS(word) {
+  // 作り置きのAI音声を鳴らす。まだ作られていなければ端末の読み上げで鳴らす
+  function playTTS(text) {
+    playAudioFile(audioFileFor(text), () => speakWithDevice(text));
+  }
+
+  // 端末の読み上げ機能で鳴らす（AI音声がまだないとき用）
+  function speakWithDevice(word) {
+    if (currentAudio) currentAudio.pause();
     speechSynthesis.cancel();
     if (!bestVoice) bestVoice = pickBestVoice();
 
