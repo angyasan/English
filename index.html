@@ -223,7 +223,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.2.0</span>
+  <span id="appVersion">v1.3.0</span>
 </h2>
 
 <div class="tabs">
@@ -343,6 +343,16 @@
     <h2>全体復習タイム！</h2>
     <p id="finalReviewText">このクイズで間違えた問題を、全部解き直しましょう。</p>
     <button id="startFinalReviewConfirm" class="notice-btn" style="background:#6f42c1;">全体復習をはじめる</button>
+  </div>
+</div>
+
+<!-- 前回から変更があったときのお知らせ -->
+<div id="updateNotice" class="notice-overlay">
+  <div class="notice-box">
+    <div class="notice-icon">🆕</div>
+    <h2>前回から変更がありました</h2>
+    <p>単語の追加や、アプリの更新がありました。</p>
+    <button id="updateNoticeOk" class="notice-btn" style="background:#007bff;">OK</button>
   </div>
 </div>
 
@@ -5080,6 +5090,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   exampleText.addEventListener("click", handleWhiteAreaTap);
   exampleText.addEventListener("touchend", handleWhiteAreaTap);
+
+  // --- 前回開いたときから単語やアプリに変更があればお知らせ（端末内だけで判定） ---
+  function checkForUpdates() {
+    const version = document.getElementById("appVersion").textContent;
+    const text = JSON.stringify(originalData);
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) | 0;
+    const stamp = version + ":" + hash;
+
+    let lastStamp = null;
+    try {
+      lastStamp = localStorage.getItem("lastSeenStamp");
+      localStorage.setItem("lastSeenStamp", stamp);
+    } catch (e) {
+      return; // 保存できない環境では何もしない
+    }
+    if (lastStamp && lastStamp !== stamp) {
+      const notice = document.getElementById("updateNotice");
+      notice.style.display = "flex";
+      document.getElementById("updateNoticeOk").onclick = () => { notice.style.display = "none"; };
+    }
+  }
+  checkForUpdates();
 
   renderList(currentType);
 });
