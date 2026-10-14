@@ -27,11 +27,10 @@
   #appVersion { margin-left: 8px; font-size: 12px; font-weight: normal; color: #888; vertical-align: middle; }
 
   /* タブ */
-  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
+  /* 品詞タブ：横スクロールせず、画面幅に合わせて折り返して全部見せる */
+  .tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); margin-bottom: 10px; }
   .tab-btn {
-    flex: 1 0 auto;
-    min-width: 100px;
-    padding: 10px 0;
+    padding: 8px 0;
     cursor: pointer;
     border: 1px solid #444;
     background: #2a2a2a;
@@ -43,6 +42,7 @@
     white-space: nowrap;
   }
   .tab-btn.active { background-color: #007bff; color: #fff; }
+  #quizProgress.final-review { color: #6f42c1 !important; font-weight: bold; }
 
   /* ボタン */
   .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
@@ -4624,14 +4624,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function showReviewQuestion() {
     jpText.style.color = "orange"; // 復習はオレンジ
     showQuestion(reviewList[reviewIndex], reviewIndex);
-    quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+    quizProgress.textContent = (isFinalReview ? "📚 全体復習中・" : "") + `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+    quizProgress.classList.toggle("final-review", isFinalReview);
   }
 
   function showQuizQuestion() {
     const item = quizList[currentQuizIndex];
     jpText.style.color = "";
     showQuestion(item, currentQuizIndex);
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    quizProgress.textContent = isFinalReview
+      ? `📚 全体復習中 ${currentQuizIndex + 1} / ${quizList.length} 問`
+      : `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    quizProgress.classList.toggle("final-review", isFinalReview);
 
     if (quizDirection === "E→J") {
       // 英語を常に再生可能に
