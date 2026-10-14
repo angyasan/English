@@ -4424,10 +4424,34 @@ document.addEventListener("DOMContentLoaded", () => {
   //   AI音声モード　：作り置きのAI音声 → 端末の読み上げ
   let currentAudio = null;
 
+  // 先読みした音声：URL → 手元に保存した音声のURL（なかったものは MISSING）
+  // ▶️ を押した瞬間に鳴らせるよう、単語を開いたときやクイズの問題が出たときに先にダウンロードしておく
+  const MISSING = "missing";
+  const preloadedAudio = new Map();
+  const preloading = new Set();
+
+  function preloadAudio(text) {
+    if (!text) return;
+    const url = audioFileFor(text);
+    if (preloadedAudio.has(url) || preloading.has(url)) return;
+    preloading.add(url);
+    fetch(url)
+      .then(res => (res.ok ? res.blob() : null))
+      .then(blob => preloadedAudio.set(url, blob ? URL.createObjectURL(blob) : MISSING))
+      .catch(() => {}) // 通信できないときは、押したときに直接読み込む
+      .finally(() => preloading.delete(url));
+  }
+
   function playAudioFile(url, onFail) {
     speechSynthesis.cancel();
     if (currentAudio) currentAudio.pause();
-    const audio = new Audio(url);
+    const ready = preloadedAudio.get(url);
+    if (ready === MISSING) {
+      currentAudio = null;
+      onFail();
+      return;
+    }
+    const audio = new Audio(ready || url);
     currentAudio = audio;
     let failed = false;
     const fail = () => {
@@ -4582,6 +4606,7 @@ document.addEventListener("DOMContentLoaded", () => {
       detailsDiv.style.display = "none";
       jpDiv.addEventListener("click", () => {
         detailsDiv.style.display = (detailsDiv.style.display === "flex") ? "none" : "flex";
+        if (detailsDiv.style.display === "flex") preloadAudio(item.en);
       });
 
       return entry;
@@ -4727,6 +4752,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 通常・復習で共通の表示部分
   function showQuestion(item, index) {
+    // 今の問題と次の問題の音声を先読みしておく
+    preloadAudio(item.en);
+    const list = isReviewMode ? reviewList : quizList;
+    if (list[index + 1]) preloadAudio(list[index + 1].en);
+
     if (directionOf(item) === "J→E") {
       jpText.textContent = item.jp;
       enText.textContent = item.en;
@@ -5133,6 +5163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </p>`;
     }
     exampleText.innerHTML = html;
+    textsEn.forEach(preloadAudio);
     exampleModal.style.display = "flex";
   }
 
