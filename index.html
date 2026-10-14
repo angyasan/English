@@ -27,11 +27,12 @@
   #appVersion { margin-left: 8px; font-size: 12px; font-weight: normal; color: #888; vertical-align: middle; }
 
   /* タブ */
-  .tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; margin-bottom: 10px; }
+  /* 品詞タブ：横スクロールせず2段で全部見せる（各段は横いっぱいに広げる） */
+  .tabs { display: flex; flex-direction: column; margin-bottom: 10px; }
+  .tab-row { display: flex; }
+  .tab-row .tab-btn { flex: 1 1 0; min-width: 0; }
   .tab-btn {
-    flex: 1 0 auto;
-    min-width: 100px;
-    padding: 10px 0;
+    padding: 8px 0;
     cursor: pointer;
     border: 1px solid #444;
     background: #2a2a2a;
@@ -43,6 +44,20 @@
     white-space: nowrap;
   }
   .tab-btn.active { background-color: #007bff; color: #fff; }
+  #quizProgress.final-review { color: #6f42c1 !important; font-weight: bold; }
+  /* 何のクイズ中かの表示（クイズ画面の左上） */
+  #quizModeLabel {
+    display: inline-block;
+    max-width: calc(100% - 80px);
+    margin-bottom: 8px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: var(--mode-color, #555);
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+  }
+  #quizModeRow { text-align: left; }
 
   /* ボタン */
   .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
@@ -208,21 +223,25 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.1.0</span>
+  <span id="appVersion">v1.2.0</span>
 </h2>
 
 <div class="tabs">
-  <div class="tab-btn" data-type="others">その他</div>
-  <div class="tab-btn" data-type="various">色々</div>
-  <div class="tab-btn active" data-type="verbs">動詞</div>
-  <div class="tab-btn" data-type="nouns">名詞</div>
-  <div class="tab-btn" data-type="adverbs">副詞</div>
-  <div class="tab-btn" data-type="adjectives">形容詞</div>
-  <div class="tab-btn" data-type="tenses">時制</div>
-  <div class="tab-btn" data-type="pronouns">代名詞</div>
-  <div class="tab-btn" data-type="prepositions">前置詞</div>
-  <div class="tab-btn" data-type="conjunctions">接続詞</div>
-  <div class="tab-btn" data-type="nsfw">ダメー</div>
+  <div class="tab-row">
+    <div class="tab-btn" data-type="various">色々</div>
+    <div class="tab-btn active" data-type="verbs">動詞</div>
+    <div class="tab-btn" data-type="nouns">名詞</div>
+    <div class="tab-btn" data-type="adverbs">副詞</div>
+    <div class="tab-btn" data-type="adjectives">形容詞</div>
+  </div>
+  <div class="tab-row">
+    <div class="tab-btn" data-type="tenses">時制</div>
+    <div class="tab-btn" data-type="pronouns">代名詞</div>
+    <div class="tab-btn" data-type="prepositions">前置詞</div>
+    <div class="tab-btn" data-type="conjunctions">接続詞</div>
+    <div class="tab-btn" data-type="nsfw">ダメー</div>
+    <div class="tab-btn" data-type="others">その他</div>
+  </div>
 </div>
 
 <div id="searchRow">
@@ -235,6 +254,7 @@
   <button class="control-btn" id="resetBtn">元に戻す</button>
   <button id="startQuizBtn" class="control-btn">J→Eクイズ</button>
   <button id="startQuizEnToJBtn" class="control-btn">E→Jクイズ</button>
+  <button id="startAllQuizBtn" class="control-btn">全体クイズ</button>
   <button id="voiceToggleBtn" class="control-btn">辞書音声</button>
   <button id="resumeQuizBtn" class="control-btn" style="display:none; margin-left:8px;">続きから再開</button>
 </div>
@@ -246,6 +266,7 @@
 <!-- クイズモーダル -->
 <div id="quizOverlay">
   <div id="quizContainer">
+    <div id="quizModeRow"><span id="quizModeLabel"></span></div>
     <div id="quizProgress" style="margin-bottom: 10px; font-size: 14px; color: #555;"></div>
 
     <div style="margin-bottom: 15px; text-align: center;">
@@ -312,6 +333,26 @@
     <h2>もう一回！</h2>
     <p>間違えた問題を完璧にしましょう。</p>
     <button id="startReReviewConfirm" class="notice-btn" style="background:#ff9800;">再復習スタート</button>
+  </div>
+</div>
+
+<!-- 全体復習（このクイズで間違えた問題を全部解き直す） -->
+<div id="finalReviewNotice" class="notice-overlay">
+  <div class="notice-box">
+    <div class="notice-icon">📚</div>
+    <h2>全体復習タイム！</h2>
+    <p id="finalReviewText">このクイズで間違えた問題を、全部解き直しましょう。</p>
+    <button id="startFinalReviewConfirm" class="notice-btn" style="background:#6f42c1;">全体復習をはじめる</button>
+  </div>
+</div>
+
+<!-- 全体復習完了 -->
+<div id="finalReviewFinishNotice" class="notice-overlay">
+  <div class="notice-box">
+    <div class="notice-icon">🎉</div>
+    <h2>全体復習完了！</h2>
+    <p>間違えた問題をすべてクリアしました。おつかれさま！</p>
+    <button id="finishFinalReviewConfirm" class="notice-btn" style="background:#28a745;">終了する</button>
   </div>
 </div>
 
@@ -4302,6 +4343,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const resetBtn = document.getElementById("resetBtn");
   const startQuizBtn = document.getElementById("startQuizBtn");
   const startQuizEnToJBtn = document.getElementById("startQuizEnToJBtn");
+  const startAllQuizBtn = document.getElementById("startAllQuizBtn");
+  const quizModeLabel = document.getElementById("quizModeLabel");
   const voiceBtn = document.getElementById("voiceToggleBtn");
   const resumeQuizBtn = document.getElementById("resumeQuizBtn");
   const quizOverlay = document.getElementById("quizOverlay");
@@ -4331,13 +4374,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let quizList = [];
   let wrongQuizList = [];   // 不正解保存用
   let currentQuizIndex = 0;
-  let quizDirection = "J→E";
+  let quizDirection = "J→E"; // "J→E" / "E→J" / "ランダム"（全体クイズ）
+  let quizType = "verbs";     // クイズ中の品詞（全体クイズは "all"）
   let currentBatchWrong = [];
   let batchSize = 10;
   let isReviewMode = false;
   let reviewList = [];
   let reviewIndex = 0;
   let reviewWrongList = [];
+  let isFinalReview = false; // 全体復習中か
   let lastTapTime = 0;
   let globalSearch = true; // 全体検索（全品詞）をするか
 
@@ -4578,9 +4623,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- クイズ：問題表示 ---
 
+  // その問題の出題方向（全体クイズは1問ごとにランダム）
+  function directionOf(item) {
+    return quizDirection === "ランダム" ? item._dir : quizDirection;
+  }
+
+  // 今表示している問題（復習中は復習の問題）
+  function currentQuizItem() {
+    return isReviewMode ? reviewList[reviewIndex] : quizList[currentQuizIndex];
+  }
+
+  // クイズ画面左上の「何のクイズ中か」の表示
+  function updateQuizModeLabel() {
+    if (quizType === "all") {
+      quizModeLabel.textContent = "🌐 全体クイズ（全品詞・方向ランダム）";
+      quizModeLabel.style.setProperty("--mode-color", "#6c757d");
+    } else {
+      quizModeLabel.textContent = `${typeNames[quizType] || quizType}クイズ ・ ${quizDirection}`;
+      quizModeLabel.style.setProperty("--mode-color", categoryColors[quizType] || "#555");
+    }
+  }
+
   // 通常・復習で共通の表示部分
   function showQuestion(item, index) {
-    if (quizDirection === "J→E") {
+    if (directionOf(item) === "J→E") {
       jpText.textContent = item.jp;
       enText.textContent = item.en;
     } else {
@@ -4603,18 +4669,22 @@ document.addEventListener("DOMContentLoaded", () => {
   function showReviewQuestion() {
     jpText.style.color = "orange"; // 復習はオレンジ
     showQuestion(reviewList[reviewIndex], reviewIndex);
-    quizProgress.textContent = `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+    quizProgress.textContent = (isFinalReview ? "📚 全体復習中・" : "") + `復習 ${reviewIndex + 1} / ${reviewList.length}`;
+    quizProgress.classList.toggle("final-review", isFinalReview);
   }
 
   function showQuizQuestion() {
     const item = quizList[currentQuizIndex];
     jpText.style.color = "";
     showQuestion(item, currentQuizIndex);
-    quizProgress.textContent = `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    quizProgress.textContent = isFinalReview
+      ? `📚 全体復習中 ${currentQuizIndex + 1} / ${quizList.length} 問`
+      : `${currentQuizIndex + 1} / ${quizList.length} 問`;
+    quizProgress.classList.toggle("final-review", isFinalReview);
 
-    if (quizDirection === "E→J") {
+    if (directionOf(item) === "E→J") {
       // 英語を常に再生可能に
-      enText.onclick = () => playSound(quizList[currentQuizIndex].en);
+      enText.onclick = () => playSound(item.en);
       jpText.style.cursor = "default";
     } else {
       enText.onclick = null;
@@ -4625,7 +4695,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const existingBtn = document.getElementById("quizExampleBtn");
     if (existingBtn) existingBtn.remove();
 
-    if (currentType === "others") {
+    if ((item._type || quizType) === "others") {
       const exampleBtn = document.createElement("button");
       exampleBtn.id = "quizExampleBtn";
       exampleBtn.className = "control-btn";
@@ -4651,10 +4721,26 @@ document.addEventListener("DOMContentLoaded", () => {
     quizDirection = "E→J";
     startQuiz(currentType);
   });
+  startAllQuizBtn.addEventListener("click", () => {
+    quizDirection = "ランダム";
+    startQuiz("all");
+  });
 
   // 中断データ確認用のカテゴリ名（タブの表示名から作る）
   const typeNames = {};
   tabButtons.forEach(btn => { typeNames[btn.getAttribute("data-type")] = btn.textContent; });
+  typeNames.all = "全体";
+
+  // 全体クイズ用：全品詞の単語に、品詞と出題方向（ランダム）を付けて集める
+  function buildAllQuizList() {
+    const list = [];
+    for (const type in originalData) {
+      originalData[type].forEach(item => {
+        list.push({ ...item, _type: type, _dir: Math.random() < 0.5 ? "J→E" : "E→J" });
+      });
+    }
+    return list;
+  }
 
   function startQuiz(type) {
     // 保存データがあるかチェックして確認を出す
@@ -4662,7 +4748,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (saved) {
       try {
         const state = JSON.parse(saved);
-        const savedTypeName = typeNames[state.currentType] || state.currentType;
+        const savedType = state.quizType || state.currentType;
+        const savedTypeName = typeNames[savedType] || savedType;
         const savedDirection = state.quizDirection || "不明";
         const message = `【中断データがあります】\n\n` +
                         `進行中：${savedTypeName} (${savedDirection} クイズ)\n\n` +
@@ -4675,9 +4762,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 新しく始めるための初期化
-    quizList = shuffleArray([...currentList[type]]);
+    quizType = type;
+    quizList = shuffleArray(type === "all" ? buildAllQuizList() : [...currentList[type]]);
     currentQuizIndex = 0;
     isReviewMode = false;
+    isFinalReview = false;
     currentBatchWrong = [];
     reviewWrongList = [];
 
@@ -4686,6 +4775,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("savedQuiz");
     autoSaveQuizState();
 
+    updateQuizModeLabel();
     showQuizQuestion();
     quizOverlay.style.display = "flex";
 
@@ -4697,17 +4787,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // クイズが最後まで到達した時の処理
+  // クイズが最後まで到達した時の処理（間違いがあれば全体復習へ）
   function finishQuiz() {
     if (wrongQuizList.length > 0) {
+      const again = isFinalReview; // 全体復習の中でまた間違えた
       quizList = shuffleArray([...wrongQuizList]);
       wrongQuizList = [];
       currentQuizIndex = 0;
-      alert("不正解だけもう一回！");
-      showQuizQuestion();
+      isFinalReview = true;
+      autoSaveQuizState();
+
+      document.getElementById("finalReviewText").textContent = again
+        ? "まだ間違えた問題があります。もう一度解き直しましょう。"
+        : "このクイズで間違えた問題を、全部解き直しましょう。";
+      const notice = document.getElementById("finalReviewNotice");
+      notice.style.display = "flex";
+      document.getElementById("startFinalReviewConfirm").onclick = () => {
+        notice.style.display = "none";
+        showQuizQuestion();
+      };
+      return;
+    }
+
+    quizOverlay.style.display = "none";
+    localStorage.removeItem("savedQuiz");
+    if (isFinalReview) {
+      isFinalReview = false;
+      const notice = document.getElementById("finalReviewFinishNotice");
+      notice.style.display = "flex";
+      document.getElementById("finishFinalReviewConfirm").onclick = () => {
+        notice.style.display = "none";
+      };
     } else {
       alert("全問終了！");
-      quizOverlay.style.display = "none";
-      localStorage.removeItem("savedQuiz");
     }
   }
 
@@ -4716,10 +4828,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const state = {
       quizDirection,
       currentType,
+      quizType,
       currentQuizIndex,
       quizList,
       wrongQuizList,
-      batchSize
+      batchSize,
+      isFinalReview
     };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
   }
@@ -4755,11 +4869,8 @@ document.addEventListener("DOMContentLoaded", () => {
     wrongBtn.style.display = "inline-block";
     nextBtn.style.display = "inline-block";
 
-    if (quizDirection === "J→E") {
-      enText.onclick = () => playSound(enText.textContent);
-    } else {
-      enText.onclick = () => playSound(quizList[currentQuizIndex].en);
-    }
+    const item = currentQuizItem();
+    enText.onclick = () => playSound(item.en);
   });
 
   // 復習モードで次の問題へ（最後まで行ったら再復習 or 復習完了）
@@ -4795,9 +4906,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 通常モードで次の問題へ（区切りで間違いがあれば復習タイム）
+  // 通常モードで次の問題へ（区切りか最後の問題で、間違いがあれば復習タイム）
   function advanceQuiz() {
-    if ((currentQuizIndex + 1) % batchSize === 0 && currentBatchWrong.length > 0) {
+    const atBatchEnd = (currentQuizIndex + 1) % batchSize === 0;
+    const atLastQuestion = currentQuizIndex + 1 >= quizList.length;
+    if ((atBatchEnd || atLastQuestion) && currentBatchWrong.length > 0) {
       startBatchReview();
       return;
     }
@@ -4880,10 +4993,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!saved) return;
     const state = JSON.parse(saved);
     quizDirection = state.quizDirection;
-    currentType = state.currentType;
+    quizType = state.quizType || state.currentType;
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
-    wrongQuizList = state.wrongQuizList || [];
+    // 保存データから戻すと別物扱いになるので、問題リスト側の同じ単語に結び付け直す
+    isFinalReview = !!state.isFinalReview;
+    wrongQuizList = (state.wrongQuizList || []).map(w =>
+      quizList.find(q => q.jp === w.jp && q.en === w.en) || w
+    );
 
     // 保存された値を復元し、プルダウンの見た目も合わせる
     if (state.batchSize) {
@@ -4891,6 +5008,7 @@ document.addEventListener("DOMContentLoaded", () => {
       batchSizeSelect.value = batchSize;
     }
 
+    updateQuizModeLabel();
     showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
