@@ -223,7 +223,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.3.0</span>
+  <span id="appVersion">v1.4.0</span>
 </h2>
 
 <div class="tabs">
@@ -4410,13 +4410,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- 音声 ---
   voiceBtn.addEventListener("click", () => {
-    if (voiceMode === "dictionary") {
-      voiceMode = "tts";
-      voiceBtn.textContent = "TTS音声";
-    } else {
-      voiceMode = "dictionary";
-      voiceBtn.textContent = "辞書音声";
-    }
+    voiceMode = voiceMode === "dictionary" ? "tts" : "dictionary";
+    updateVoiceButton();
   });
 
   function playSound(word) {
@@ -4434,16 +4429,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // 端末にある英語の声から、一番自然なものを選ぶ
+  // （プレミアム → 拡張 → 標準の順。iPhoneは 設定→アクセシビリティ→読み上げコンテンツ→声 で追加できる）
+  const NOVELTY_VOICES = /Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eloquence|Grandma|Grandpa|Rocko|Shelley|Flo|Eddy|Reed|Sandy/i;
+  let bestVoice = null;
+
+  function voiceQuality(v) {
+    const id = (v.voiceURI + " " + v.name).toLowerCase();
+    if (id.includes("premium") || id.includes("プレミアム")) return 3;
+    if (id.includes("enhanced") || id.includes("拡張")) return 2;
+    return 1;
+  }
+
+  function pickBestVoice() {
+    const voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang) && !NOVELTY_VOICES.test(v.name));
+    if (voices.length === 0) return null;
+    const score = v => voiceQuality(v) * 10 + (/en[-_]US/i.test(v.lang) ? 2 : 0) + (/Samantha|Ava|Zoe|Allison|Evan|Nathan/i.test(v.name) ? 1 : 0);
+    return voices.slice().sort((a, b) => score(b) - score(a))[0];
+  }
+
+  function refreshVoice() {
+    bestVoice = pickBestVoice();
+    if (voiceMode === "tts") updateVoiceButton();
+  }
+  refreshVoice();
+  speechSynthesis.addEventListener?.("voiceschanged", refreshVoice);
+
+  // TTSモードのときは、使っている声の名前もボタンに出す
+  function updateVoiceButton() {
+    if (voiceMode === "dictionary") {
+      voiceBtn.textContent = "辞書音声";
+    } else {
+      const name = bestVoice ? bestVoice.name.replace(/\s*\(.*\)\s*$/, "") : "";
+      voiceBtn.textContent = name ? `TTS音声（${name}${voiceQuality(bestVoice) > 1 ? "★" : ""}）` : "TTS音声";
+    }
+  }
+
   function playTTS(word) {
     speechSynthesis.cancel();
-    const voices = speechSynthesis.getVoices();
-    const voice = voices.find(v => v.lang === "en-US") || voices[0];
+    if (!bestVoice) bestVoice = pickBestVoice();
 
     const utterance = new SpeechSynthesisUtterance(word);
-    utterance.voice = voice;
-    utterance.lang = "en-US";
+    if (bestVoice) utterance.voice = bestVoice;
+    utterance.lang = bestVoice ? bestVoice.lang : "en-US";
     utterance.rate = 0.9;
-    utterance.pitch = 1.1;
+    // 高品質な声は素の高さが一番自然なので、標準の声のときだけ少し高めにする
+    utterance.pitch = bestVoice && voiceQuality(bestVoice) > 1 ? 1.0 : 1.1;
 
     speechSynthesis.speak(utterance);
   }
