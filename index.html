@@ -208,7 +208,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.1.1</span>
+  <span id="appVersion">v1.2.0</span>
 </h2>
 
 <div class="tabs">
@@ -312,6 +312,26 @@
     <h2>もう一回！</h2>
     <p>間違えた問題を完璧にしましょう。</p>
     <button id="startReReviewConfirm" class="notice-btn" style="background:#ff9800;">再復習スタート</button>
+  </div>
+</div>
+
+<!-- 全体復習（このクイズで間違えた問題を全部解き直す） -->
+<div id="finalReviewNotice" class="notice-overlay">
+  <div class="notice-box">
+    <div class="notice-icon">📚</div>
+    <h2>全体復習タイム！</h2>
+    <p id="finalReviewText">このクイズで間違えた問題を、全部解き直しましょう。</p>
+    <button id="startFinalReviewConfirm" class="notice-btn" style="background:#6f42c1;">全体復習をはじめる</button>
+  </div>
+</div>
+
+<!-- 全体復習完了 -->
+<div id="finalReviewFinishNotice" class="notice-overlay">
+  <div class="notice-box">
+    <div class="notice-icon">🎉</div>
+    <h2>全体復習完了！</h2>
+    <p>間違えた問題をすべてクリアしました。おつかれさま！</p>
+    <button id="finishFinalReviewConfirm" class="notice-btn" style="background:#28a745;">終了する</button>
   </div>
 </div>
 
@@ -4338,6 +4358,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let reviewList = [];
   let reviewIndex = 0;
   let reviewWrongList = [];
+  let isFinalReview = false; // 全体復習中か
   let lastTapTime = 0;
   let globalSearch = true; // 全体検索（全品詞）をするか
 
@@ -4678,6 +4699,7 @@ document.addEventListener("DOMContentLoaded", () => {
     quizList = shuffleArray([...currentList[type]]);
     currentQuizIndex = 0;
     isReviewMode = false;
+    isFinalReview = false;
     currentBatchWrong = [];
     reviewWrongList = [];
 
@@ -4697,17 +4719,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // クイズが最後まで到達した時の処理
+  // クイズが最後まで到達した時の処理（間違いがあれば全体復習へ）
   function finishQuiz() {
     if (wrongQuizList.length > 0) {
+      const again = isFinalReview; // 全体復習の中でまた間違えた
       quizList = shuffleArray([...wrongQuizList]);
       wrongQuizList = [];
       currentQuizIndex = 0;
-      alert("不正解だけもう一回！");
-      showQuizQuestion();
+      isFinalReview = true;
+      autoSaveQuizState();
+
+      document.getElementById("finalReviewText").textContent = again
+        ? "まだ間違えた問題があります。もう一度解き直しましょう。"
+        : "このクイズで間違えた問題を、全部解き直しましょう。";
+      const notice = document.getElementById("finalReviewNotice");
+      notice.style.display = "flex";
+      document.getElementById("startFinalReviewConfirm").onclick = () => {
+        notice.style.display = "none";
+        showQuizQuestion();
+      };
+      return;
+    }
+
+    quizOverlay.style.display = "none";
+    localStorage.removeItem("savedQuiz");
+    if (isFinalReview) {
+      isFinalReview = false;
+      const notice = document.getElementById("finalReviewFinishNotice");
+      notice.style.display = "flex";
+      document.getElementById("finishFinalReviewConfirm").onclick = () => {
+        notice.style.display = "none";
+      };
     } else {
       alert("全問終了！");
-      quizOverlay.style.display = "none";
-      localStorage.removeItem("savedQuiz");
     }
   }
 
@@ -4719,7 +4763,8 @@ document.addEventListener("DOMContentLoaded", () => {
       currentQuizIndex,
       quizList,
       wrongQuizList,
-      batchSize
+      batchSize,
+      isFinalReview
     };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
   }
@@ -4886,6 +4931,7 @@ document.addEventListener("DOMContentLoaded", () => {
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
     // 保存データから戻すと別物扱いになるので、問題リスト側の同じ単語に結び付け直す
+    isFinalReview = !!state.isFinalReview;
     wrongQuizList = (state.wrongQuizList || []).map(w =>
       quizList.find(q => q.jp === w.jp && q.en === w.en) || w
     );
