@@ -208,7 +208,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.1.0</span>
+  <span id="appVersion">v1.1.1</span>
 </h2>
 
 <div class="tabs">
@@ -4818,7 +4818,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   nextBtn.addEventListener("click", () => {
     if (isReviewMode) {
+      // 復習で正解したら、最後の「不正解だけもう一回」からも外す
       removeFrom(reviewWrongList, reviewList[reviewIndex]);
+      removeFrom(wrongQuizList, reviewList[reviewIndex]);
       advanceReview();
       return;
     }
@@ -4883,7 +4885,10 @@ document.addEventListener("DOMContentLoaded", () => {
     currentType = state.currentType;
     quizList = state.quizList;
     currentQuizIndex = state.currentQuizIndex;
-    wrongQuizList = state.wrongQuizList || [];
+    // 保存データから戻すと別物扱いになるので、問題リスト側の同じ単語に結び付け直す
+    wrongQuizList = (state.wrongQuizList || []).map(w =>
+      quizList.find(q => q.jp === w.jp && q.en === w.en) || w
+    );
 
     // 保存された値を復元し、プルダウンの見た目も合わせる
     if (state.batchSize) {
