@@ -4795,9 +4795,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 通常モードで次の問題へ（区切りで間違いがあれば復習タイム）
+  // 通常モードで次の問題へ（区切りか最後の問題で、間違いがあれば復習タイム）
   function advanceQuiz() {
-    if ((currentQuizIndex + 1) % batchSize === 0 && currentBatchWrong.length > 0) {
+    const atBatchEnd = (currentQuizIndex + 1) % batchSize === 0;
+    const atLastQuestion = currentQuizIndex + 1 >= quizList.length;
+    if ((atBatchEnd || atLastQuestion) && currentBatchWrong.length > 0) {
       startBatchReview();
       return;
     }
@@ -4818,9 +4820,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   nextBtn.addEventListener("click", () => {
     if (isReviewMode) {
-      // 復習で正解したら、最後の「不正解だけもう一回」からも外す
       removeFrom(reviewWrongList, reviewList[reviewIndex]);
-      removeFrom(wrongQuizList, reviewList[reviewIndex]);
       advanceReview();
       return;
     }
