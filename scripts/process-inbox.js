@@ -15,9 +15,7 @@ const CATEGORY_MARKERS = {
   prepositions: '前置詞ぜんちしzentisi',
   conjunctions: '接続詞せつぞくしsetuzokusi',
   nsfw: 'だめーダメーdame',
-  // pronouns を使う場合は index.html の pronouns 配列の末尾（"]," の直前）に
-  // <!-- 代名詞だいめいしdaimeishi --> を追加してから、下のコメントを外してください。
-  // pronouns: '代名詞だいめいしdaimeishi',
+  pronouns: '代名詞だいめいしdaimeisi',
 };
 const CATEGORY_LIST = Object.keys(CATEGORY_MARKERS);
 
@@ -34,6 +32,7 @@ const JAPANESE_LABEL_TO_KEY = {
   '前置詞': 'prepositions', 'ぜんちし': 'prepositions',
   '接続詞': 'conjunctions', 'せつぞくし': 'conjunctions',
   'ダメー': 'nsfw', 'だめー': 'nsfw',
+  '代名詞': 'pronouns', 'だいめいし': 'pronouns',
 };
 // これを書くと、以降はまたAIの自動判定に戻る
 const AUTO_LABELS = ['自動', 'AI', 'auto'];
@@ -58,7 +57,7 @@ async function classifyEntry(jp, en) {
         `verbs=動詞・動作を表す表現（英語が複数単語の熟語/句動詞でも、日本語訳が動作を表すなら動詞）, ` +
         `nouns=名詞・物や概念（英語が動詞としても使える単語でも、日本語訳が物や概念を指すなら名詞）, ` +
         `adverbs=副詞, adjectives=形容詞, tenses=時間・時制表現, prepositions=前置詞, ` +
-        `conjunctions=接続詞, nsfw=性的な内容）` +
+        `conjunctions=接続詞, nsfw=性的な内容, pronouns=代名詞）` +
         '判定は英単語の形ではなく、日本語訳が表す意味・品詞を最優先すること。' +
         '出力は必ずJSONのみ。他の文字は一切含めないこと。' +
         '形式: {"category":"verbs","reading":"カタカナ"}',
