@@ -123,12 +123,10 @@
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
-  #quizExampleBtn {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 1001;  /* クイズ要素の上に表示 */
-  }
+  /* 例文ボタンは「前へ」の上の段に置く（重ならないように） */
+  #quizExampleSlot { text-align: left; margin-top: 12px; }
+  #quizExampleSlot.reserved { min-height: 34px; }
+  #quizExampleBtn { margin-left: 0 !important; }
   #tempQuitBtn {
     position: absolute;
     bottom: 10px;
@@ -308,7 +306,9 @@
 
     <button id="quitQuizBtn" style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 12px; background: #666; color: white; border: none; border-radius: 4px; z-index: 10;">やめる</button>
 
-    <div style="display: flex; align-items: center; justify-content: center; margin-top: 20px; position: relative; width: 100%; min-height: 40px;">
+    <div id="quizExampleSlot"></div>
+
+    <div style="display: flex; align-items: center; justify-content: center; margin-top: 8px; position: relative; width: 100%; min-height: 40px;">
       <div style="display: flex; gap: 8px; position: absolute; left: 0;">
         <button id="prevBtn" style="display:none;">前へ</button>
         <button id="wrongBtn" style="display:none; background:#dc3545; color:white;">不正解だった</button>
@@ -4765,6 +4765,8 @@ document.addEventListener("DOMContentLoaded", () => {
       quizModeLabel.textContent = `${typeNames[quizType] || quizType}クイズ ・ ${quizDirection}`;
       quizModeLabel.style.setProperty("--mode-color", categoryColors[quizType] || "#555");
     }
+    // 例文ボタンが出るクイズでは、問題ごとに高さが変わらないよう段の場所を確保しておく
+    document.getElementById("quizExampleSlot").classList.toggle("reserved", quizType === "others" || quizType === "all");
   }
 
   // 通常・復習で共通の表示部分
@@ -4858,7 +4860,7 @@ document.addEventListener("DOMContentLoaded", () => {
           showCustomExampleModal([], [], item.jp, item.en);
         }
       };
-      quizContainer.appendChild(exampleBtn);
+      document.getElementById("quizExampleSlot").appendChild(exampleBtn);
     }
   }
 
