@@ -58,6 +58,17 @@
     font-weight: bold;
   }
   #quizModeRow { text-align: left; }
+  #hintRow { min-height: 30px; margin-bottom: 6px; display: flex; justify-content: center; align-items: center; }
+  #hintBtn { padding: 3px 12px; font-size: 13px; color: #6f42c1; border-color: #6f42c1; }
+  #hintText {
+    display: none;
+    padding: 3px 12px;
+    border-radius: 12px;
+    background: var(--hint-color, #555);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+  }
 
   /* ボタン */
   .control-buttons { display: flex; gap: 8px; margin-bottom: 15px; user-select: none; }
@@ -223,7 +234,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.5.0</span>
+  <span id="appVersion">v1.6.0</span>
 </h2>
 
 <div class="tabs">
@@ -283,6 +294,12 @@
     </div>
 
     <div id="jpText"></div>
+
+    <!-- 全体クイズのヒント：押すと品詞（どのタブの単語か）を表示 -->
+    <div id="hintRow">
+      <button id="hintBtn" class="control-btn">💡 ヒント</button>
+      <span id="hintText"></span>
+    </div>
 
     <div id="quizAnswerRow">
       <div id="enText"></div>
@@ -4751,7 +4768,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 通常・復習で共通の表示部分
+  // 全体クイズのヒント（品詞）。問題が変わるたびに隠した状態に戻す
+  const hintRow = document.getElementById("hintRow");
+  const hintBtn = document.getElementById("hintBtn");
+  const hintText = document.getElementById("hintText");
+
+  function resetHint(item) {
+    const type = item && item._type;
+    hintRow.style.display = quizType === "all" && type ? "flex" : "none";
+    hintBtn.style.display = "inline-block";
+    hintText.style.display = "none";
+    if (type) {
+      hintText.textContent = `品詞：${typeNames[type] || type}`;
+      hintText.style.setProperty("--hint-color", categoryColors[type] || "#555");
+    }
+  }
+
+  hintBtn.addEventListener("click", () => {
+    hintBtn.style.display = "none";
+    hintText.style.display = "inline-block";
+  });
+
   function showQuestion(item, index) {
+    resetHint(item);
     // 今の問題と次の問題の音声を先読みしておく
     preloadAudio(item.en);
     const list = isReviewMode ? reviewList : quizList;
