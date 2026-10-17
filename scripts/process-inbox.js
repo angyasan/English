@@ -47,11 +47,15 @@ async function classifyEntry(jp, en) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 200,
+      max_tokens: 300,
       system:
         '英単語帳に新しい単語を追加するための判定を行います。' +
         `以下のカテゴリのうち最も適切なものを1つ選び、` +
-        `英語表現のカタカナ読みを生成してください。` +
+        `英語表現のカタカナ読みを2種類生成してください。` +
+        `reading は表示用で、アメリカ英語の実際の発音に近いカタカナ（音のつながりや脱落も反映。` +
+        `例: I got it→アイ ガラリッ, information→インファメイション, problem→プラブレム, right→ライッ）。` +
+        `searchReading は検索用で、日本で一般的なカタカナ表記（例: information→インフォメーション, problem→プロブレム）。` +
+        `単語の区切りは半角スペースにすること。` +
         `カテゴリ一覧: ${CATEGORY_LIST.join(', ')}` +
         `（others=その他の表現・構文・言い回し, various=日常会話フレーズ・決まり文句, ` +
         `verbs=動詞・動作を表す表現（英語が複数単語の熟語/句動詞でも、日本語訳が動作を表すなら動詞）, ` +
@@ -60,7 +64,7 @@ async function classifyEntry(jp, en) {
         `conjunctions=接続詞, nsfw=性的な内容, pronouns=代名詞）` +
         '判定は英単語の形ではなく、日本語訳が表す意味・品詞を最優先すること。' +
         '出力は必ずJSONのみ。他の文字は一切含めないこと。' +
-        '形式: {"category":"verbs","reading":"カタカナ"}',
+        '形式: {"category":"verbs","reading":"カタカナ","searchReading":"カタカナ"}',
       messages: [
         { role: 'user', content: `日本語: ${jp}\n英語: ${en}` },
       ],
@@ -80,6 +84,7 @@ async function classifyEntry(jp, en) {
     return {
       category: CATEGORY_LIST.includes(parsed.category) ? parsed.category : null,
       reading: parsed.reading || '',
+      searchReading: parsed.searchReading || '',
     };
   } catch (e) {
     console.log('AIの返答をJSONとして解析できませんでした:', text);
@@ -184,6 +189,9 @@ async function main() {
     const result = await classifyEntry(jp, en);
     const category = blockCategory || result.category;
     const reading = result.reading;
+    // 検索用の読みは、表示用と違うときだけ入れる
+    const searchPart = result.searchReading && result.searchReading !== reading
+      ? `, "searchReading": "${escapeForJs(result.searchReading)}"` : '';
 
     if (!category) {
       skipped.push(`カテゴリ判定失敗: ${jp} / ${en}`);
@@ -201,10 +209,10 @@ async function main() {
     if (category === 'others' && example.length > 0) {
       entryLine =
         `      { "jp": "${escapeForJs(jp)}", "en": "${escapeForJs(en)}", ` +
-        `"reading": "${escapeForJs(reading)}", "example": ${toJsArray(example)}, ` +
+        `"reading": "${escapeForJs(reading)}"${searchPart}, "example": ${toJsArray(example)}, ` +
         `"exampleJp": ${toJsArray(exampleJp)} },`;
     } else {
-      entryLine = `      { "jp": "${escapeForJs(jp)}", "en": "${escapeForJs(en)}", "reading": "${escapeForJs(reading)}" },`;
+      entryLine = `      { "jp": "${escapeForJs(jp)}", "en": "${escapeForJs(en)}", "reading": "${escapeForJs(reading)}"${searchPart} },`;
     }
 
     html = html.replace(markerFull, `${entryLine}\n${markerFull}`);
