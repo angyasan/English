@@ -60,8 +60,9 @@
   #quizModeRow { text-align: left; }
 
   /* 単語の追加画面 */
-  #openAddBtn { margin-left: 10px; padding: 2px 10px; font-size: 13px; vertical-align: middle; }
-  #addOverlay {
+  #openAddBtn, #openInfoBtn { margin-left: 10px; padding: 2px 10px; font-size: 13px; vertical-align: middle; }
+  #openInfoBtn { margin-left: 6px; }
+  #addOverlay, #infoOverlay {
     display: none;
     position: fixed;
     top: 0; left: 0;
@@ -72,7 +73,7 @@
     align-items: flex-start;
     overflow-y: auto;
   }
-  #addBox {
+  #addBox, #infoBox {
     background: #fff;
     color: #222;
     width: 92%;
@@ -82,8 +83,12 @@
     border-radius: 10px;
     position: relative;
   }
-  #addBox h3 { margin: 0 0 10px; }
-  #addCloseBtn { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 22px; cursor: pointer; color: #666; }
+  #addBox h3, #infoBox h3 { margin: 0 0 10px; }
+  #infoBox h4 { margin: 16px 0 6px; font-size: 15px; }
+  #infoBox ul { margin: 4px 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+  #infoBox .info-date { font-weight: bold; color: #c0392b; }
+  #infoBox .info-q { margin: 10px 0 2px; font-size: 14px; font-weight: bold; color: #007bff; }
+  #addCloseBtn, #infoCloseBtn { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 22px; cursor: pointer; color: #666; }
   #addLabelBtns { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
   #addLabelBtns button {
     padding: 4px 9px;
@@ -278,8 +283,9 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.7.0</span>
+  <span id="appVersion">v1.7.1</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
+  <button id="openInfoBtn" class="control-btn">ℹ️ メモ</button>
 </h2>
 
 <div class="tabs">
@@ -428,6 +434,36 @@
       <button id="addTokenDelete" class="control-btn" style="color:#c0392b; border-color:#c0392b;">削除</button>
       <div style="margin-top:6px; color:#666;">合鍵はこの端末のブラウザの中にだけ保存されます。</div>
     </div>
+  </div>
+</div>
+
+<!-- 覚えておくこと（期限など） -->
+<div id="infoOverlay">
+  <div id="infoBox">
+    <button id="infoCloseBtn" aria-label="閉じる">✖</button>
+    <h3>覚えておくこと</h3>
+
+    <h4>🔑 合鍵（GitHubのアクセストークン）</h4>
+    <ul>
+      <li>期限：<span class="info-date">2027年9月30日</span></li>
+      <li>期限が切れると、「＋追加」で送信したときに「合鍵が正しくないか、期限が切れています」と表示されます。</li>
+      <li>そのときは同じ手順で作り直してください：<br>
+        github.com/settings/personal-access-tokens/new を開く → 名前・期限を入れる → Repository access は「Only select repositories」で angyasan/English → Permissions に「Contents」を追加して「Read and write」 → Generate token → 出てきた文字列を Safari で開いた単語帳の「＋追加」→「🔑 合鍵の設定」に貼って保存</li>
+    </ul>
+
+    <h4>🔊 Google の音声（AI音声）の無料枠</h4>
+    <ul>
+      <li>期限：<span class="info-date">2027年1月14日</span></li>
+      <li>そのあとも新しい単語の音声を作り続けるには、Google Cloud のアカウントを有料版に切り替える必要があります。</li>
+    </ul>
+    <div class="info-q">Q. 期限を過ぎたら、新しい単語だけ音声が作られなくなる？すでにある音声は？</div>
+    <ul>
+      <li>止まるのは、<b>新しく追加した単語の音声づくりだけ</b>です。</li>
+      <li><b>すでにある音声</b>は mp3 ファイルとしてリポジトリ（audio フォルダ）に保存されていて、再生のときは Google にアクセスしません。期限が過ぎても消えたり鳴らなくなったりしません。</li>
+      <li><b>期限後に追加した単語</b>も、追加自体は普通にできます。AI音声がないだけで、再生すると iPhone 本体の読み上げに自動で切り替わります。GitHub から「音声生成が失敗しました」という通知メールが届くことがあります。</li>
+      <li>あとで有料版に切り替えれば、次に音声を作るタイミングで、AI音声がない単語の分もまとめて自動で作られます。</li>
+      <li>期限が来ても勝手に課金は始まりません（切り替えは自分で操作が必要）。切り替えたあとも、1日に数語追加する程度なら、ほぼ無料〜数円の見込みです。</li>
+    </ul>
   </div>
 </div>
 
@@ -5427,6 +5463,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("openAddBtn").addEventListener("click", () => openAddScreen());
   document.getElementById("addCloseBtn").addEventListener("click", () => { addOverlay.style.display = "none"; });
+
+  // 覚えておくこと（期限など）
+  const infoOverlay = document.getElementById("infoOverlay");
+  document.getElementById("openInfoBtn").addEventListener("click", () => { infoOverlay.style.display = "flex"; });
+  document.getElementById("infoCloseBtn").addEventListener("click", () => { infoOverlay.style.display = "none"; });
+  infoOverlay.addEventListener("click", e => { if (e.target === infoOverlay) infoOverlay.style.display = "none"; });
   addText.addEventListener("input", updateAddSummary);
   document.getElementById("addTokenToggle").addEventListener("click", () => {
     addTokenArea.style.display = addTokenArea.style.display === "block" ? "none" : "block";
