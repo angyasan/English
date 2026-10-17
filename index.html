@@ -284,7 +284,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.7.2</span>
+  <span id="appVersion">v1.7.3</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -5410,7 +5410,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return { counts, warnings };
   }
 
+  // 送る前の書きかけは端末に残しておく（メモ帳から何回か共有して、まとめて送れるように）
+  const DRAFT_KEY = "addDraft";
+  function saveDraft() {
+    try {
+      if (addText.value.trim()) localStorage.setItem(DRAFT_KEY, addText.value);
+      else localStorage.removeItem(DRAFT_KEY);
+    } catch (e) {}
+  }
+
   function updateAddSummary() {
+    saveDraft();
     const { counts, warnings } = summarizeInbox(addText.value);
     const total = [...counts.values()].reduce((a, b) => a + b, 0);
     const parts = [...counts].map(([cat, n]) => `${cat ? typeNames[cat] : "自動判定"} ${n}語`);
@@ -5543,9 +5553,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ショートカット（メモ帳から）用：?add=〜 で開くと、その内容を入れた追加画面を開く
+  // 送っていない書きかけがあれば上書きせず後ろに足す（前の品詞を引き継がないよう「自動」から始める）。
+  // カーソルは足した分の先頭に置くので、そのまま品詞ボタンを押せばその分の品詞になる
+  try { addText.value = localStorage.getItem(DRAFT_KEY) || ""; } catch (e) {}
   const addParam = new URLSearchParams(location.search).get("add");
   if (addParam) {
-    openAddScreen(addParam);
+    const shared = addParam.trim();
+    const draft = addText.value.trim();
+    const head = draft ? draft + "\n\n" + (isLabel(shared.split("\n")[0].trim()) ? "" : "自動\n") : "";
+    openAddScreen(head + shared);
+    addText.setSelectionRange(head.length, head.length);
+    if (draft) {
+      addStatus.style.color = "#333";
+      addStatus.textContent = "まだ送っていない分の後ろに足しました。";
+    }
+    updateAddSummary();
     history.replaceState(null, "", location.pathname + location.hash);
   }
 
