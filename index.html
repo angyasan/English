@@ -284,7 +284,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.8.0</span>
+  <span id="appVersion">v1.8.1</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -5252,6 +5252,19 @@ document.addEventListener("DOMContentLoaded", () => {
     resumeQuizBtn.style.display = "inline-block";
   });
 
+  // 保存したクイズは単語のコピーを持っているので、再開するときに今の単語帳の内容（読み・例文など）に差し替える。
+  // 日本語＋英語で探し、英語が直されていたら日本語だけで探す（同じ日本語が1つだけのとき）
+  function refreshSavedItems(list) {
+    const all = Object.values(originalData).flat();
+    const byBoth = new Map(all.map(it => [it.jp + "\t" + it.en, it]));
+    const byJp = new Map();
+    all.forEach(it => byJp.set(it.jp, byJp.has(it.jp) ? null : it));
+    return list.map(q => {
+      const cur = byBoth.get(q.jp + "\t" + q.en) || byJp.get(q.jp);
+      return cur ? { ...q, ...cur } : q;
+    });
+  }
+
   // --- 続きから再開：クリックで再開、長押し0.8秒で破棄 ---
   function resumeQuiz() {
     const saved = localStorage.getItem("savedQuiz");
@@ -5259,11 +5272,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const state = JSON.parse(saved);
     quizDirection = state.quizDirection;
     quizType = state.quizType || state.currentType;
-    quizList = state.quizList;
+    quizList = refreshSavedItems(state.quizList);
     currentQuizIndex = state.currentQuizIndex;
     // 保存データから戻すと別物扱いになるので、問題リスト側の同じ単語に結び付け直す
     isFinalReview = !!state.isFinalReview;
-    wrongQuizList = (state.wrongQuizList || []).map(w =>
+    wrongQuizList = refreshSavedItems(state.wrongQuizList || []).map(w =>
       quizList.find(q => q.jp === w.jp && q.en === w.en) || w
     );
 
