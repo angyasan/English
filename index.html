@@ -58,6 +58,8 @@
     font-weight: bold;
   }
   #quizModeRow { text-align: left; }
+  #autoPlayBtn { padding: 3px 10px; border: none; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; background: #999; cursor: pointer; vertical-align: middle; }
+  #autoPlayBtn.on { background: #28a745; }
 
   /* 単語の追加画面 */
   #openAddBtn { margin-left: 10px; padding: 2px 10px; font-size: 13px; vertical-align: middle; }
@@ -284,7 +286,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.8.1</span>
+  <span id="appVersion">v1.9.0</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -343,6 +345,8 @@
         <option value="50">50問おき</option>
         <option value="100">100問おき</option>
       </select>
+      <span style="font-size: 12px; color: #666; margin-left: 10px;">🔊自動再生:</span>
+      <button id="autoPlayBtn"></button>
     </div>
 
     <div id="jpText"></div>
@@ -5136,7 +5140,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const item = currentQuizItem();
     enText.onclick = () => playSound(item.en);
+    if (autoPlay) playSound(item.en);
   });
+
+  // 答えを見たときに英語の音声を自動で流すか（ON/OFF は端末に保存、最初は ON）
+  const autoPlayBtn = document.getElementById("autoPlayBtn");
+  let autoPlay = true;
+  try { autoPlay = localStorage.getItem("autoPlay") !== "off"; } catch (e) {}
+  function updateAutoPlayBtn() {
+    autoPlayBtn.textContent = autoPlay ? "ON" : "OFF";
+    autoPlayBtn.classList.toggle("on", autoPlay);
+  }
+  autoPlayBtn.addEventListener("click", () => {
+    autoPlay = !autoPlay;
+    try { localStorage.setItem("autoPlay", autoPlay ? "on" : "off"); } catch (e) {}
+    updateAutoPlayBtn();
+  });
+  updateAutoPlayBtn();
 
   // 復習モードで次の問題へ（最後まで行ったら再復習 or 復習完了）
   function advanceReview() {
