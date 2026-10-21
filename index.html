@@ -286,7 +286,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v1.9.0</span>
+  <span id="appVersion">v2.0.0</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -455,6 +455,16 @@
       <li>そのときは同じ手順で作り直してください：<br>
         github.com/settings/personal-access-tokens/new を開く → 名前・期限を入れる → Repository access は「Only select repositories」で angyasan/English → Permissions に「Contents」を追加して「Read and write」 → Generate token → 出てきた文字列を Safari で開いた単語帳の「＋追加」→「🔑 合鍵の設定」に貼って保存</li>
     </ul>
+
+    <h4>📴 ネットがなくても使う</h4>
+    <ul>
+      <li>ネットにつながった状態で一度開けば、単語帳は自動で iPhone に保存され、ネットがなくても開けます（Safari で開いてください）。</li>
+      <li>音声は、一度鳴らしたものは自動で保存されます。全部まとめて保存するには下のボタンを押してください（約30MB。Wi-Fi のときがおすすめ）。</li>
+      <li>ネットがないときは「＋追加」の送信はできません（書きかけは残ります）。辞書音声は使えないので、AI音声で鳴ります。</li>
+      <li>Safari で長いあいだ（7日以上）開かないと、保存した分が消されることがあります。そのときはネットにつながった状態で開き直し、ボタンでもう一度保存してください。</li>
+    </ul>
+    <button id="offlineDlBtn" class="control-btn" style="color:#007bff;">🔊 音声をまとめて保存</button>
+    <div id="offlineStatus" style="font-size:13px; color:#555; margin-top:6px;"></div>
 
     <h4>🔊 Google の音声（AI音声）の無料枠</h4>
     <ul>
@@ -5517,6 +5527,74 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("openInfoBtn").addEventListener("click", () => { infoOverlay.style.display = "flex"; });
   document.getElementById("infoCloseBtn").addEventListener("click", () => { infoOverlay.style.display = "none"; });
   infoOverlay.addEventListener("click", e => { if (e.target === infoOverlay) infoOverlay.style.display = "none"; });
+  document.getElementById("openInfoBtn").addEventListener("click", showOfflineStatus);
+
+  // --- オフライン対応：アプリ本体と音声を端末に保存する（sw.js） ---
+  const AUDIO_CACHE = "audio-v1";
+  const offlineDlBtn = document.getElementById("offlineDlBtn");
+  const offlineStatus = document.getElementById("offlineStatus");
+  const canCache = "serviceWorker" in navigator && "caches" in window && (location.protocol === "https:" || location.hostname === "localhost");
+  if (canCache) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+    navigator.storage?.persist?.().catch(() => {});
+  }
+
+  function allAudioUrls() {
+    return [...new Set(Object.values(originalData).flat().map(it => audioFileFor(it.en)))];
+  }
+
+  async function showOfflineStatus() {
+    if (!canCache) {
+      offlineStatus.textContent = "このページでは保存できません（本番の単語帳を Safari で開いてください）。";
+      offlineDlBtn.disabled = true;
+      return;
+    }
+    try {
+      const cache = await caches.open(AUDIO_CACHE);
+      const saved = new Set((await cache.keys()).map(r => new URL(r.url).pathname.split("/").pop()));
+      const urls = allAudioUrls();
+      const n = urls.filter(u => saved.has(u.split("/").pop())).length;
+      offlineStatus.textContent = `保存済みの音声：${n} / ${urls.length}`;
+    } catch (e) {
+      offlineStatus.textContent = "";
+    }
+  }
+
+  offlineDlBtn.addEventListener("click", async () => {
+    if (!canCache || offlineDlBtn.disabled) return;
+    offlineDlBtn.disabled = true;
+    try {
+      const cache = await caches.open(AUDIO_CACHE);
+      const saved = new Set((await cache.keys()).map(r => new URL(r.url).pathname));
+      const urls = allAudioUrls();
+      const todo = urls.filter(u => !saved.has(new URL(u, location.href).pathname));
+      let done = urls.length - todo.length, noAudio = 0, failed = 0;
+      const show = () => { offlineStatus.textContent = `保存中… ${done} / ${urls.length}`; };
+      show();
+      // 6本ずつ並べてダウンロードする
+      const worker = async () => {
+        while (todo.length) {
+          const url = todo.shift();
+          try {
+            const res = await fetch(url);
+            if (res.ok) await cache.put(url, res);
+            else noAudio++;
+          } catch (e) {
+            failed++;
+          }
+          done++;
+          if (done % 20 === 0) show();
+        }
+      };
+      await Promise.all(Array.from({ length: 6 }, worker));
+      offlineStatus.textContent = failed
+        ? `${failed} 個を保存できませんでした。ネットにつながっているか確認して、もう一度押してください。`
+        : `✅ 音声を保存しました（${urls.length - noAudio} 個${noAudio ? `。音声がまだない単語 ${noAudio} 個` : ""}）`;
+    } catch (e) {
+      offlineStatus.textContent = "保存できませんでした：" + e.message;
+    }
+    offlineDlBtn.disabled = false;
+  });
   addText.addEventListener("input", updateAddSummary);
   document.getElementById("addTokenToggle").addEventListener("click", () => {
     addTokenArea.style.display = addTokenArea.style.display === "block" ? "none" : "block";
@@ -5584,7 +5662,9 @@ document.addEventListener("DOMContentLoaded", () => {
       updateAddSummary();
     } catch (e) {
       addStatus.style.color = "#c0392b";
-      addStatus.textContent = "送信できませんでした：" + e.message;
+      addStatus.textContent = navigator.onLine === false || e instanceof TypeError
+        ? "ネットにつながっていないため送信できませんでした。書きかけは残っているので、つながったらもう一度送信してください。"
+        : "送信できませんでした：" + e.message;
       updateAddSummary();
     }
   });
