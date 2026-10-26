@@ -61,6 +61,27 @@
   #autoPlayBtn { padding: 3px 10px; border: none; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; background: #999; cursor: pointer; vertical-align: middle; }
   #autoPlayBtn.on { background: #28a745; }
 
+  /* 番外編：前置詞クイズ */
+  .prep-banner { display: block; width: 100%; margin-bottom: 14px; padding: 10px; border: 1px dashed #ffc107; border-radius: 8px; background: rgba(255,193,7,0.08); color: #ffc107; font-size: 15px; font-weight: bold; cursor: pointer; }
+  #prepOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1500; justify-content: center; align-items: center; }
+  #prepBox { position: relative; background: #fff; color: #222; width: 90%; max-width: 400px; padding: 20px; border-radius: 8px; text-align: center; }
+  #prepBox h3 { margin: 0 0 6px; font-size: 16px; }
+  #prepCloseBtn { position: absolute; top: 8px; right: 10px; background: none; border: none; font-size: 22px; color: #666; cursor: pointer; }
+  #prepProgress { font-size: 13px; color: #555; margin-bottom: 12px; }
+  #prepJp { font-size: 15px; color: #444; margin-bottom: 10px; }
+  #prepEn { font-size: 1.3em; font-weight: bold; margin-bottom: 16px; line-height: 1.5; }
+  #prepEn .blank { display: inline-block; min-width: 3em; border-bottom: 2px solid #333; color: #28a745; }
+  #prepEn .blank.wrong { color: #dc3545; }
+  #prepChoices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #prepChoices button { padding: 10px 6px; font-size: 16px; border: 1px solid #bbb; border-radius: 8px; background: #f7f7f7; color: #222; cursor: pointer; }
+  #prepChoices button.correct { background: #28a745; border-color: #28a745; color: #fff; }
+  #prepChoices button.wrong { background: #dc3545; border-color: #dc3545; color: #fff; }
+  #prepNote { min-height: 22px; margin-top: 12px; font-size: 14px; color: #6f42c1; }
+  #prepNextBtn { display: none; margin-top: 10px; padding: 8px 28px; font-size: 16px; }
+  #prepResult { display: none; }
+  #prepResult p { font-size: 18px; margin: 10px 0 16px; }
+  #prepResult button { display: block; width: 100%; margin-top: 8px; padding: 10px; font-size: 15px; border: none; border-radius: 8px; color: #fff; cursor: pointer; }
+
   /* 単語の追加画面 */
   #openAddBtn { margin-left: 10px; padding: 2px 10px; font-size: 13px; vertical-align: middle; }
   #openInfoBtn { margin-left: 8px; padding: 0; background: none; border: none; color: #007bff; cursor: pointer; vertical-align: middle; line-height: 0; }
@@ -286,7 +307,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v2.0.0</span>
+  <span id="appVersion">v2.1.0</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -479,6 +500,28 @@
       <li>あとで有料版に切り替えれば、次に音声を作るタイミングで、AI音声がない単語の分もまとめて自動で作られます。</li>
       <li>期限が来ても勝手に課金は始まりません（切り替えは自分で操作が必要）。切り替えたあとも、1日に数語追加する程度なら、ほぼ無料〜数円の見込みです。</li>
     </ul>
+  </div>
+</div>
+
+<!-- 番外編：前置詞の穴埋めクイズ -->
+<div id="prepOverlay">
+  <div id="prepBox">
+    <button id="prepCloseBtn" aria-label="閉じる">✖</button>
+    <h3>🧩 前置詞クイズ（番外編）</h3>
+    <div id="prepQuestion">
+      <div id="prepProgress"></div>
+      <div id="prepJp"></div>
+      <div id="prepEn"></div>
+      <div id="prepChoices"></div>
+      <div id="prepNote"></div>
+      <button id="prepNextBtn" class="control-btn">次へ</button>
+    </div>
+    <div id="prepResult">
+      <p id="prepScore"></p>
+      <button id="prepRetryWrongBtn" style="background:#ff9800;">間違えた問題をもう一度</button>
+      <button id="prepAgainBtn" style="background:#007bff;">新しい問題でもう一度</button>
+      <button id="prepFinishBtn" style="background:#666;">終わる</button>
+    </div>
   </div>
 </div>
 
@@ -4479,6 +4522,10 @@ document.addEventListener("DOMContentLoaded", () => {
 ],
 };
 
+  // 番外編：前置詞の穴埋めクイズ（en の ___ に answer が入る。読み上げ音声は scripts/audio-lib.js が作る）
+  const prepQuizData = [
+  ];
+
   // 各カテゴリの表示用リスト（シャッフルや検索で並びが変わる）
   const currentList = {};
   for (const type in originalData) currentList[type] = [...originalData[type]];
@@ -4755,6 +4802,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderList(type) {
     contentDiv.innerHTML = "";
+    if (type === "prepositions" && prepQuizData.length) {
+      const banner = document.createElement("button");
+      banner.className = "prep-banner";
+      banner.textContent = "🧩 番外編：前置詞クイズ（穴埋め）";
+      banner.addEventListener("click", () => startPrepQuiz());
+      contentDiv.appendChild(banner);
+    }
     currentList[type].forEach(item => contentDiv.appendChild(createEntry(item, type)));
   }
 
@@ -5541,7 +5595,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function allAudioUrls() {
-    return [...new Set(Object.values(originalData).flat().map(it => audioFileFor(it.en)))];
+    const texts = Object.values(originalData).flat().flatMap(it => [it.en, ...(it.example || [])])
+      .concat(prepQuizData.map(prepSentence));
+    return [...new Set(texts.map(audioFileFor))];
   }
 
   async function showOfflineStatus() {
@@ -5669,6 +5725,95 @@ document.addEventListener("DOMContentLoaded", () => {
       updateAddSummary();
     }
   });
+
+  // --- 番外編：前置詞の穴埋めクイズ（20問ずつ。選んだらすぐ正解・不正解、最後に間違えた問題をやり直せる） ---
+  const PREP_QUIZ_SIZE = 20;
+  const prepOverlay = document.getElementById("prepOverlay");
+  const prepQuestionDiv = document.getElementById("prepQuestion");
+  const prepResultDiv = document.getElementById("prepResult");
+  const prepChoicesDiv = document.getElementById("prepChoices");
+  const prepNextBtn = document.getElementById("prepNextBtn");
+  let prepList = [], prepIndex = 0, prepWrong = [], prepCorrect = 0;
+
+  function prepSentence(q) {
+    return q.en.replace("___", q.answer);
+  }
+
+  function startPrepQuiz(list) {
+    prepList = list || shuffleArray([...prepQuizData]).slice(0, PREP_QUIZ_SIZE);
+    prepList = shuffleArray([...prepList]);
+    prepIndex = 0;
+    prepWrong = [];
+    prepCorrect = 0;
+    prepList.forEach(q => preloadAudio(prepSentence(q)));
+    prepResultDiv.style.display = "none";
+    prepQuestionDiv.style.display = "block";
+    prepOverlay.style.display = "flex";
+    showPrepQuestion();
+  }
+
+  function showPrepQuestion() {
+    const q = prepList[prepIndex];
+    document.getElementById("prepProgress").textContent = `${prepIndex + 1} / ${prepList.length} 問　正解 ${prepCorrect}`;
+    document.getElementById("prepJp").textContent = q.jp;
+    const [before, after] = q.en.split("___");
+    const enDiv = document.getElementById("prepEn");
+    enDiv.innerHTML = "";
+    enDiv.onclick = null;
+    const blank = document.createElement("span");
+    blank.className = "blank";
+    blank.innerHTML = "&nbsp;";
+    enDiv.append(before, blank, after);
+    document.getElementById("prepNote").textContent = "";
+    prepNextBtn.style.display = "none";
+    prepChoicesDiv.innerHTML = "";
+    q.choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice;
+      btn.addEventListener("click", () => answerPrep(q, choice, btn, blank));
+      prepChoicesDiv.appendChild(btn);
+    });
+  }
+
+  function answerPrep(q, choice, btn, blank) {
+    if (prepNextBtn.style.display === "inline-block") return; // 回答済み
+    const ok = choice === q.answer;
+    [...prepChoicesDiv.children].forEach(b => {
+      if (b.textContent === q.answer) b.classList.add("correct");
+    });
+    if (ok) {
+      prepCorrect++;
+    } else {
+      btn.classList.add("wrong");
+      blank.classList.add("wrong");
+      prepWrong.push(q);
+    }
+    blank.textContent = q.answer;
+    document.getElementById("prepNote").textContent = (ok ? "⭕ 正解！ " : "❌ ") + (q.note || "");
+    document.getElementById("prepProgress").textContent = `${prepIndex + 1} / ${prepList.length} 問　正解 ${prepCorrect}`;
+    const sentence = prepSentence(q);
+    document.getElementById("prepEn").onclick = () => playTTS(sentence);
+    if (autoPlay) playTTS(sentence);
+    prepNextBtn.style.display = "inline-block";
+  }
+
+  prepNextBtn.addEventListener("click", () => {
+    prepIndex++;
+    if (prepIndex < prepList.length) {
+      showPrepQuestion();
+      return;
+    }
+    prepQuestionDiv.style.display = "none";
+    prepResultDiv.style.display = "block";
+    document.getElementById("prepScore").textContent = `${prepList.length} 問中 ${prepCorrect} 問正解！` + (prepWrong.length ? "" : " 🎉 全問正解");
+    document.getElementById("prepRetryWrongBtn").style.display = prepWrong.length ? "block" : "none";
+  });
+
+  document.getElementById("prepRetryWrongBtn").addEventListener("click", () => startPrepQuiz(prepWrong));
+  document.getElementById("prepAgainBtn").addEventListener("click", () => startPrepQuiz());
+  const closePrep = () => { prepOverlay.style.display = "none"; if (currentAudio) currentAudio.pause(); };
+  document.getElementById("prepFinishBtn").addEventListener("click", closePrep);
+  document.getElementById("prepCloseBtn").addEventListener("click", closePrep);
 
   // ショートカット（メモ帳から）用：?add=〜 で開くと、その内容を入れた追加画面を開く
   // 送っていない書きかけがあれば上書きせず後ろに足す（前の品詞を引き継がないよう「自動」から始める）。
