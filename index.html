@@ -78,6 +78,9 @@
   #prepChoices button.wrong { background: #dc3545; border-color: #dc3545; color: #fff; }
   #prepNote { min-height: 22px; margin-top: 12px; font-size: 14px; color: #6f42c1; }
   #prepNextBtn { display: none; margin-top: 10px; padding: 8px 28px; font-size: 16px; }
+  #prepExpBtn { display: none; margin: 8px auto 0; padding: 3px 12px; font-size: 13px; color: #6f42c1; border-color: #6f42c1; }
+  #prepExp { display: none; margin-top: 8px; padding: 10px 12px; background: #f6f3fb; border-radius: 8px; text-align: left; font-size: 13px; line-height: 1.6; color: #333; }
+  #prepExp div + div { margin-top: 4px; }
   #prepResult { display: none; }
   #prepResult p { font-size: 18px; margin: 10px 0 16px; }
   #prepResult button { display: block; width: 100%; margin-top: 8px; padding: 10px; font-size: 15px; border: none; border-radius: 8px; color: #fff; cursor: pointer; }
@@ -514,6 +517,8 @@
       <div id="prepEn"></div>
       <div id="prepChoices"></div>
       <div id="prepNote"></div>
+      <button id="prepExpBtn" class="control-btn">📖 くわしい解説</button>
+      <div id="prepExp"></div>
       <button id="prepNextBtn" class="control-btn">次へ</button>
     </div>
     <div id="prepResult">
@@ -6288,6 +6293,8 @@ document.addEventListener("DOMContentLoaded", () => {
     blank.innerHTML = "&nbsp;";
     enDiv.append(before, blank, after);
     document.getElementById("prepNote").textContent = "";
+    prepExpBtn.style.display = "none";
+    prepExp.style.display = "none";
     prepNextBtn.style.display = "none";
     prepChoicesDiv.innerHTML = "";
     q.choices.forEach(choice => {
@@ -6313,12 +6320,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     blank.textContent = q.answer;
     document.getElementById("prepNote").textContent = (ok ? "⭕ 正解！ " : "❌ ") + (q.note || "");
+    showPrepExplanation(q, !ok);
     document.getElementById("prepProgress").textContent = `${prepIndex + 1} / ${prepList.length} 問　正解 ${prepCorrect}`;
     const sentence = prepSentence(q);
     document.getElementById("prepEn").onclick = () => playTTS(sentence);
     if (autoPlay) playTTS(sentence);
     prepNextBtn.style.display = "inline-block";
   }
+
+  // くわしい解説：正解の理由と、ほかの選択肢がダメな理由。間違えたときは最初から開いておく
+  const prepExpBtn = document.getElementById("prepExpBtn");
+  const prepExp = document.getElementById("prepExp");
+  function showPrepExplanation(q, open) {
+    if (!q.why) return;
+    prepExp.innerHTML = "";
+    const line = (mark, word, text) => {
+      const div = document.createElement("div");
+      const b = document.createElement("b");
+      b.textContent = `${mark} ${word}：`;
+      div.append(b, text);
+      prepExp.appendChild(div);
+    };
+    line("✅", q.answer, q.why);
+    q.choices.filter(c => c !== q.answer).forEach(c => line("✖", c, (q.others || {})[c] || ""));
+    prepExpBtn.style.display = "block";
+    prepExp.style.display = open ? "block" : "none";
+  }
+  prepExpBtn.addEventListener("click", () => {
+    prepExp.style.display = prepExp.style.display === "block" ? "none" : "block";
+  });
 
   prepNextBtn.addEventListener("click", () => {
     prepIndex++;
