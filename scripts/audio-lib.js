@@ -14,6 +14,21 @@ function loadVocab(htmlPath) {
   return vm.runInNewContext('(' + literal + ')');
 }
 
+// index.html から番外編の前置詞クイズ（prepQuizData）を取り出す。なければ空
+function loadPrepQuiz(htmlPath) {
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const start = html.indexOf('const prepQuizData = [');
+  if (start < 0) return [];
+  const end = html.indexOf('\n  ];', start);
+  if (end < 0) throw new Error('index.html の prepQuizData の終わりが見つかりません');
+  return vm.runInNewContext('(' + html.slice(start + 'const prepQuizData = '.length, end + 4) + ')');
+}
+
+// 前置詞クイズの読み上げ用の文（___ に答えを入れたもの）
+function prepSentences(list) {
+  return list.map(q => q.en.replace('___', q.answer));
+}
+
 // 英語欄の文字列 → 音声ファイル名（アプリ側の audioFileFor と同じ計算）
 function audioId(text) {
   let h1 = 0x811c9dc5;
@@ -58,4 +73,4 @@ function collectTexts(vocab) {
   return [...texts];
 }
 
-module.exports = { loadVocab, audioId, speechText, collectTexts };
+module.exports = { loadVocab, loadPrepQuiz, prepSentences, audioId, speechText, collectTexts };

@@ -4,7 +4,7 @@
 // - GOOGLE_TTS_API_KEY がなければ何もせず終了する
 const fs = require('fs');
 const path = require('path');
-const { loadVocab, audioId, speechText, collectTexts } = require('./audio-lib');
+const { loadVocab, loadPrepQuiz, prepSentences, audioId, speechText, collectTexts } = require('./audio-lib');
 
 const HTML_PATH = 'index.html';
 const AUDIO_DIR = 'audio';
@@ -71,7 +71,7 @@ async function main() {
   }
   fs.mkdirSync(AUDIO_DIR, { recursive: true });
 
-  const texts = collectTexts(loadVocab(HTML_PATH));
+  const texts = [...collectTexts(loadVocab(HTML_PATH)), ...prepSentences(loadPrepQuiz(HTML_PATH))];
   const wanted = new Map(); // ファイル名 → 読み上げる文字
   for (const text of texts) {
     const speech = speechText(text);
