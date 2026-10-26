@@ -58,8 +58,8 @@
     font-weight: bold;
   }
   #quizModeRow { text-align: left; }
-  #autoPlayBtn { padding: 3px 10px; border: none; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; background: #999; cursor: pointer; vertical-align: middle; }
-  #autoPlayBtn.on { background: #28a745; }
+  #autoPlayBtn, #prepAutoPlayBtn { padding: 3px 10px; border: none; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; background: #999; cursor: pointer; vertical-align: middle; }
+  #autoPlayBtn.on, #prepAutoPlayBtn.on { background: #28a745; }
 
   /* 番外編：前置詞クイズ */
   .prep-banner { display: block; width: 100%; margin-bottom: 14px; padding: 10px; border: 1px dashed #ffc107; border-radius: 8px; background: rgba(255,193,7,0.08); color: #ffc107; font-size: 15px; font-weight: bold; cursor: pointer; }
@@ -67,7 +67,8 @@
   #prepBox { position: relative; background: #fff; color: #222; width: 90%; max-width: 400px; padding: 20px; border-radius: 8px; text-align: center; }
   #prepBox h3 { margin: 0 0 6px; font-size: 16px; }
   #prepCloseBtn { position: absolute; top: 8px; right: 10px; background: none; border: none; font-size: 22px; color: #666; cursor: pointer; }
-  #prepProgress { font-size: 13px; color: #555; margin-bottom: 12px; }
+  #prepProgress { font-size: 13px; color: #555; margin-bottom: 6px; }
+  #prepAutoPlayRow { font-size: 12px; color: #666; margin-bottom: 12px; }
   #prepJp { font-size: 15px; color: #444; margin-bottom: 10px; }
   #prepEn { font-size: 1.3em; font-weight: bold; margin-bottom: 16px; line-height: 1.5; }
   #prepEn .blank { display: inline-block; min-width: 3em; border-bottom: 2px solid #333; color: #28a745; }
@@ -310,7 +311,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v2.1.0</span>
+  <span id="appVersion">v2.1.1</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -513,6 +514,7 @@
     <h3>🧩 前置詞クイズ（番外編）</h3>
     <div id="prepQuestion">
       <div id="prepProgress"></div>
+      <div id="prepAutoPlayRow">🔊自動再生: <button id="prepAutoPlayBtn"></button></div>
       <div id="prepJp"></div>
       <div id="prepEn"></div>
       <div id="prepChoices"></div>
@@ -6324,9 +6326,24 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("prepProgress").textContent = `${prepIndex + 1} / ${prepList.length} 問　正解 ${prepCorrect}`;
     const sentence = prepSentence(q);
     document.getElementById("prepEn").onclick = () => playTTS(sentence);
-    if (autoPlay) playTTS(sentence);
+    if (prepAutoPlay) playTTS(sentence);
     prepNextBtn.style.display = "inline-block";
   }
+
+  // 前置詞クイズ用の自動再生 ON/OFF（通常クイズとは別に端末に保存、最初は OFF）
+  const prepAutoPlayBtn = document.getElementById("prepAutoPlayBtn");
+  let prepAutoPlay = false;
+  try { prepAutoPlay = localStorage.getItem("prepAutoPlay") === "on"; } catch (e) {}
+  function updatePrepAutoPlayBtn() {
+    prepAutoPlayBtn.textContent = prepAutoPlay ? "ON" : "OFF";
+    prepAutoPlayBtn.classList.toggle("on", prepAutoPlay);
+  }
+  prepAutoPlayBtn.addEventListener("click", () => {
+    prepAutoPlay = !prepAutoPlay;
+    try { localStorage.setItem("prepAutoPlay", prepAutoPlay ? "on" : "off"); } catch (e) {}
+    updatePrepAutoPlayBtn();
+  });
+  updatePrepAutoPlayBtn();
 
   // くわしい解説：正解の理由と、ほかの選択肢がダメな理由。間違えたときは最初から開いておく
   const prepExpBtn = document.getElementById("prepExpBtn");
