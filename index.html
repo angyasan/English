@@ -311,7 +311,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v2.2.0</span>
+  <span id="appVersion">v2.2.1</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -6290,7 +6290,13 @@ document.addEventListener("DOMContentLoaded", () => {
       quizList,
       wrongQuizList,
       batchSize,
-      isFinalReview
+      isFinalReview,
+      // 復習の途中で離脱しても、復習の続きから再開できるように
+      currentBatchWrong,
+      isReviewMode,
+      reviewList,
+      reviewIndex,
+      reviewWrongList
     };
     localStorage.setItem("savedQuiz", JSON.stringify(state));
   }
@@ -6350,6 +6356,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function advanceReview() {
     reviewIndex++;
     if (reviewIndex < reviewList.length) {
+      autoSaveQuizState();
       showReviewQuestion();
       return;
     }
@@ -6361,6 +6368,7 @@ document.addEventListener("DOMContentLoaded", () => {
         reviewList = shuffleArray([...reviewWrongList]);
         reviewWrongList = [];
         reviewIndex = 0;
+        autoSaveQuizState();
         showReviewQuestion();
       };
     } else {
@@ -6369,6 +6377,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("finishReviewConfirm").onclick = () => {
         document.getElementById("reviewFinishNotice").style.display = "none";
         currentQuizIndex++;
+        autoSaveQuizState();
         if (currentQuizIndex >= quizList.length) {
           finishQuiz();
         } else {
@@ -6433,6 +6442,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reviewWrongList = [];
     isReviewMode = true;
     reviewIndex = 0;
+    autoSaveQuizState();
     const notice = document.getElementById("reviewNotice");
     notice.style.display = "flex";
     document.getElementById("startReviewConfirm").onclick = () => {
@@ -6484,9 +6494,15 @@ document.addEventListener("DOMContentLoaded", () => {
     currentQuizIndex = state.currentQuizIndex;
     // 保存データから戻すと別物扱いになるので、問題リスト側の同じ単語に結び付け直す
     isFinalReview = !!state.isFinalReview;
-    wrongQuizList = refreshSavedItems(state.wrongQuizList || []).map(w =>
+    const relink = list => refreshSavedItems(list || []).map(w =>
       quizList.find(q => q.jp === w.jp && q.en === w.en) || w
     );
+    wrongQuizList = relink(state.wrongQuizList);
+    currentBatchWrong = relink(state.currentBatchWrong);
+    isReviewMode = !!state.isReviewMode && (state.reviewList || []).length > 0;
+    reviewList = isReviewMode ? relink(state.reviewList) : [];
+    reviewIndex = isReviewMode ? Math.min(state.reviewIndex || 0, reviewList.length - 1) : 0;
+    reviewWrongList = isReviewMode ? relink(state.reviewWrongList) : [];
 
     // 保存された値を復元し、プルダウンの見た目も合わせる
     if (state.batchSize) {
@@ -6495,7 +6511,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updateQuizModeLabel();
-    showQuizQuestion();
+    if (isReviewMode) showReviewQuestion();
+    else showQuizQuestion();
     quizOverlay.style.display = "flex";
     resumeQuizBtn.style.display = "none";
   }
