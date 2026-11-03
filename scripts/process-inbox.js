@@ -16,8 +16,10 @@ const CATEGORY_MARKERS = {
   conjunctions: '接続詞せつぞくしsetuzokusi',
   nsfw: 'だめーダメーdame',
   pronouns: '代名詞だいめいしdaimeisi',
+  toeic: 'TOEICとーいっくtoeic',
 };
-const CATEGORY_LIST = Object.keys(CATEGORY_MARKERS);
+// AI に選ばせる品詞（TOEIC は品詞ではないので、inbox で「TOEIC」と書いたときだけ入れる）
+const CATEGORY_LIST = Object.keys(CATEGORY_MARKERS).filter(c => c !== 'toeic');
 
 // ブロックの1行目にこれを単独で書くと、それ以降のブロックは
 // 次に別のラベルが出てくるまでずっとそのカテゴリに確定される（漢字・ひらがな両対応）
@@ -32,6 +34,7 @@ const JAPANESE_LABEL_TO_KEY = {
   '前置詞': 'prepositions', 'ぜんちし': 'prepositions',
   '接続詞': 'conjunctions', 'せつぞくし': 'conjunctions',
   'ダメー': 'nsfw', 'だめー': 'nsfw',
+  'TOEIC': 'toeic', 'toeic': 'toeic', 'とーいっく': 'toeic',
   '代名詞': 'pronouns', 'だいめいし': 'pronouns',
 };
 // これを書くと、以降はまたAIの自動判定に戻る
