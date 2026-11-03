@@ -311,7 +311,7 @@
   📘 単語帳
   <button id="scrollBottomBtn" style="margin-left:10px; font-size:24px; cursor:pointer; background:none; border:none; color:#007bff;">↓</button>
   <!-- バージョン：更新したらここの数字を上げる -->
-  <span id="appVersion">v2.1.1</span>
+  <span id="appVersion">v2.2.0</span>
   <button id="openAddBtn" class="control-btn">＋追加</button>
   <button id="openInfoBtn" aria-label="覚えておくこと"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10.2"/><line x1="12" y1="10.5" x2="12" y2="17"/><line x1="10" y1="17" x2="14" y2="17"/><line x1="10.5" y1="10.5" x2="12" y2="10.5"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button>
 </h2>
@@ -323,6 +323,7 @@
     <div class="tab-btn" data-type="nouns">名詞</div>
     <div class="tab-btn" data-type="adverbs">副詞</div>
     <div class="tab-btn" data-type="adjectives">形容詞</div>
+    <div class="tab-btn" data-type="toeic">TOEIC</div>
   </div>
   <div class="tab-row">
     <div class="tab-btn" data-type="tenses">時制</div>
@@ -4529,6 +4530,10 @@ document.addEventListener("DOMContentLoaded", () => {
 { "jp": "セックスを除いた前戯", "en": "petting", "reading": "ペディン", searchReading: "ペッティング" },
     <!-- だめーダメーdame -->
 ],
+
+  toeic: [
+    <!-- TOEICとーいっくtoeic -->
+  ],
 };
 
   // 番外編：前置詞の穴埋めクイズ（en の ___ に answer が入る。読み上げ音声は scripts/audio-lib.js が作る）
@@ -5377,7 +5382,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryColors = {
     others: "#9c27b0", various: "#e91e63", verbs: "#2196f3", nouns: "#4caf50",
     adverbs: "#ff9800", adjectives: "#00bcd4", tenses: "#795548", pronouns: "#8bc34a",
-    prepositions: "#ffc107", conjunctions: "#3f51b5", nsfw: "#f44336"
+    prepositions: "#ffc107", conjunctions: "#3f51b5", nsfw: "#f44336", toeic: "#009688"
   };
 
   // カタカナの読みは、表示用（実際の発音に近い）と検索用（日本語でよく使う書き方）のどちらでも探せる。
@@ -5987,9 +5992,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "副詞": "adverbs", "ふくし": "adverbs", "形容詞": "adjectives", "けいようし": "adjectives",
     "時制": "tenses", "じせい": "tenses", "代名詞": "pronouns", "だいめいし": "pronouns",
     "前置詞": "prepositions", "ぜんちし": "prepositions", "接続詞": "conjunctions", "せつぞくし": "conjunctions",
-    "ダメー": "nsfw", "だめー": "nsfw"
+    "ダメー": "nsfw", "だめー": "nsfw",
+    "TOEIC": "toeic", "toeic": "toeic", "とーいっく": "toeic"
   };
-  const ADD_BUTTON_LABELS = ["自動", "色々", "動詞", "名詞", "副詞", "形容詞", "時制", "代名詞", "前置詞", "接続詞", "ダメー", "その他"];
+  const ADD_BUTTON_LABELS = ["自動", "色々", "動詞", "名詞", "副詞", "形容詞", "時制", "代名詞", "前置詞", "接続詞", "ダメー", "TOEIC", "その他"];
   const TOKEN_KEY = "githubInboxToken";
 
   const addOverlay = document.getElementById("addOverlay");
